@@ -1,18 +1,24 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import GuestLayout from '$layouts/GuestLayout.svelte';
   import Button from '$components/Actions/Button.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import { router, useForm } from '@inertiajs/svelte';
 
-  export let email: string;
-  export let token: string;
+  interface Props {
+    email: string;
+    token: string;
+  }
 
-  const form = useForm({
+  let { email, token }: Props = $props();
+
+  const form = $state(useForm({
     token,
     email,
     password: '',
     password_confirmation: '',
-  });
+  }));
 
   const submit = () => {
     form.post(route('password.store'), {
@@ -24,11 +30,13 @@
 </script>
 
 <GuestLayout>
-  <div slot="head">
-    <title>Reset Password</title>
-  </div>
+  {#snippet head()}
+    <div >
+      <title>Reset Password</title>
+    </div>
+  {/snippet}
 
-  <form on:submit|preventDefault={submit}>
+  <form onsubmit={preventDefault(submit)}>
     <div>
       <Input
         label="Email"

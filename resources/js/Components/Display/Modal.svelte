@@ -1,6 +1,11 @@
 <script lang="ts">
-  export let isOpen: boolean = false;
-  export let size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
+  interface Props {
+    isOpen?: boolean;
+    size?: 'sm' | 'md' | 'lg' | 'xl';
+    children?: import('svelte').Snippet;
+  }
+
+  let { isOpen = false, size = 'md', children }: Props = $props();
 
   const sizeClasses = {
     sm: 'max-w-sm',
@@ -17,9 +22,9 @@
     role="dialog"
     aria-modal="true"
   >
-    <div class="modal-backdrop bg-black/50" />
+    <div class="modal-backdrop bg-black/50"></div>
     <div class="modal-box {sizeClasses[size]} relative">
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 {/if}

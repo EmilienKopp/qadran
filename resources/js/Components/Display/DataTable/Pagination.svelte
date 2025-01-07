@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { Paginated } from '$types/pagination';
 
-  export let paginatedData: Paginated<any>;
-  export let pageIndex: number;
+  interface Props {
+    paginatedData: Paginated<any>;
+    pageIndex: number;
+  }
+
+  let { paginatedData, pageIndex = $bindable() }: Props = $props();
 </script>
 
 <div class="pagination-container w-full my-2 flex justify-center gap-2">
@@ -16,7 +20,7 @@
         class:active={pageIndex === index &&
           index !== 0 &&
           index !== paginatedData.links.length - 1}
-        on:click={() => {
+        onclick={() => {
           if (index !== 0 && index !== paginatedData.links.length - 1) {
             pageIndex = index;
           }

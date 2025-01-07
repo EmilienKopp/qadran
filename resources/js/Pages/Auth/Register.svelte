@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import Button from '@/Components/Actions/FormActionButtons.svelte';
   import Input from '@/Components/DataInput/Input.svelte';
   import GuestLayout from '@/Layouts/GuestLayout.svelte';
@@ -23,7 +25,7 @@
 </script>
 
 <GuestLayout>
-  <form on:submit|preventDefault={submit}>
+  <form onsubmit={preventDefault(submit)}>
     <div class="flex flex-row gap-4">
       <Input
         label="First Name"

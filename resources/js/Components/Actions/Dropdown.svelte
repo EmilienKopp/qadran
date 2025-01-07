@@ -1,12 +1,17 @@
 <script lang="ts">
   import { Link, inertia } from '@inertiajs/svelte';
   
-  export let actions: DropdownAction[] = [];
+  interface Props {
+    actions?: DropdownAction[];
+    trigger?: import('svelte').Snippet;
+  }
+
+  let { actions = [], trigger }: Props = $props();
 </script>
 
 <details class="dropdown dropdown-bottom">
-  <summary class="flex rounded-md items-center cursor-pointer select-none" on:click={() => console.log("Dropdown")}>
-    <slot name="trigger"></slot>
+  <summary class="flex rounded-md items-center cursor-pointer select-none" onclick={() => console.log("Dropdown")}>
+    {@render trigger?.()}
   </summary>
 
   <ul
@@ -17,7 +22,7 @@
         {#if as === 'a' || !as}
           <Link {href}>{text}</Link>
         {:else if as === 'button'}
-          <button on:click={onclick} use:inertia="{{ href: href, method: 'post' }}" type="button">
+          <button {onclick} use:inertia="{{ href: href, method: 'post' }}" type="button">
             {text}
           </button>
         {:else}

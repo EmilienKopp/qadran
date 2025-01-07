@@ -1,11 +1,21 @@
 <script lang="ts">
   import { Link } from '@inertiajs/svelte';
 
-  export let canLogin = false;
-  export let canRegister = false;
-  export let laravelVersion = '';
-  export let phpVersion = '';
-  export let auth = { user: null };
+  interface Props {
+    canLogin?: boolean;
+    canRegister?: boolean;
+    laravelVersion?: string;
+    phpVersion?: string;
+    auth?: any;
+  }
+
+  let {
+    canLogin = false,
+    canRegister = false,
+    laravelVersion = '',
+    phpVersion = '',
+    auth = { user: null }
+  }: Props = $props();
 
   console.log(canLogin, canRegister, laravelVersion, phpVersion, auth);
 </script>

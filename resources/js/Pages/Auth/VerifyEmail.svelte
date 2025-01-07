@@ -1,10 +1,16 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import GuestLayout from '$layouts/GuestLayout.svelte';
   import Button from '$components/Actions/Button.svelte';
   import { Link, useForm } from '@inertiajs/svelte';
   import { writable } from 'svelte/store';
 
-  export let status: string | undefined;
+  interface Props {
+    status: string | undefined;
+  }
+
+  let { status }: Props = $props();
 
   const form = useForm({});
 
@@ -16,9 +22,11 @@
 </script>
 
 <GuestLayout>
-  <div slot="head">
-    <title>Email Verification</title>
-  </div>
+  {#snippet head()}
+    <div >
+      <title>Email Verification</title>
+    </div>
+  {/snippet}
 
   <div class="mb-4 text-sm text-gray-600">
     Thanks for signing up! Before getting started, could you verify your
@@ -33,7 +41,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={submit}>
+  <form onsubmit={preventDefault(submit)}>
     <div class="mt-4 flex items-center justify-between">
       <Button
         class="ml-4"

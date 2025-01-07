@@ -1,12 +1,21 @@
 <script lang="ts">
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import clsx from "clsx";
   import { twMerge } from "tailwind-merge";
 
-  export let variant = "primary";
+  interface Props {
+    variant?: string;
+    children?: import('svelte').Snippet;
+    [key: string]: any
+  }
+
+  let { variant = "primary", children, ...rest }: Props = $props();
 </script>
 
-<button  {...$$restProps} 
-  on:click
+<button  {...rest} 
+  onclick={bubble('click')}
   class={twMerge(
     "btn",
     clsx({
@@ -17,7 +26,7 @@
       "btn-outline": variant === "outline",
       "btn-link": variant === "link",
     }),
-    $$restProps.class)}>
+    rest.class)}>
 
-  <slot />
+  {@render children?.()}
 </button>

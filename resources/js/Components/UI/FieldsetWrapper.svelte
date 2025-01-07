@@ -1,10 +1,16 @@
 <script lang="ts">
     import { twMerge } from 'tailwind-merge';
-    export let title: string = '';
-    export let description: string = '';
+  interface Props {
+    title?: string;
+    description?: string;
+    children?: import('svelte').Snippet;
+    [key: string]: any
+  }
+
+  let { title = '', description = '', children, ...rest }: Props = $props();
   </script>
   
-  <fieldset {...$$restProps} class={twMerge("p-6 bg-base-100 border border-primary rounded-lg", $$restProps.class)}>
+  <fieldset {...rest} class={twMerge("p-6 bg-base-100 border border-primary rounded-lg", rest.class)}>
     <legend class="md:text-lg font-semibold text-primary">
       {title}
     </legend>
@@ -12,7 +18,7 @@
       <p class="mt-1 text-xs sm:text-sm text-gray-600">{description}</p>
     {/if}
     <div class="mt-4">
-      <slot />
+      {@render children?.()}
     </div>
   </fieldset>
   

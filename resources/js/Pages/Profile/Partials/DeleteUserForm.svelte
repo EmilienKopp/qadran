@@ -6,8 +6,8 @@
   import { useForm } from '@inertiajs/svelte';
   import { tick } from 'svelte';
 
-  let confirmingUserDeletion = false;
-  let passwordInput: HTMLInputElement;
+  let confirmingUserDeletion = $state(false);
+  let passwordInput: HTMLInputElement = $state();
 
   const form = useForm({
       password: '',

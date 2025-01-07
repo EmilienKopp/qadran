@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { TableHeader } from '$types/components/Table';
   
-  export let headers: TableHeader<any>[];
-  export let hasActions = false;
+  interface Props {
+    headers: TableHeader<any>[];
+    hasActions?: boolean;
+  }
+
+  let { headers, hasActions = false }: Props = $props();
 </script>
 
 <tr>

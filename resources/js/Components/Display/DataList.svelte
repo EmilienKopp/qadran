@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { TableHeader } from "../../types/components/Table";
 
-  export let headers: TableHeader<any>[];
-  export let data: Record<string,any>;
+  interface Props {
+    headers: TableHeader<any>[];
+    data: Record<string,any>;
+  }
+
+  let { headers, data }: Props = $props();
 </script>
 
 <dl>

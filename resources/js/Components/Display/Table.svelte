@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run, self } from 'svelte/legacy';
+
   import { query } from '$lib/stores';
   import { FilterService } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
@@ -6,22 +8,38 @@
   import type { TableAction, TableHeader } from '../../types/components/Table';
   import type { Paginated } from '../../types/pagination';
 
-  export let data: any[] | undefined = undefined;
-  export let paginatedData: Paginated<any> | undefined = undefined;
-  export let headers: TableHeader<any>[] = [];
-  export let onRowClick: ((row: any) => void) | undefined = undefined;
-  export let onDelete: ((row: any) => void) | undefined = undefined;
-  export let model: 'employer' | 'job' | 'user' | 'application' | 'candidate' =
-    'user';
-  export let className = '';
-  export let actions: TableAction<any>[] | undefined = undefined;
-  export let searchStrings: string[] = [];
+  interface Props {
+    data?: any[] | undefined;
+    paginatedData?: Paginated<any> | undefined;
+    headers?: TableHeader<any>[];
+    onRowClick?: ((row: any) => void) | undefined;
+    onDelete?: ((row: any) => void) | undefined;
+    model?: 'employer' | 'job' | 'user' | 'application' | 'candidate';
+    className?: string;
+    actions?: TableAction<any>[] | undefined;
+    searchStrings?: string[];
+  }
+
+  let {
+    data = undefined,
+    paginatedData = undefined,
+    headers = [],
+    onRowClick = undefined,
+    onDelete = undefined,
+    model = 'user',
+    className = '',
+    actions = undefined,
+    searchStrings = $bindable([])
+  }: Props = $props();
 
   if (!searchStrings.length && $query.param('search')) {
     searchStrings = [$query.param('search')?.toString() || ''];
   }
 
-  $: pageIndex = $query.param('page') || 1;
+  let pageIndex;
+  run(() => {
+    pageIndex = $query.param('page') || 1;
+  });
 
   if (paginatedData && data?.length) {
     throw new Error('Cannot use both dasta and paginatedData props');
@@ -31,7 +49,7 @@
     );
   }
 
-  $: tableData = paginatedData ? paginatedData.data : data;
+  let tableData = $derived(paginatedData ? paginatedData.data : data);
 
   function handleRowClick(row: any) {
     if (onRowClick) {
@@ -80,13 +98,13 @@
               {@const value = resolveNestedValue(row, header.key)}
               <td
                 class="whitespace-nowrap max-w-72 truncate"
-                on:click|self={() => handleRowClick(row)}
+                onclick={self(() => handleRowClick(row))}
               >
                 <div class="flex gap-1 items-center">
                   {#if header.icon}
+                    {@const SvelteComponent = header.icon(row)}
                     <span title={value} class={header.iconClass(row)}>
-                      <svelte:component
-                        this={header.icon(row)}
+                      <SvelteComponent
                         class="w-5 h-5"
                       />
                     </span>
@@ -122,15 +140,15 @@
                 {#each actions ?? [] as action}
                   {#if !action.hidden?.(row)}
                     <button
-                      on:click={() => action.callback(row)}
+                      onclick={() => action.callback(row)}
                       class={twMerge(
                         'mx-1 px-1 hover:underline flex items-center gap-1s',
                         action.css?.(row)
                       )}
                     >
                       {#if action.icon}
-                        <svelte:component
-                          this={action.icon(row)}
+                        {@const SvelteComponent_1 = action.icon(row)}
+                        <SvelteComponent_1
                           class="w-4 h-4"
                         />
                       {/if}
@@ -156,7 +174,7 @@
           class:active={pageIndex === index &&
             index !== 0 &&
             index !== paginatedData.links.length - 1}
-          on:click={() => {
+          onclick={() => {
             if (index !== 0 && index !== paginatedData.links.length - 1) {
               pageIndex = index;
             }

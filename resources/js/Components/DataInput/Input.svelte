@@ -1,16 +1,32 @@
 <script lang="ts">
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import { twMerge } from 'tailwind-merge';
-  export let label: string = '';
-  export let name: string;
-  export let required: boolean = false;
-  export let value: string | number | File | null = '';
-  export let errors: Record<string, string> = {};
-  export let type: 'text' | 'number' | 'file' | 'search' = 'text';
+  interface Props {
+    label?: string;
+    name: string;
+    required?: boolean;
+    value?: string | number | File | null;
+    errors?: Record<string, string>;
+    type?: 'text' | 'number' | 'file' | 'search';
+    [key: string]: any
+  }
+
+  let {
+    label = '',
+    name,
+    required = false,
+    value = $bindable(''),
+    errors = {},
+    type = 'text',
+    ...rest
+  }: Props = $props();
 </script>
 
 <div class="form-control w-full mb-4">
   {#if label}
-    <label class="label" for={$$restProps.id}>
+    <label class="label" for={rest.id}>
       <span class="label-text flex items-center">
         {label}
         {#if required}
@@ -20,11 +36,11 @@
     </label>
   {/if}
   <input
-    class={twMerge('input input-bordered', $$restProps.class)}
+    class={twMerge('input input-bordered', rest.class)}
     bind:value
-    on:change
-    on:input
-    {...$$restProps}
+    onchange={bubble('change')}
+    oninput={bubble('input')}
+    {...rest}
     {type}
   />
   {#if errors && errors[name]}

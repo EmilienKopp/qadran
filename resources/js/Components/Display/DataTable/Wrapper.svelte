@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { query } from '$lib/stores';
   import { exists } from '$lib/utils/assessing';
   import type { TableProps } from '$types/components/Table';
@@ -8,35 +10,50 @@
   import TableHeader from './Header.svelte';
   import Pagination from './Pagination.svelte';
 
-  export let data: TableProps<any>['data'] | TableProps<any>['paginatedData'] = undefined;
-  export let paginated: TableProps<any>['paginated'] = false;
-  export let paginatedData: TableProps<any>['paginatedData'] = undefined;
-  export let headers: TableProps<any>['headers'] = [];
-  export let onRowClick: TableProps<any>['onRowClick'] = undefined;
-  export let onDelete: TableProps<any>['onDelete'] = undefined;
-  export let model: TableProps<any>['model'] = 'user';
-  export let className = '';
-  export let actions: TableProps<any>['actions'] = undefined;
-  export let searchStrings: TableProps<any>['searchStrings'] = [];
+  interface Props {
+    data?: TableProps<any>['data'] | TableProps<any>['paginatedData'];
+    paginated?: TableProps<any>['paginated'];
+    paginatedData?: TableProps<any>['paginatedData'];
+    headers?: TableProps<any>['headers'];
+    onRowClick?: TableProps<any>['onRowClick'];
+    onDelete?: TableProps<any>['onDelete'];
+    model?: TableProps<any>['model'];
+    className?: string;
+    actions?: TableProps<any>['actions'];
+    searchStrings?: TableProps<any>['searchStrings'];
+  }
 
-  let tableData: any[] = data;
+  let {
+    data = undefined,
+    paginated = false,
+    paginatedData = undefined,
+    headers = [],
+    onRowClick = undefined,
+    onDelete = undefined,
+    model = 'user',
+    className = '',
+    actions = undefined,
+    searchStrings = $bindable([])
+  }: Props = $props();
+
+  let tableData: any[] = $state(data);
 
   if (!searchStrings?.length && $query.param('search')) {
     searchStrings = [$query.param('search')?.toString() || ''];
   }
 
-  $: pageIndex = $query.param('page') || 1;
+  let pageIndex = $derived($query.param('page') || 1);
 
-  $: {
+  run(() => {
     if(paginated) {
       tableData = data?.data ?? paginatedData?.data ?? [];
     }
     if (paginatedData && data?.length) {
       throw new Error('Cannot use both data and paginatedData props');
     }
-  }
+  });
 
-  $: hasActions = Boolean(onDelete || actions?.length);
+  let hasActions = $derived(Boolean(onDelete || actions?.length));
 </script>
 
 {#if tableData?.length === 0}

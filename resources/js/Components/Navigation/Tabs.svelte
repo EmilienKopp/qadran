@@ -1,6 +1,5 @@
-<script>
-  export let tabs = [];
-  export let activeTab = tabs.length > 0 ? tabs[0].name : '';
+<script lang="ts">
+  let { tabs = [], activeTab = $bindable(tabs.length > 0 ? tabs[0].name : '') } = $props();
 
   const setActiveTab = (tabName) => {
     activeTab = tabName;
@@ -12,7 +11,7 @@
     {#each tabs as tab}
       <button
         class="tab whitespace-nowrap {activeTab === tab.name ? 'tab-active' : ''}"
-        on:click={() => setActiveTab(tab.name)}
+        onclick={() => setActiveTab(tab.name)}
       >
         {tab.name}
       </button>

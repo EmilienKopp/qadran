@@ -1,10 +1,24 @@
 <script lang="ts">
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import { createEventDispatcher } from 'svelte';
   import { twMerge } from 'tailwind-merge';
-  export let label: Props['label'];
-  export let options: Option[] = [];
-  export let value: Props['value'];
-  export let placeholder: string = 'Select something';
+  interface Props {
+    label: Props['label'];
+    options?: Option[];
+    value: Props['value'];
+    placeholder?: string;
+    [key: string]: any
+  }
+
+  let {
+    label,
+    options = [],
+    value = $bindable(),
+    placeholder = 'Select something',
+    ...rest
+  }: Props = $props();
 
   interface Option {
     value: string | number;
@@ -21,15 +35,15 @@
 
 <div class="form-control w-full mb-4">
   {#if label}
-    <label class="label" for={$$restProps.id}>
+    <label class="label" for={rest.id}>
       <span class="label-text">{label}</span>
     </label>
   {/if}
   <select
-    class={twMerge('select select-bordered', $$restProps.class)}
-    {...$$restProps}
+    class={twMerge('select select-bordered', rest.class)}
+    {...rest}
     bind:value
-    on:change
+    onchange={bubble('change')}
   >
     {#if placeholder && !value}
       <option value="" disabled selected>{placeholder}</option>

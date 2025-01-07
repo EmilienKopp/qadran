@@ -1,29 +1,43 @@
 <script lang="ts">
+  import { stopPropagation } from 'svelte/legacy';
+
   import { createEventDispatcher } from 'svelte';
   
-  export let options: Array<{ name: string, value: string | number }> = [];
-  export let selected: string[] = [];
-  export let placeholder = 'Select items...';
-  export let disabled = false;
-  export let label: string;
-  export let errors:string[] = [];
-  export let required = false;
+  interface Props {
+    options?: Array<{ name: string, value: string | number }>;
+    selected?: string[];
+    placeholder?: string;
+    disabled?: boolean;
+    label: string;
+    errors?: string[];
+    required?: boolean;
+  }
 
-  let isOpen = false;
-  let searchText = '';
-  let inputElement: HTMLDivElement;
+  let {
+    options = [],
+    selected = $bindable([]),
+    placeholder = 'Select items...',
+    disabled = false,
+    label,
+    errors = [],
+    required = false
+  }: Props = $props();
+
+  let isOpen = $state(false);
+  let searchText = $state('');
+  let inputElement: HTMLDivElement = $state();
   
   const dispatch = createEventDispatcher();
   
-  $: filteredOptions = searchText 
+  let filteredOptions = $derived(searchText 
     ? options.filter(option => 
         option.name.toLowerCase().includes(searchText.toLowerCase())
       )
-    : options;
+    : options);
   
-  $: selectedLabels = selected
+  let selectedLabels = $derived(selected
     ?.map(value => options.find(opt => opt.value === value)?.name)
-    ?.filter(Boolean);
+    ?.filter(Boolean));
   
   function toggleOption(value: string) {
     const index = selected.indexOf(value);
@@ -53,7 +67,7 @@
   }
 </script>
 
-<svelte:window on:click={handleClickOutside} on:keydown={handleKeydown} />
+<svelte:window onclick={handleClickOutside} onkeydown={handleKeydown} />
 
 <div class="multiselect w-full" bind:this={inputElement}>
   {#if label}
@@ -64,7 +78,7 @@
   <button type="button"
     class="select-input w-full"
     class:disabled
-    on:click={() => !disabled && (isOpen = !isOpen)}
+    onclick={() => !disabled && (isOpen = !isOpen)}
   >
     {#if selectedLabels.length > 0}
       <div class="selected-items">
@@ -73,7 +87,7 @@
             {label}
             <button type="button"
               class="remove-btn"
-              on:click|stopPropagation={() => removeOption(selected[i])}
+              onclick={stopPropagation(() => removeOption(selected[i]))}
               disabled={disabled}
             >
               ×
@@ -100,7 +114,7 @@
           <button type="button"
             class="option"
             class:selected={selected.includes(option.value.toString())}
-            on:click|stopPropagation={() => toggleOption(option.value.toString())}
+            onclick={stopPropagation(() => toggleOption(option.value.toString()))}
           >
             <input
               type="checkbox"

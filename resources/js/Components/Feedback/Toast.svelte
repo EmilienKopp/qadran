@@ -1,14 +1,28 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { toast } from '$lib/stores';
     import { Link } from '@inertiajs/svelte';
     import { onDestroy, onMount } from 'svelte';
     import { fly } from 'svelte/transition';
 
-    export let href: string | undefined = undefined;
-    export let linkText: string | undefined = undefined;
-    export let yOffsetRem: number = 12;
-    export let xOffsetRem: number = 12;
-    export let show = false
+    interface Props {
+        href?: string | undefined;
+        linkText?: string | undefined;
+        yOffsetRem?: number;
+        xOffsetRem?: number;
+        show?: boolean;
+        link?: import('svelte').Snippet;
+    }
+
+    let {
+        href = undefined,
+        linkText = undefined,
+        yOffsetRem = 12,
+        xOffsetRem = 12,
+        show = $bindable(false),
+        link
+    }: Props = $props();
 
     let position: "top-right" | "none" | "top-left" | "bottom-left" | "bottom-right" | undefined = $toast.options?.position ?? "top-right";
 
@@ -39,13 +53,17 @@
         info: "text-blue-500",
     }
 
-    $: if($toast.show) {
-        setTimeout(() =>  {
-            $toast.show = false;
-        }, $toast.options?.duration);
-    }
+    run(() => {
+        if($toast.show) {
+            setTimeout(() =>  {
+                $toast.show = false;
+            }, $toast.options?.duration);
+        }
+    });
 
-    $: show = $toast.show;
+    run(() => {
+        show = $toast.show;
+    });
 </script>
 
 {#if show}
@@ -73,6 +91,6 @@
             <Link {href}>{linkText ?? href}</Link>
         {/if}
     </div>
-    <slot name="link"/>
+    {@render link?.()}
 </div>
 {/if}

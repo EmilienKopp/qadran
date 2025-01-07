@@ -1,5 +1,9 @@
 <script lang="ts">
-  export let variant: Variants = 'primary';
+  interface Props {
+    variant?: Variants;
+  }
+
+  let { variant = 'primary' }: Props = $props();
 
   const classes: Record<Variants,string> = {
     'primary': 'text-primary',

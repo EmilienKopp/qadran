@@ -1,9 +1,21 @@
 
 <script lang="ts">
     
-  export let id: string;
-  export let dialog: HTMLDialogElement;
-  export let show: boolean = false;
+  interface Props {
+    id: string;
+    dialog: HTMLDialogElement;
+    show?: boolean;
+    title?: import('svelte').Snippet;
+    children?: import('svelte').Snippet;
+  }
+
+  let {
+    id,
+    dialog = $bindable(),
+    show = false,
+    title,
+    children
+  }: Props = $props();
 
 </script>
 
@@ -11,10 +23,10 @@
   <dialog class="modal" {id} bind:this={dialog}>
     <div class="modal-box">
       <h3 class="text-lg font-bold">
-          <slot name="title"/>
+          {@render title?.()}
       </h3>
       <p class="py-4">
-          <slot />
+          {@render children?.()}
       </p>
     </div>
 

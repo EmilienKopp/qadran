@@ -1,14 +1,25 @@
 <script lang="ts">
+  import { self } from 'svelte/legacy';
+
   import { FilterService } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
   import type { TableHeader } from '$types/components/Table';
 
-  export let row: any;
-  export let header: TableHeader<any>;
-  export let searchStrings: string[] = [];
-  export let onRowClick: ((row: any) => void) | undefined = undefined;
+  interface Props {
+    row: any;
+    header: TableHeader<any>;
+    searchStrings?: string[];
+    onRowClick?: ((row: any) => void) | undefined;
+  }
 
-  $: value = resolveNestedValue(row, header.key);
+  let {
+    row,
+    header,
+    searchStrings = [],
+    onRowClick = undefined
+  }: Props = $props();
+
+  let value = $derived(resolveNestedValue(row, header.key));
 
   function handleClick() {
     if (onRowClick) {
@@ -17,11 +28,12 @@
   }
 </script>
 
-<td class="whitespace-nowrap max-w-72 truncate" on:click|self={handleClick}>
+<td class="whitespace-nowrap max-w-72 truncate" onclick={self(handleClick)}>
   <div class="flex gap-1 items-center">
     {#if header.icon}
+      {@const SvelteComponent = header.icon(row)}
       <span title={value} class={header.iconClass?.(row)}>
-        <svelte:component this={header.icon(row)} class="w-5 h-5" />
+        <SvelteComponent class="w-5 h-5" />
       </span>
     {/if}
     {#if !header.iconOnly}

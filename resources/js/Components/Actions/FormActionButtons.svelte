@@ -1,8 +1,12 @@
 <script lang="ts">
   import Button from './Button.svelte';
 
-  export let onCancel: fn = () => {};
-  export let onSave: fn = () => {};
+  interface Props {
+    onCancel?: fn;
+    onSave?: fn;
+  }
+
+  let { onCancel = () => {}, onSave = () => {} }: Props = $props();
 </script>
 
 <div

@@ -1,14 +1,20 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import GuestLayout from '$layouts/GuestLayout.svelte';
   import Button from '$components/Actions/Button.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import { router, useForm } from '@inertiajs/svelte';
 
-  export let status: string | undefined;
+  interface Props {
+    status: string | undefined;
+  }
 
-  const form = useForm({
+  let { status }: Props = $props();
+
+  const form = $state(useForm({
     email: '',
-  });
+  }));
 
   const submit = () => {
     form.post(route('password.email'));
@@ -16,9 +22,11 @@
 </script>
 
 <GuestLayout>
-  <div slot="head">
-    <title>Forgot Password</title>
-  </div>
+  {#snippet head()}
+    <div >
+      <title>Forgot Password</title>
+    </div>
+  {/snippet}
 
   <div class="mb-4 text-sm text-gray-600">
     Forgot your password? No problem. Just let us know your email
@@ -32,7 +40,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={submit}>
+  <form onsubmit={preventDefault(submit)}>
     <div>
       <Input
         label="Email"

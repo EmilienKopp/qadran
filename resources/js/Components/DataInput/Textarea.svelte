@@ -1,13 +1,21 @@
 <script lang="ts">
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
     import { twMerge } from 'tailwind-merge'
-    export let label: string = ''
-    export let required: boolean = false
-    export let value: string = ''
+    interface Props {
+        label?: string;
+        required?: boolean;
+        value?: string;
+        [key: string]: any
+    }
+
+    let { label = '', required = false, value = $bindable(''), ...rest }: Props = $props();
 </script>
 
 <div class="form-control w-full mb-4">
     {#if label}
-    <label class="label" for={$$restProps.id}>
+    <label class="label" for={rest.id}>
         <span class="label-text flex items-center">
             {label}
             {#if required}
@@ -18,10 +26,10 @@
     </label>
     {/if}
     <textarea
-        class={twMerge('textarea textarea-bordered', $$restProps.class)}
+        class={twMerge('textarea textarea-bordered', rest.class)}
         bind:value
-        on:change
-        on:input
-        {...$$restProps}
+        onchange={bubble('change')}
+        oninput={bubble('input')}
+        {...rest}
     ></textarea>
 </div>
