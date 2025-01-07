@@ -1,0 +1,51 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "preserve",
+        "strict": true,
+        "isolatedModules": true,
+        "target": "ESNext",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "paths": {
+            "ziggy-js": [
+                "./vendor/tightenco/ziggy"
+            ],
+            "$lib/*": [
+                "./resources/js/Lib/*"
+            ],
+            "$components/*": [
+                "./resources/js/Components/*"
+            ],
+            "$vendor/*": [
+                "./vendor/*"
+            ],
+            "$types/*": [
+                "./resources/js/types/*"
+            ],
+            "$models": [
+                "./resources/js/models.d.ts"
+            ],
+            "$layouts": [
+                "./resources/js/Layouts/*"
+            ],
+            "$pages": [
+                "./resources/js/Pages/*"
+            ],
+        }
+    },
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.d.ts",
+        "resources/js/**/*.svelte",
+        "resources/js/bootstrap.js",
+        "resources/js/app.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
