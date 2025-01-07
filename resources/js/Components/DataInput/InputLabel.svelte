@@ -1,7 +1,20 @@
-
 <script lang="ts">
-  let { children, for: htmlFor, ...others } = $props();
+    import { twMerge } from "tailwind-merge";
+
+    interface Props {
+        htmlFor?: string;
+        required?: boolean;
+        [key: string]: any;
+    }
+
+    let { children, required, for: htmlFor, ...rest }: Props = $props();
 </script>
-<label class="block text-sm font-medium text-gray-700" for={htmlFor} {...others}> 
-    {@render children?.()}
+
+<label class={twMerge("label", rest.class)} for={htmlFor} {...rest}>
+    <span class="label-text flex items-center">
+        {@render children?.()}
+        {#if required}
+            <span class="text-error ml-1">*</span>
+        {/if}
+    </span>
 </label>

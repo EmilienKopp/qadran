@@ -1,22 +1,25 @@
 
 <script lang="ts">
-    
   interface Props {
-    id: string;
-    dialog: HTMLDialogElement;
+    id?: string;
     show?: boolean;
     title?: import('svelte').Snippet;
     children?: import('svelte').Snippet;
+    onclose?: (e?: Event) => void;
   }
+
+  let dialog: HTMLDialogElement;
 
   let {
     id,
-    dialog = $bindable(),
     show = false,
     title,
     children
   }: Props = $props();
 
+  export function close () {
+    dialog.close();
+  }
 </script>
 
 {#if show}
@@ -32,7 +35,7 @@
 
     <!-- This never displays -->
     <form method="dialog" class="modal-backdrop">
-      <button>X</button>
+      <button onclick={close}>X</button>
     </form>
   </dialog>
 {/if}

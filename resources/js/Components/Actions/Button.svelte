@@ -1,32 +1,59 @@
 <script lang="ts">
-  import { createBubbler } from 'svelte/legacy';
-
-  const bubble = createBubbler();
-  import clsx from "clsx";
-  import { twMerge } from "tailwind-merge";
+  import clsx from 'clsx';
+  import { twMerge } from 'tailwind-merge';
 
   interface Props {
     variant?: string;
     children?: import('svelte').Snippet;
-    [key: string]: any
+    href?: string;
+    onclick?: (e: MouseEvent) => void;
+    [key: string]: any;
   }
 
-  let { variant = "primary", children, ...rest }: Props = $props();
+  let {
+    variant = 'primary',
+    children,
+    onclick,
+    href,
+    ...rest
+  }: Props = $props();
 </script>
 
-<button  {...rest} 
-  onclick={bubble('click')}
-  class={twMerge(
-    "btn",
-    clsx({
-      "btn-error": variant === "danger",
-      "btn-primary": variant === "primary",
-      "btn-secondary": variant === "secondary",
-      "btn-accent": variant === "accent",
-      "btn-outline": variant === "outline",
-      "btn-link": variant === "link",
-    }),
-    rest.class)}>
-
-  {@render children?.()}
-</button>
+{#if href}
+  <a
+    {href}
+    class={twMerge(
+      'btn',
+      clsx({
+        'btn-error': variant === 'danger',
+        'btn-primary': variant === 'primary',
+        'btn-secondary': variant === 'secondary',
+        'btn-accent': variant === 'accent',
+        'btn-outline': variant === 'outline',
+        'btn-link': variant === 'link',
+      }),
+      rest.class
+    )}
+  >
+    {@render children?.()}
+  </a>
+{:else}
+  <button
+    {...rest}
+    {onclick}
+    class={twMerge(
+      'btn',
+      clsx({
+        'btn-error': variant === 'danger',
+        'btn-primary': variant === 'primary',
+        'btn-secondary': variant === 'secondary',
+        'btn-accent': variant === 'accent',
+        'btn-outline': variant === 'outline',
+        'btn-link': variant === 'link',
+      }),
+      rest.class
+    )}
+  >
+    {@render children?.()}
+  </button>
+{/if}

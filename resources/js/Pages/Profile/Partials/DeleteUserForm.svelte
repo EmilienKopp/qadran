@@ -1,13 +1,20 @@
 <script lang="ts">
   import Button from '$components/Actions/Button.svelte';
-  import Modal from '$components/Modal.svelte';
-  import SecondaryButton from '$components/SecondaryButton.svelte';
-  import TextInput from '$components/TextInput.svelte';
+  import Modal from '$components/Actions/Modal.svelte';
+  import InputError from '$components/DataInput/InputError.svelte';
+  import InputLabel from '$components/DataInput/InputLabel.svelte';
+  import PasswordInput from '$components/DataInput/PasswordInput.svelte';
   import { useForm } from '@inertiajs/svelte';
-  import { tick } from 'svelte';
+  import { twMerge } from 'tailwind-merge';
+
+  interface Props {
+    class: string;
+  };
+
+  let { class: className }: Props = $props();
 
   let confirmingUserDeletion = $state(false);
-  let passwordInput: HTMLInputElement = $state();
+  let modal: Modal;
 
   const form = useForm({
       password: '',
@@ -16,14 +23,12 @@
   const confirmUserDeletion = () => {
       confirmingUserDeletion = true;
       
-      tick().then(() => passwordInput?.focus());
   };
 
   const deleteUser = () => {
       form.delete(route('profile.destroy'), {
           preserveScroll: true,
           onSuccess: () => closeModal(),
-          onError: () => passwordInput?.focus(),
           onFinish: () => {
               $form.reset();
           },
@@ -31,14 +36,13 @@
   };
 
   const closeModal = () => {
-      confirmingUserDeletion = false;
-
+      modal.close();
       $form.clearErrors();
       $form.reset();
   };
 </script>
 
-<section class="space-y-6">
+<section class={twMerge("space-y-6", className)}>
   <header>
       <h2 class="text-lg font-medium text-gray-900">
           Delete Account
@@ -51,9 +55,9 @@
       </p>
   </header>
 
-  <Button variant="danger" on:click={confirmUserDeletion}>Delete Account</Button>
+  <Button variant="danger" onclick={confirmUserDeletion}>Delete Account</Button>
 
-  <Modal show={confirmingUserDeletion} on:close={closeModal}>
+  <Modal show={confirmingUserDeletion} bind:this={modal}>
       <div class="p-6">
           <h2 class="text-lg font-medium text-gray-900">
               Are you sure you want to delete your account?
@@ -72,31 +76,31 @@
                   class="sr-only"
               />
 
-              <TextInput
+              <PasswordInput
                   id="password"
-                  bind:this={passwordInput}
                   bind:value={$form.password}
                   type="password"
+                  name="password"
                   class="mt-1 block w-3/4"
                   placeholder="Password"
                   on:keyup={(e) => e.key === 'Enter' && deleteUser()}
               />
 
-              <InputError message={$form.errors.password} class="mt-2" />
+              <InputError message={$form.errors.password} />
           </div>
 
           <div class="mt-6 flex justify-end">
-              <SecondaryButton on:click={closeModal}>
+              <Button variant="secondary" on:click={closeModal}>
                   Cancel
-              </SecondaryButton>
+              </Button>
 
-              <DangerButton
+              <Button variant="danger"
                   class="ms-3"
                   disabled={$form.processing}
                   on:click={deleteUser}
               >
                   Delete Account
-              </DangerButton>
+            </Button>
           </div>
       </div>
   </Modal>
