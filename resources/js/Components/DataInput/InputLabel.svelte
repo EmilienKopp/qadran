@@ -1,11 +1,7 @@
 
 <script lang="ts">
-  type $$Props = {
-    htmlFor?: string;
-  };
-  
-  let { htmlFor } = $props();
+  let { children, htmlFor } = $props();
 </script>
 <label class="block text-sm font-medium text-gray-700"> 
-    <slot/>
+    {@render children?.()}
 </label>
