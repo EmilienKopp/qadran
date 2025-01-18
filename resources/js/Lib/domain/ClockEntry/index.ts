@@ -4,6 +4,21 @@ import { router } from '@inertiajs/svelte';
 import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
 
 export class ClockEntry extends ClockEntryBase {
+  static determineNextAction(
+    nextEntry: Partial<ClockEntry>,
+    latestEntry: ClockEntry | undefined
+  ) {
+    console.log(latestEntry?.project_id, nextEntry?.project_id);
+    if (!latestEntry?.out) {
+      if (latestEntry?.project_id !== nextEntry?.project_id) {
+        return 'Switch Project';
+      } else {
+        return 'Clock Out';
+      }
+    } else {
+      return 'Clock In';
+    }
+  }
 
   static async delete(entry: ClockEntry) {
     router.delete(route('clock-entry.destroy', entry.id), {
@@ -18,15 +33,15 @@ export class ClockEntry extends ClockEntryBase {
   }
 
   static async push(form: InertiaForm<Partial<ClockEntry>>) {
-      form.post(route('clock-entry.store'), {
-        onSuccess: () => {
-          toaster.success('Clock entry created successfully');
-          form.reset();
-        },
-        onError: (errors: Record<string, string>) => {
-          toaster.error('An error occurred while creating the clock entry');
-          console.log(errors);
-        },
-      });
+    form.post(route('clock-entry.store'), {
+      onSuccess: () => {
+        toaster.success('Clock entry created successfully');
+        form.reset();
+      },
+      onError: (errors: Record<string, string>) => {
+        toaster.error('An error occurred while creating the clock entry');
+        console.log(errors);
+      },
+    });
   }
 }

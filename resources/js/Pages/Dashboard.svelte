@@ -20,7 +20,6 @@
 
   let { user }: Props = $props();
   let latestEntry = $derived(user?.todays_entries?.[0]);
-
   let projectOptions = asSelectOptions<Project>(user.projects, 'id', 'name');
 
   let form = superUseForm({
@@ -28,7 +27,8 @@
     timezone: getTimezone(),
   });
 
-  $inspect($form);
+  let nextAction = $derived.by(() => ClockEntry.determineNextAction($form,latestEntry));
+
 </script>
 
 <svelte:head>
@@ -54,9 +54,9 @@
             options={projectOptions}
           />
           <Button onclick={() => ClockEntry.push($form)} class="mt-4">
-            Submit
+            {nextAction}
           </Button>
-          <div>
+          <div class="w-full mt-4 flex flex-col items-center">
             <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8">
               Today's Entries
             </h2>
