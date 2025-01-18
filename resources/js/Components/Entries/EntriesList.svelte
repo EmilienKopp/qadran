@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DeleteButton from '$components/Display/DeleteButton.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import Clock from '$components/UI/Clock.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
@@ -16,13 +17,13 @@
 
   function handleDelete(entry: ClockEntry) {
     const index = entries?.findIndex((e) => e.id === entry.id);
-    if(index === -1 || index === undefined) return;
+    if (index === -1 || index === undefined) return;
     entries = entries?.toSpliced(index, 1);
-    router.delete(route('clock-entry.destroy', entry.id),{
+    router.delete(route('clock-entry.destroy', entry.id), {
       onSuccess: () => {
         toaster.success('Entry deleted');
       },
-      onError: ({error}) => {
+      onError: ({ error }) => {
         toaster.error(error);
         entries = entries?.toSpliced(index, 0, entry);
       },
@@ -31,23 +32,68 @@
 </script>
 
 {#snippet listItem(entry: ClockEntry)}
-  <li class="flex flex-row space-x-2" in:fade>
-    <div>{entry.project?.name || 'No Project'}</div>
-    <div>{time(entry.in)}</div>
-    <div>{time(entry.out) || '-'}</div>
-    <div>{secondsToHHMM(entry.duration_seconds)}</div>
-    <button class="text-red-500" onclick={() => handleDelete(entry)}>
-      <X size={16} />
-    </button>
-  </li>
+  <tr in:fade>
+    <td>{entry.project?.name || 'No Project'}</td>
+    <td>{time(entry.in)}</td>
+    <td>{time(entry.out) || '-'}</td>
+    <td>{secondsToHHMM(entry.duration_seconds)}</td>
+    <td>
+      <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)}>
+        <X size={16} />
+      </DeleteButton>
+    </td>
+  </tr>
 {/snippet}
 
-<ul>
-  {#if !entries?.length}
-    <li>No entries yet</li>
-  {:else}
-    {#each entries! as entry}
-      {@render listItem(entry)}
-    {/each}
-  {/if}
-</ul>
+<table class="w-full">
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>In</th>
+      <th>Out</th>
+      <th>Duration</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {#if !entries?.length}
+      <tr>
+        <td colspan="5">No entries yet</td>
+      </tr>
+    {:else}
+      {#each entries! as entry}
+        {@render listItem(entry)}
+      {/each}
+    {/if}
+  </tbody>
+</table>
+
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f7fafc;
+  }
+
+  tr {
+    transition: background-color 0.2s;
+  }
+
+  tr:hover {
+    background-color: #f7fafc;
+  }
+
+  button {
+    cursor: pointer;
+  }
+</style>
