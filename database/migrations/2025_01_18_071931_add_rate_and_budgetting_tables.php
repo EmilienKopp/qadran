@@ -111,11 +111,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('activity_logs', function (Blueprint $table) {
-            $table->dropForeignIdFor('expense_id');
+            $table->dropColumn('expense_id');
         });
 
         Schema::table('clock_entries', function (Blueprint $table) {
-            $table->dropColumn(['rate_id', 'applied_rate', 'currency', 'amount']);
+            $table->dropColumn(['rate_id', 'amount', 'applied_rate', 'currency', ]);
         });
 
         Schema::dropIfExists('expenses');

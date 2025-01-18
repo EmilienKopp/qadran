@@ -50,7 +50,7 @@ return new class extends Migration
             $table->dropColumn('avatar');
             $table->dropColumn('role_data');
             $table->dropColumn('facebook');
-            $table->dropColumn('twitter');
+            $table->dropColumn('x_twitter');
             $table->dropColumn('instagram');
             $table->dropColumn('linkedin');
             $table->dropColumn('youtube');

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { TableHeader } from '$types/components/Table';
+
+  import type { TableHeader } from "$lib/types/components/Table";
   
   interface Props {
     headers: TableHeader<any>[];

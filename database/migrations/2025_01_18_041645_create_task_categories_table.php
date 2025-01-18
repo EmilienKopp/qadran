@@ -36,6 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('task_category_aliases');
         Schema::dropIfExists('task_categories');
     }
 };

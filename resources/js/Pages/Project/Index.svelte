@@ -3,7 +3,8 @@
   import { DataTable } from '$components/Display/DataTable';
   import Header from '$components/UI/Header.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import { router } from '@inertiajs/svelte';
+  import { ProjectTableContext } from '$lib/domain/Project/tableContext';
+  import { Link, page, useForm } from '@inertiajs/svelte';
 
   interface Props {
     projects: any[];
@@ -11,11 +12,10 @@
     auth: any;
   }
 
-  $effect(() => {
-    console.log(window);
-  });
+  const user = $page.props.auth.user;
+  const context = new ProjectTableContext();
 
-  let { projects, children, auth }: Props = $props();
+  let { projects }: Props = $props();
 </script>
 
 <AuthenticatedLayout>
@@ -27,6 +27,7 @@
 
     <DataTable
       data={projects}
+      {headers}
     />
   </div>
 </AuthenticatedLayout>

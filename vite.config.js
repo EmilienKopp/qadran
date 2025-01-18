@@ -16,16 +16,20 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      $lib: '/resources/js/Lib',
-      $components: '/resources/js/Components',
-      $vendor: '/vendor',
+      $lib: fileURLToPath(new URL('./resources/js/Lib', import.meta.url)),
+      $components: fileURLToPath(
+        new URL('./resources/js/Components', import.meta.url)
+      ),
+      $vendor: fileURLToPath(new URL('./vendor', import.meta.url)),
       $types: fileURLToPath(new URL('./resources/js/types', import.meta.url)),
       $layouts: fileURLToPath(
         new URL('./resources/js/Layouts', import.meta.url)
       ),
-      $pages: '/resources/js/Pages',
-      $lang: '/lang',
-      $models: '/resources/js/models.d.ts',
+      $pages: fileURLToPath(new URL('./resources/js/Pages', import.meta.url)),
+      $lang: fileURLToPath(new URL('./lang', import.meta.url)),
+      $models: fileURLToPath(
+        new URL('./resources/js/models.d.ts', import.meta.url)
+      ),
     },
   },
   server: {
