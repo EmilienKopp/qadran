@@ -12,11 +12,11 @@ export class ClockEntryBase implements ClockEntry {
     notes?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
-    duration_seconds: number;
+    duration_seconds?: number;
     rate_id?: number;
     applied_rate?: number;
     currency: string;
-    amount: number;
+    amount?: number;
 
 
     constructor(data: ClockEntry) {

@@ -37,11 +37,11 @@ export interface ClockEntry {
     notes?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
-    duration_seconds: number;
+    duration_seconds?: number;
     rate_id?: number;
     applied_rate?: number;
     currency: string;
-    amount: number;
+    amount?: number;
 }
 
 export interface Industry {
@@ -183,7 +183,6 @@ export interface User {
     website?: string;
     github?: string;
     dashboard_preferences?: any;
-    projects: Project[];
 }
 
 export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;
