@@ -20,6 +20,7 @@ class ClockEntry extends Model
         'note',
         'project_id',
         'user_id',
+        'timezone',
     ];
 
     public function project()
@@ -45,35 +46,54 @@ class ClockEntry extends Model
     protected function inTime(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)->format('H:i'),
+            get: fn($value) => 
+                Carbon::parse($value)
+                    ->setTimezone($this->timezone)
+                    ->format('H:i:s'),
         );
     }
 
     protected function outTime(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)->format('H:i'),
+            get: fn($value) => 
+                Carbon::parse($value)
+                    ->setTimezone($this->timezone)
+                    ->format('H:i:s'),
         );
     }
 
     protected function in(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => isset($value) ? Carbon::parse($value)->format('Y-m-d H:i') : null,
+            get: fn($value) => 
+                isset($value) 
+                ? Carbon::parse($value)
+                    ->setTimezone($this->timezone)
+                    ->format('Y-m-d H:i') 
+                : null,
         );
     }
 
     protected function out(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => isset($value) ? Carbon::parse($value)->format('Y-m-d H:i') : null,
+            get: fn($value) => 
+                isset($value) 
+                    ? Carbon::parse($value)
+                        ->setTimezone($this->timezone)
+                        ->format('Y-m-d H:i') 
+                    : null,
         );
     }
 
     protected function date(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)->format('Y-m-d'),
+            get: fn($value) => 
+                Carbon::parse($value)
+                    ->setTimezone($this->timezone)
+                    ->format('Y-m-d'),
         );
     }
 }

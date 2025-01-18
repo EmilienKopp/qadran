@@ -42,11 +42,13 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Project>
+     */
     public function projects()
     {
         return $this->belongsToMany(Project::class)
-            ->using(ProjectUser::class)
-            ->withTimestamps();
+            ->using(ProjectUser::class);
     }
 
     public function clockEntries()
@@ -56,7 +58,7 @@ class User extends Authenticatable
 
     public function todaysEntries()
     {
-        return $this->clockEntries()->today();
+        return $this->clockEntries()->today()->orderBy('created_at', 'desc');
     }
 
     /**
