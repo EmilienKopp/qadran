@@ -16,21 +16,10 @@
   let projectOptions = asSelectOptions<Project>(user.projects, 'id', 'name');
 
   let form = superUseForm({
-    project_id: null,
+    project_id: undefined,
   });
 
-  function handleClockEntry() {
-    $form.post(route('clock-entry.store'), {
-      onSuccess: () => {
-        toaster.success('Clock entry created successfully');
-        $form.reset();
-      },
-      onError: (errors: Record<string,string>) => {
-        toaster.error('An error occurred while creating the clock entry');
-        console.log(errors);
-      },
-    });
-  }
+  
   
 </script>
 
@@ -50,7 +39,7 @@
       <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-full">
         <div class="p-6 text-gray-900 flex flex-col items-center justify-between w-full">
           <Select label="Select a project" bind:value={$form.project_id} options={projectOptions} />
-          <Button onclick={() => handleClockEntry()}>
+          <Button onclick={() => ClockEntry.push($form)} class="mt-4">
             Submit
           </Button>
         </div>
