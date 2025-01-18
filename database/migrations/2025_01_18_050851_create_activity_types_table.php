@@ -20,12 +20,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('activity_types_aliases', function (Blueprint $table) {
+        Schema::create('activity_type_aliases', function (Blueprint $table) {
             $table->id();
             $table->string('alias');
             $table->foreignId('activity_type_id')->constrained()->onDelete('cascade');
-            $table->foreignId('organization_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('organization_id')->nullable()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->nullOnDelete();
             $table->timestamps();
 
             $table->unique(['activity_type_id', 'organization_id', 'user_id']);

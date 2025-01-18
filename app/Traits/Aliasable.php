@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -9,81 +10,181 @@ use Illuminate\Support\Str;
 
 trait Aliasable
 {
-    protected $aliasable = 'name';
-    protected $aliasTable;
-    protected $aliasForeignKey;
-    protected $scopes = [];
-    protected $ttlSeconds = 300;
+    protected array $scopesCache = [];
+    protected int $cacheTTL = 300; // 5 minutes
 
-    public function alias(?array $scopes = null)
+    /**
+     * Get the alias for the current model instance
+     */
+    public function alias(?array $scopes = null): string
     {
         return Cache::remember(
-            $this->getAliasCacheKey($scopes),
-            now()->addSeconds($this->ttlSeconds),
-            function () use ($scopes) {
-                return $this->getAlias($scopes);
-            }
-        ) ?? $this->{$this->aliasable};
+            $this->buildCacheKey($scopes),
+            now()->addSeconds($this->cacheTTL),
+            fn() => $this->resolveAlias($scopes)
+        ) ?? $this->{$this->getAliasableField()};
     }
 
+    /**
+     * Set an alias for the current model instance
+     */
+    public function setAlias(string $alias, ?array $scopes = null): void
+    {
+        $existingAlias = $this->findExistingAlias($scopes);
+
+        if ($existingAlias) {
+            $existingAlias->update(['alias' => $alias]);
+        } else {
+            $this->createNewAlias($alias, $scopes);
+        }
+
+        $this->clearAliasCache($scopes);
+    }
+
+    /**
+     * Define the aliases relationship
+     */
     public function aliases()
     {
-        return $this->hasMany($this->getAliasModel(), $this->getAliasForeignKey());
+        return $this->hasMany($this->getAliasModelClass(), $this->getAliasForeignKey());
     }
 
-    public function getAliasTable()
+    /**
+     * Get the table name for aliases
+     */
+    protected function getAliasTable(): string
     {
-        if (!isset($this->aliasTable)) {
-            $this->aliasTable = $this->getTable() . '_aliases';
+        return $this->aliasTable ?? $this->getTable() . '_aliases';
+    }
+
+    /**
+     * Get the foreign key for alias relationships
+     */
+    protected function getAliasForeignKey(): string
+    {
+        return Str::singular($this->getTable()) . '_id';
+    }
+
+    /**
+     * Get the field that stores the main aliasable value
+     */
+    protected function getAliasableField(): string
+    {
+        return $this->aliasable ?? 'name';
+    }
+
+    /**
+     * Resolve the alias model class
+     */
+    protected function getAliasModelClass(): string
+    {
+        $relatedModel = Str::studly(Str::singular($this->getTable()));
+        $modelClass = "App\\Models\\{$relatedModel}Alias";
+
+        if (!class_exists($modelClass)) {
+            throw new \Exception("Alias model does not exist: {$modelClass}");
         }
-        return $this->aliasTable;
+
+        return $modelClass;
     }
 
-    public function getAlias(?array $scopes)
+    /**
+     * Build a cache key for the alias
+     */
+    protected function buildCacheKey(?array $scopes = null): string
     {
-        $query = DB::table($this->getAliasTable())
+        $scopes = $this->normalizeScopes($scopes);
+        $baseKey = sprintf(
+            '%s.%s.%d',
+            $this->getAliasTable(),
+            $this->getAliasForeignKey(),
+            $this->id
+        );
+
+        return collect($scopes)
+            ->map(fn($value, $key) => "{$key}.{$value}")
+            ->prepend($baseKey)
+            ->join('.');
+    }
+
+    /**
+     * Resolve the alias value
+     */
+    protected function resolveAlias(?array $scopes = null): ?string
+    {
+        return DB::table($this->getAliasTable())
+            ->where($this->getAliasForeignKey(), $this->id)
+            ->where($this->buildScopesQuery($scopes))
+            ->value('alias');
+    }
+
+    /**
+     * Find an existing alias record
+     */
+    protected function findExistingAlias(?array $scopes = null): ?Model
+    {
+        $aliasModel = $this->resolveAliasModel();
+        $query = $aliasModel::query()
             ->where($this->getAliasForeignKey(), $this->id);
 
-        $scopes = $scopes ?? array_merge($this->scopes, [
-            'organization_id' => Auth::user()->organization_id ?? null,
-            'user_id' => Auth::id(),
-        ]);
+        foreach ($this->normalizeScopes($scopes) as $column => $value) {
+            $query->where($column, $value);
+        }
 
-        foreach ($scopes as $column => $value) {
-            if(isset($value)) {
-                $query->where($column, $value);
+        return $query->first();
+    }
+
+    /**
+     * Create a new alias record
+     */
+    protected function createNewAlias(string $alias, ?array $scopes = null): void
+    {
+        $aliasModel = $this->resolveAliasModel();
+        $data = array_merge(
+            [$this->getAliasForeignKey() => $this->id, 'alias' => $alias],
+            $this->normalizeScopes($scopes)
+        );
+
+        $aliasModel::create($data);
+    }
+
+    /**
+     * Build the scopes part of the query
+     */
+    protected function buildScopesQuery(?array $scopes = null): callable
+    {
+        return function ($query) use ($scopes) {
+            foreach ($this->normalizeScopes($scopes) as $column => $value) {
+                if (isset($value)) {
+                    $query->where($column, $value);
+                }
             }
-        }
-
-        return $query->value('alias');
+        };
     }
 
-    public function getAliasForeignKey()
+    /**
+     * Normalize the scopes array
+     */
+    protected function normalizeScopes(?array $scopes = null): array
     {
-        return $this->getTable() . '_id';
+        return $scopes ?? [
+            'user_id' => Auth::id(),
+        ];
     }
 
-    public function setScopes(array $scopes)
+    /**
+     * Clear the alias cache
+     */
+    protected function clearAliasCache(?array $scopes = null): void
     {
-        $this->scopes = $scopes;
+        Cache::forget($this->buildCacheKey($scopes));
     }
 
-    public function getAliasCacheKey(?array $scopes)
+    /**
+     * Get an instance of the alias model
+     */
+    protected function resolveAliasModel(): string
     {
-        $scopes = $scopes ?? $this->scopes;
-        $key = $this->getAliasTable() . '.' . $this->getAliasForeignKey() . '.' . $this->id;
-        foreach ($scopes as $column => $value) {
-            $key .= '.' . $column . '.' . $value;
-        }
-        return $key;
-    }
-
-    public function getAliasModel()
-    {
-        $modelClass = 'App\\Models\\' . Str::singular(Str::studly($this->getAliasTable()));
-        if (!class_exists($modelClass)) {
-            throw new \Exception('Alias model does not exist: ' . $modelClass);
-        }
-        return $modelClass;
+        return $this->getAliasModelClass();
     }
 }

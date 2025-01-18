@@ -36,4 +36,8 @@ trait ExtendEnums
     return self::cases();
   }
   
+  public static function random(): string
+  {
+    return Arr::random(self::values());
+  }
 }

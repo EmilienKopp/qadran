@@ -18,12 +18,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('task_categories_aliases', function (Blueprint $table) {
+        Schema::create('task_category_aliases', function (Blueprint $table) {
             $table->id();
             $table->string('alias');
             $table->foreignId('task_category_id')->constrained()->onDelete('cascade');
-            $table->foreignId('organization_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('organization_id')->nullable()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->nullOnDelete();
             $table->timestamps();
 
             $table->unique(['task_category_id', 'organization_id', 'user_id']);

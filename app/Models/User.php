@@ -33,6 +33,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class)
+            ->using(OrganizationUser::class)
+            ->withPivot('elevated')
+            ->withTimestamps();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
