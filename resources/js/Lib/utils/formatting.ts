@@ -1,6 +1,7 @@
-import dayjs from 'dayjs';
-import { capitalize } from './strings';
 import { Admin, Candidate, Employer } from '$models';
+
+import { capitalize } from './strings';
+import dayjs from 'dayjs';
 
 export const DATE_FORMAT = 'YYYY/MM/DD';
 export const TIME_FORMAT = 'HH:mm';
@@ -45,7 +46,7 @@ export function currency(
  * @returns an array of objects with value, label, and name keys
  */
 export function asSelectOptions<T extends {[key: string]: any}>(
-  data: Record<string, number | string>[] | string[] | T[],
+  data?: Record<string, number | string>[] | string[] | T[],
   valueColumn?: string,
   nameColumn?: string
 ): SelectOption[] {
