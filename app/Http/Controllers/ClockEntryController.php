@@ -37,20 +37,30 @@ class ClockEntryController extends Controller
         $validated = $request->validated();
 
         $entry = ClockEntry::where('user_id', Auth::id())
-            ->where('project_id', $validated['project_id'])
             ->whereNull('out')
             ->orderBy('in', 'desc')
             ->first();
+
         if(!$entry) {
             $entry = ClockEntry::create([
                 ...$validated,
                 'in' => now()->parse($request->in),
             ]);
         } else {
-            $entry->update([
-                ...$validated,
-                'out' => now()->parse($request->out),
-            ]);
+            if($entry->project_id !== $validated['project_id']) {
+                $entry->update([
+                    'out' => now(),
+                ]);
+                $entry = ClockEntry::create([
+                    ...$validated,
+                    'in' => now()->parse($request->in),
+                ]);
+            } else {
+                $entry->update([
+                    ...$validated,
+                    'out' => now()->parse($request->out),
+                ]);
+            }
         }
 
         return to_route('dashboard');
