@@ -1,66 +1,175 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Qadran
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern web application built for small teams, freelancers and start-ups to efficiently track time, manage projects, and gain valuable insights into their work patterns. Built with Laravel, Inertia.js, Svelte, and PostgreSQL.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Overview](#overview)
+- [Features](#features)
+- [Technical Architecture](#technical-architecture)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Usage Guide](#usage-guide)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This application streamlines time tracking through an intuitive clock-in/clock-out system. Users can:
 
-## Learning Laravel
+- Track daily and weekly working hours with precision
+- Associate time sessions with specific projects or administrative tasks
+- Generate comprehensive reports for time analysis
+- Break down work sessions into specific activities (optional)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The system separates time logs from activity breakdowns, allowing users to record their work sessions while maintaining the flexibility to allocate time to specific tasks later.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User Management
+- Secure authentication system
+- Role-based access control (Admin/Employer/Freelancer/Employee)
 
-## Laravel Sponsors
+### Project Management
+- Create and manage multiple projects
+- Organize tasks within projects
+- Handle standalone administrative tasks
+- Track project-specific time and budget allocations
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Time Tracking
+- Intuitive clock in/out interface
+- Automatic session duration calculation
+- Project-specific or task-specific time logging
+- Activity breakdown options
 
-### Premium Partners
+### Reporting & Analytics
+- Daily and weekly time summaries
+- Project-based time analysis
+- Custom date range filtering
+- Detailed activity breakdowns
+- Visual data representations
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Technical Architecture
+
+### Core Technologies
+- Backend: Laravel 11+
+- Frontend: Svelte 5
+- Middleware: Inertia.js 2.0
+- Database: PostgreSQL 17
+- Authentication: Laravel Breeze
+
+## Getting Started
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/EmilienKopp/qadran.git
+cd qadran
+```
+
+2. Install dependencies:
+```bash
+composer install
+npm install # or pnpm install
+```
+
+3. Configure environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+docker compose up
+```
+
+4. Update `.env` with your PostgreSQL credentials:
+```ini
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=54329
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+5. Set up the database:
+```bash
+php artisan migrate
+php artisan db:seed  # Optional: adds demo data
+```
+
+### Development Server
+
+#### All in one
+```bash
+npm run start
+```
+
+#### Manual
+
+1. Start the Laravel server:
+```bash
+php artisan serve
+```
+
+2. Compile frontend assets:
+```bash
+npm run dev
+```
+
+3. Start db server:
+```bash
+docker compose up
+```
+
+## Usage Guide
+
+### Time Tracking Workflow
+
+1. Project Selection
+   - Choose a project from your dashboard
+   - Use "Admin" for general tasks
+
+2. Clock Operations
+   - Click "Clock In" to start a session
+   - Work on your tasks
+   - "Clock Out" when finished or switching projects
+
+3. Activity Breakdown (Optional)
+   - Split completed sessions into specific activities
+   - Tag activities with relevant task IDs
+   - Add notes or descriptions
+
+### Reporting
+
+1. Access the dashboard for:
+   - Daily/weekly hour summaries
+   - Project-specific time allocation
+   - Activity breakdowns
+
+2. Generate custom reports:
+   - Filter by date range
+   - Select specific projects
+   - Export data in various formats
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Please ensure your PR:
+- Follows the existing code style
+- Includes appropriate tests
+- Updates documentation as needed
+- Describes the changes in detail
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+For additional support or questions, please open an issue in the repository.
