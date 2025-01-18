@@ -9,13 +9,15 @@
   interface Props {
     projects: any[];
     children?: import('svelte').Snippet;
-    auth: any;
   }
-
   const user = $page.props.auth.user;
-  const context = new ProjectTableContext();
+  const context = new ProjectTableContext(user.roles?.[0].name);
+
+  const headers = context.getHeaders();
+  const actions = context.getActions();
 
   let { projects }: Props = $props();
+
 </script>
 
 <AuthenticatedLayout>
@@ -28,6 +30,7 @@
     <DataTable
       data={projects}
       {headers}
+      {actions}
     />
   </div>
 </AuthenticatedLayout>
