@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [ClockEntryController::class, 'store'])->name('clock-entry.store');
     });
 
-    Route::group(['prefix' => 'project'] , function(){
+    Route::group(['prefix' => 'projects'] , function(){
         Route::get('/', [ProjectController::class, 'index'])->name('project.index');
         Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
         Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');

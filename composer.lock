@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f88e28ef240942faa8167249e78bfb6",
+    "content-hash": "9d3509d49a4cdff14252e70dec010646",
     "packages": [
         {
             "name": "brick/math",
@@ -656,6 +656,59 @@
                 }
             ],
             "time": "2024-12-27T00:36:43+00:00"
+        },
+        {
+            "name": "emilienkopp/formats-dates-trait",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EmilienKopp/FormatsDates.git",
+                "reference": "36367b2b9e60b892b12ee37a00abfec60cf2236a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EmilienKopp/FormatsDates/zipball/36367b2b9e60b892b12ee37a00abfec60cf2236a",
+                "reference": "36367b2b9e60b892b12ee37a00abfec60cf2236a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0|^11.0",
+                "nesbot/carbon": "^2.0|^3.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpstan/phpstan": "^1.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": [],
+                    "providers": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "EmilienKopp\\DatesFormatter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emilien Kopp",
+                    "email": "emilien.kopp@gmail.com"
+                }
+            ],
+            "description": "A Laravel-Carbon trait for easy date formatting",
+            "support": {
+                "issues": "https://github.com/EmilienKopp/FormatsDates/issues",
+                "source": "https://github.com/EmilienKopp/FormatsDates/tree/v1.0.4"
+            },
+            "time": "2024-11-13T13:12:42+00:00"
         },
         {
             "name": "firebase/php-jwt",

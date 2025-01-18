@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Laravel\Prompts\Prompt;
 
 class SplitMake extends Command
 {
@@ -95,9 +96,6 @@ class SplitMake extends Command
     public function generateDomain($name)
     {
         $dir = 'Lib/domains/'.$name;
-        if(!File::exists(resource_path("js/{$dir}"))) {
-            File::makeDirectory(resource_path("js/{$dir}"), 0755, true);
-        }
         $this->generateFile('domain', 'index', $dir);
     }
 
@@ -105,6 +103,18 @@ class SplitMake extends Command
     {
         $extension = $this->resolveExtension($type);
         $dir ??= Str::ucfirst($type) . 's';
-        File::put(resource_path("js/{$dir}/{$path}.{$extension}"), '');
+        $exploded = collect(explode('/', $path));
+        $userInputDirectories = $exploded->take(-1);
+        $filename = $exploded->last();
+        $path = $userInputDirectories->implode('/');
+        $dirPath = "js/{$dir}/{$path}";
+        if(!File::exists(resource_path($dirPath))) {
+            File::makeDirectory(resource_path($dirPath), 0755, true);
+        }
+        $finalPath = resource_path("{$dirPath}/{$filename}.{$extension}");
+        File::put($finalPath, '');
+
+        $this->info("File created at:");
+        $this->line($finalPath);
     }
 }

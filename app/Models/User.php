@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function clockEntries()
     {
-        return $this->hasMany(ClockEntry::class);
+        return $this->hasMany(ClockEntry::class)->with('project');
     }
 
     public function todaysEntries()

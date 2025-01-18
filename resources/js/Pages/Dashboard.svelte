@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from '$components/Actions/Button.svelte';
   import Select from '$components/DataInput/Select.svelte';
-  import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
+  import EntriesList from '$components/Entries/EntriesList.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
   import { superUseForm } from '$lib/inertia';
@@ -18,8 +18,6 @@
   let form = superUseForm({
     project_id: undefined,
   });
-
-  
   
 </script>
 
@@ -42,6 +40,12 @@
           <Button onclick={() => ClockEntry.push($form)} class="mt-4">
             Submit
           </Button>
+          <div>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8">
+              Today's Entries
+            </h2>
+            <EntriesList entries={user.todays_entries} />
+          </div>
         </div>
       </div>
     </div>

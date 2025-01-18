@@ -12,6 +12,11 @@ class Project extends Model
 
     protected $guarded = [];
 
+    public function entries()
+    {
+        return $this->hasMany(ClockEntry::class);
+    }
+
     public function tasks()
     {
         return $this->hasMany(Task::class);

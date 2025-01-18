@@ -184,6 +184,11 @@ export interface User {
     github?: string;
     dashboard_preferences?: any;
     projects?: Project[];
+    todays_entries?: ClockEntry[];
+    entries?: ClockEntry[];
+    inTime?: string;
+    outTime?: string;
+    date?: string;
 }
 
 export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;
