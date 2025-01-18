@@ -49,7 +49,6 @@ class ClockEntryController extends Controller
                 'out' => now(),
             ]);
         }
-        dd($entry);
 
         return to_route('dashboard');
     }

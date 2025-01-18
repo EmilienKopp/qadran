@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -18,7 +19,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $user = User::find(Auth::id())->load('projects');
+    $user = User::find(Auth::id())->load(['projects']);
+    $clockEntries = ClockEntry::where('user_id', Auth::id())->get();
     return Inertia::render('Dashboard', compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -28,12 +30,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::group(['prefix' => 'clock-entry'] , function(){
-        Route::get('/', [ClockEntryController::class, 'index'])->name('clock-entry.index');
         Route::post('/store', [ClockEntryController::class, 'store'])->name('clock-entry.store');
-        Route::get('/edit/{clock-entry}', [ClockEntryController::class, 'edit'])->name('clock-entry.edit');
-        Route::patch('/update/{clock-entry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
-        Route::delete('/destroy/{clock-entry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
     });
+
+    Route::group(['prefix' => 'project'] , function(){
+        Route::get('/', [ProjectController::class, 'index'])->name('project.index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
+        Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
+        Route::post('/store', [ProjectController::class, 'store'])->name('project.store');
+        Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
+        Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
+        Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    });
+
+
 });
 
 require __DIR__.'/auth.php';
