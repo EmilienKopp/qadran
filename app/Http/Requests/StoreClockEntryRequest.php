@@ -27,6 +27,7 @@ class StoreClockEntryRequest extends FormRequest
             'note' => ['nullable', 'string'],
             'project_id' => ['exists:projects,id'],
             'user_id' => ['required','exists:users,id'],
+            'timezone' => ['required', 'timezone'],
         ];
     }
 
@@ -34,6 +35,7 @@ class StoreClockEntryRequest extends FormRequest
     {
         $this->merge([
             'user_id' => $this->user()->id,
+            'timezone' => $this->timezone ?? 'UTC',
         ]);
     }
 }
