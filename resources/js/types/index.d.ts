@@ -1,12 +1,7 @@
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
-    role: Role;
-}
+import type { Role } from '$models';
+import type { User as UserModel } from '$models';
 
-export type Role = 'freelancer' | 'employer' | 'admin';
+export type User = UserModel;
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
