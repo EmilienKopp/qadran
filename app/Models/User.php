@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasMany(ClockEntry::class);
     }
 
+    public function todaysEntries()
+    {
+        return $this->clockEntries()->today();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

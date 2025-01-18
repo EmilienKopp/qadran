@@ -8,6 +8,7 @@ use App\Http\Controllers\ClockEntryController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\ClockEntry;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -19,8 +20,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $user = User::find(Auth::id())->load(['projects']);
-    $clockEntries = ClockEntry::where('user_id', Auth::id())->get();
+    $user = User::find(Auth::id())->load(['projects', 'todaysEntries']);
+    $clockEntries = ClockEntry::today()->get();
     return Inertia::render('Dashboard', compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
