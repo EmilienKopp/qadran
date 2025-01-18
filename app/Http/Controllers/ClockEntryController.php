@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ClockEntry;
 use App\Http\Requests\StoreClockEntryRequest;
 use App\Http\Requests\UpdateClockEntryRequest;
+use App\Utils\InertiaHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Validation\ValidationException;
+use Validator;
 
 class ClockEntryController extends Controller
 {
@@ -41,12 +44,12 @@ class ClockEntryController extends Controller
         if(!$entry) {
             $entry = ClockEntry::create([
                 ...$validated,
-                'in' => now(),
+                'in' => now()->parse($request->in),
             ]);
         } else {
             $entry->update([
                 ...$validated,
-                'out' => now(),
+                'out' => now()->parse($request->out),
             ]);
         }
 
@@ -94,6 +97,15 @@ class ClockEntryController extends Controller
      */
     public function destroy(ClockEntry $clockEntry)
     {
-        //
+        try {
+            $success = $clockEntry->delete();
+            if(!$success) {
+                InertiaHelper::fail('Could not delete the clock entry.');
+            }
+        } catch (\Exception $e) {
+            InertiaHelper::fail('Could not delete the clock entry.');
+        }
+        
+        return redirect()->back();
     }
 }

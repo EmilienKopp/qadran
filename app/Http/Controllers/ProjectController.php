@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
@@ -14,9 +15,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Auth::user()->projects;
-        return inertia('Project/Index', compact('projects'));
-
+        $projects = Auth::user()->projects->load('organization');
+        return inertia('Project/Index', [
+            'projects' => Inertia::always($projects)
+        ]);
     }
 
     /**
@@ -24,7 +26,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Project/Create');
     }
 
     /**
@@ -32,7 +34,9 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $validated = $request->validated();
+        Auth::user()->projects()->create($validated);
+        return redirect()->route('project.index');
     }
 
     /**
@@ -64,6 +68,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+        return to_route('project.index');
     }
 }
