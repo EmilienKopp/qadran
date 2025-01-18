@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('timezone')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->integer('duration_seconds')->after('out')->storedAs('EXTRACT(EPOCH FROM ("out" - "in"))');
+            $table->integer('duration_seconds')->nullable()->after('out')->storedAs('EXTRACT(EPOCH FROM ("out" - "in"))');
         });
     }
 

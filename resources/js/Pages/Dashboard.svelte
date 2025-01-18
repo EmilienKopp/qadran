@@ -1,8 +1,37 @@
 <script lang="ts">
   import Button from '$components/Actions/Button.svelte';
+  import Select from '$components/DataInput/Select.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
+  import { ClockEntry } from '$lib/domain/ClockEntry';
+  import { superUseForm } from '$lib/inertia';
+  import { asSelectOptions } from '$lib/utils/formatting';
+  import type { User, Project } from '$models';
 
+  interface Props {
+    user: User;
+  }
+
+  let { user }: Props = $props();
+  let projectOptions = asSelectOptions<Project>(user.projects, 'id', 'name');
+
+  let form = superUseForm({
+    project_id: null,
+  });
+
+  function handleClockEntry() {
+    $form.post(route('clock-entry.store'), {
+      onSuccess: () => {
+        toaster.success('Clock entry created successfully');
+        $form.reset();
+      },
+      onError: (errors: Record<string,string>) => {
+        toaster.error('An error occurred while creating the clock entry');
+        console.log(errors);
+      },
+    });
+  }
+  
 </script>
 
 <svelte:head>
@@ -19,10 +48,10 @@
   <div class="py-12 w-full">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
       <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-full">
-        <div class="p-6 text-gray-900 flex items-center justify-between w-full">
-          You're logged in! 🎉
-          <Button variant="secondary" onclick={() => toaster.info('🍞 Toasted!')}>
-            Toast me!
+        <div class="p-6 text-gray-900 flex flex-col items-center justify-between w-full">
+          <Select label="Select a project" bind:value={$form.project_id} options={projectOptions} />
+          <Button onclick={() => handleClockEntry()}>
+            Submit
           </Button>
         </div>
       </div>

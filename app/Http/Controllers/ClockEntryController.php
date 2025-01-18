@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ClockEntry;
 use App\Http\Requests\StoreClockEntryRequest;
 use App\Http\Requests\UpdateClockEntryRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class ClockEntryController extends Controller
 {
@@ -29,7 +31,39 @@ class ClockEntryController extends Controller
      */
     public function store(StoreClockEntryRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $entry = ClockEntry::where('user_id', Auth::id())
+            ->where('project_id', $validated['project_id'])
+            ->whereNull('out')
+            ->orderBy('in', 'desc')
+            ->first();
+        if(!$entry) {
+            $entry = ClockEntry::create([
+                ...$validated,
+                'in' => now(),
+            ]);
+        } else {
+            $entry->update([
+                ...$validated,
+                'out' => now(),
+            ]);
+        }
+        dd($entry);
+
+        return to_route('dashboard');
+    }
+
+    public function in(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'in' => ['required', 'date']
+        ]);
+        
+        ClockEntry::create($validated);
+
+        return to_route('dashboard');
     }
 
     /**

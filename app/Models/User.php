@@ -41,6 +41,13 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class)
+            ->using(ProjectUser::class)
+            ->withTimestamps();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -97,7 +97,7 @@ return new class extends Migration
             $table->foreignId('rate_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('applied_rate', 10, 2)->nullable();
             $table->string('currency', 3)->default('JPY');
-            $table->decimal('amount', 12, 2)->storedAs('CASE 
+            $table->decimal('amount', 12, 2)->nullable()->storedAs('CASE 
                 WHEN "applied_rate" IS NOT NULL AND "in" IS NOT NULL AND "out" IS NOT NULL 
                 THEN ( EXTRACT(EPOCH FROM ("out" - "in")) / 3600.0) * applied_rate 
                 ELSE NULL 

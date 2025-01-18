@@ -5,9 +5,9 @@
   import { createEventDispatcher } from 'svelte';
   import { twMerge } from 'tailwind-merge';
   interface Props {
-    label: Props['label'];
+    label: string;
     options?: Option[];
-    value: Props['value'];
+    value: any;
     placeholder?: string;
     [key: string]: any
   }
@@ -21,7 +21,7 @@
   }: Props = $props();
 
   interface Option {
-    value: string | number;
+    value: any;
     name: string;
   }
 

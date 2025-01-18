@@ -17,4 +17,9 @@ class Organization extends Model
             ->withPivot('elevated')
             ->withTimestamps();
     }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

@@ -11,7 +11,7 @@ class StoreClockEntryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,18 @@ class StoreClockEntryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'in' => ['date'],
+            'out' => ['date'],
+            'note' => ['nullable', 'string'],
+            'project_id' => ['exists:projects,id'],
+            'user_id' => ['required','exists:users,id'],
         ];
+    }
+
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'user_id' => $this->user()->id,
+        ]);
     }
 }
