@@ -174,7 +174,7 @@
 
     <!-- Page Heading -->
     {#if header}
-      <header class="bg-white shadow">
+      <header class="bg-white shadow sticky top-0 z-10">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {@render header?.()}
         </div>
