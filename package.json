@@ -2,9 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-      "build": "vue-tsc && vite build",
-      "dev": "vite",
-      "start": "concurrently -p \"[{time}] [{name}]\" -t \"HH:mm:ss\" -n backend,frontend,docker -c #E0234E,#0000FF -s all \"php artisan serve\"  \"vite\" \"docker compose up\""
+        "build": "vue-tsc && vite build",
+        "dev": "vite",
+        "start": "concurrently -p \"[{time}] [{name}]\" -t \"HH:mm:ss\" -n backend,frontend,docker -c #E0234E,#0000FF -s all \"php artisan serve\"  \"vite\" \"docker compose up\""
     },
     "devDependencies": {
         "@eslint/js": "^9.15.0",
@@ -19,6 +19,7 @@
         "daisyui": "^4.12.14",
         "eslint": "^9.14.0",
         "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-svelte": "^2.46.1",
         "eslint-plugin-unused-imports": "^4.1.4",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.31",
