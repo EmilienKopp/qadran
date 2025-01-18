@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProjectRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('project_user', function (Blueprint $table) {
             $table->id();
-            $table->string('label');
-        });
-
-        Schema::create('taggable', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('taggable');
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->json('roles')->default('[]');  
             $table->timestamps();
+
+            $table->unique(['project_id', 'user_id']);
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('taggable_tables');
+        Schema::dropIfExists('project_user');
     }
 };
