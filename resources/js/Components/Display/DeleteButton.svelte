@@ -6,7 +6,7 @@
   import { twMerge } from 'tailwind-merge';
 
   interface Props {
-    label: string;
+    label?: string;
     [key: string]: any
   }
 
