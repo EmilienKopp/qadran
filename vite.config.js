@@ -1,8 +1,8 @@
-import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { URL, fileURLToPath } from 'node:url';
+import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
   plugins: [
@@ -19,9 +19,7 @@ export default defineConfig({
       $lib: '/resources/js/Lib',
       $components: '/resources/js/Components',
       $vendor: '/vendor',
-      $types: fileURLToPath(
-        new URL('./resources/js/types', import.meta.url)
-      ),
+      $types: fileURLToPath(new URL('./resources/js/types', import.meta.url)),
       $layouts: fileURLToPath(
         new URL('./resources/js/Layouts', import.meta.url)
       ),
