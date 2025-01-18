@@ -16,6 +16,11 @@ trait ExtendEnums
     return array_column(self::cases(), 'value');
   }
 
+  public static function collect(): \Illuminate\Support\Collection
+  {
+    return collect(array_column(self::cases(), 'value'));
+  }
+
   /**
    * Get the enum keys.
    *
