@@ -17,4 +17,9 @@ class ClockEntry extends Model
         'project_id',
         'user_id',
     ];
+
+    public function scopeToday($query)
+    {
+        return $query->whereDate('in', now());
+    }
 }
