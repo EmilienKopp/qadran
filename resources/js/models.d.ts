@@ -106,6 +106,14 @@ export interface ProjectUser {
     updated_at?: Date | string;
 }
 
+export interface Role {
+    id: number;
+    name: string;
+    guard_name: string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
 export interface Tag {
     id: number;
     label: string;
@@ -183,12 +191,10 @@ export interface User {
     website?: string;
     github?: string;
     dashboard_preferences?: any;
-    projects?: Project[];
+    roles?: Role[];
+    organizations?: Organization[];
     todays_entries?: ClockEntry[];
-    entries?: ClockEntry[];
-    inTime?: string;
-    outTime?: string;
-    date?: string;
+    projects?: Project[];
 }
 
-export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;
+export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;
