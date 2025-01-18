@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TagFactory extends Factory
 {
+    public $timestamps = false;
+    
     /**
      * Define the model's default state.
      *
@@ -17,7 +19,7 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'label' => $this->faker->word(),
         ];
     }
 }

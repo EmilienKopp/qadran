@@ -12,6 +12,37 @@ class IndustrySeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $industries = [
+            'Agriculture',
+            'Automotive',
+            'Banking',
+            'Construction',
+            'Education',
+            'Electronics',
+            'Energy',
+            'Entertainment',
+            'Finance',
+            'Food & Beverage',
+            'Healthcare',
+            'Hospitality',
+            'Insurance',
+            'IT',
+            'Manufacturing',
+            'Media',
+            'Mining, Oil & Gas',
+            'Network',
+            'Pharmaceutical',
+            'Real Estate',
+            'Retail',
+            'Technology',
+            'Telecommunications',
+            'Transportation',
+            'Utilities',
+            'Other',
+        ];
+
+        foreach ($industries as $industry) {
+            \App\Models\Industry::create(['name' => $industry]);
+        }
     }
 }

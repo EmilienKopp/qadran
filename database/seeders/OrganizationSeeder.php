@@ -24,7 +24,6 @@ class OrganizationSeeder extends Seeder
             $organizations->each(function ($organization) use ($users) {
                 $selectedUsers = $users->random(rand(3, 10));
 
-                // Prepare the pivot data
                 $pivotData = $selectedUsers->map(function ($user) {
                     return [
                         'user_id' => $user->id,
@@ -37,7 +36,6 @@ class OrganizationSeeder extends Seeder
                 $organization->users()->attach($pivotData);
             });
 
-            // Optionally, ensure each user belongs to at least one organization
             $usersWithoutOrg = User::doesntHave('organizations')->get();
             $usersWithoutOrg->each(function ($user) use ($organizations) {
                 $randomOrg = $organizations->random();

@@ -12,6 +12,6 @@ class ClockEntrySeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        
     }
 }
