@@ -4,8 +4,8 @@ import type { InertiaForm } from './types';
 
 export type * from './types';
 
-export function superUseForm<T extends object>(obj: T): Readable<InertiaForm<T>> {
-  return useForm(obj);
+export function superUseForm<T extends object>(obj?: Partial<T>): Readable<InertiaForm<T>> {
+  return useForm(obj as any);
 }
 
 export function hookSuccess<T extends object>(form: InertiaForm<T>, callback: () => void): void {

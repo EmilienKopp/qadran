@@ -1,9 +1,19 @@
 import { capitalize } from './strings';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { getTimezone } from './timezone';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(duration);
+
 
 export const DATE_FORMAT = 'YYYY/MM/DD';
 export const TIME_FORMAT = 'HH:mm';
 export const DATETIME_FORMAT = `${DATE_FORMAT} ${TIME_FORMAT}`;
+
 
 export function date(date: Date | string | null, format?: string) {
   if(!date) return '';
@@ -18,6 +28,10 @@ export function time(date: Date | string | null, format?: string) {
 export function datetime(date: Date | string | null, format?: string) {
   if (!date) return '';
   return dayjs(date).format(format ?? DATETIME_FORMAT);
+}
+
+export function secondsToHHMM(seconds: number | undefined): string {
+  return dayjs.duration(seconds ?? 0, 'seconds').format('HH[h]mm[mn]');
 }
 
 /**

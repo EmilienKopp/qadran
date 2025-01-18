@@ -8,7 +8,7 @@
     onclose?: (e?: Event) => void;
   }
 
-  let dialog: HTMLDialogElement;
+  let dialog: HTMLDialogElement | undefined = $state();
 
   let {
     id,
@@ -18,7 +18,7 @@
   }: Props = $props();
 
   export function close () {
-    dialog.close();
+    dialog?.close();
   }
 </script>
 

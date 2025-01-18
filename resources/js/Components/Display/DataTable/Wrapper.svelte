@@ -36,27 +36,18 @@
     searchStrings = $bindable([])
   }: Props = $props();
 
-  let tableData: any[] = $state(data);
-
   if (!searchStrings?.length && $query.param('search')) {
     searchStrings = [$query.param('search')?.toString() || ''];
   }
 
   let pageIndex = $derived($query.param('page') || 1);
 
-  run(() => {
-    if(paginated) {
-      tableData = data?.data ?? paginatedData?.data ?? [];
-    }
-    if (paginatedData && data?.length) {
-      throw new Error('Cannot use both data and paginatedData props');
-    }
-  });
-
   let hasActions = $derived(Boolean(onDelete || actions?.length));
+
+  $inspect(data);
 </script>
 
-{#if tableData?.length === 0}
+{#if data?.length === 0}
   <div class="text-center text-gray-500 p-4">No data available</div>
 {:else}
   <div class="overflow-x-auto shadow-md rounded-lg">
@@ -66,7 +57,7 @@
       </thead>
 
       <tbody>
-        {#each tableData ?? [] as row}
+        {#each data ?? [] as row (row.id)}
           <tr class={twMerge(
             'hover:bg-base-300 transition-colors duration-200',
             onRowClick && 'cursor-pointer'
@@ -84,7 +75,7 @@
     </table>
   </div>
 
-  {#if paginated || paginatedData?.length || exists(data?.data)}
+  {#if paginated}
     <Pagination paginatedData={data} pageIndex={Number(pageIndex)} />
   {/if}
 {/if}

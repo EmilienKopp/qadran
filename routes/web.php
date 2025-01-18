@@ -21,7 +21,6 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = User::find(Auth::id())->load(['projects', 'todaysEntries']);
-    $clockEntries = ClockEntry::today()->get();
     return Inertia::render('Dashboard', compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -37,13 +36,20 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'projects'] , function(){
         Route::get('/', [ProjectController::class, 'index'])->name('project.index');
         Route::get('/create', [ProjectController::class, 'create'])->name('project.create');
-        Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
         Route::post('/store', [ProjectController::class, 'store'])->name('project.store');
+        Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
         Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
         Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
         Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
     });
 
+    Route::group(['prefix' => 'clock-entries'] , function(){
+        Route::get('/', [ClockEntryController::class, 'index'])->name('clock-entry.index');
+        Route::get('/{clockEntry}', [ClockEntryController::class, 'show'])->name('clock-entry.show');
+        Route::get('/{clockEntry}/edit', [ClockEntryController::class, 'edit'])->name('clock-entry.edit');
+        Route::patch('/{clockEntry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
+        Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
+    });
 
 });
 
