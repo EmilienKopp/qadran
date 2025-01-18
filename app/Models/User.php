@@ -48,6 +48,11 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function clockEntries()
+    {
+        return $this->hasMany(ClockEntry::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
