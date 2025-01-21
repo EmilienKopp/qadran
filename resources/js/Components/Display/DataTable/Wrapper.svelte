@@ -3,7 +3,7 @@
 
   import { query } from '$lib/stores';
   import { exists } from '$lib/utils/assessing';
-  import type { TableProps } from '$types/components/Table';
+  import type { TableProps } from '$types/common/table';
   import { twMerge } from 'tailwind-merge';
   import TableActions from './Action.svelte';
   import TableCell from './Cell.svelte';

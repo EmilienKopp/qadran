@@ -3,18 +3,18 @@
   import { DataTable } from '$components/Display/DataTable';
   import Header from '$components/UI/Header.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import { ProjectTableContext } from '$lib/domain/Project/tableContext';
-  import { Link, page, useForm } from '@inertiajs/svelte';
+  import { ProjectTableContext } from '$lib/domain/Project/context';
+  import { getAllUserRoles, getUserRoleName } from '$lib/inertia';
 
   interface Props {
     projects: any[];
     children?: import('svelte').Snippet;
   }
-  const user = $page.props.auth.user;
-  const context = new ProjectTableContext(user.roles?.[0].name);
-
-  const headers = context.getHeaders();
-  const actions = context.getActions();
+  let role = $state(getUserRoleName());
+  let roles = $state(getAllUserRoles());
+  let context = $state(new ProjectTableContext(role));
+  let headers = $state(context.strategy.headers());
+  let actions = $state(context.strategy.actions());
 
   let { projects }: Props = $props();
 

@@ -3,7 +3,7 @@
 
   import { Highlighter } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
-  import type { TableHeader } from '$types/components/Table';
+  import type { TableHeader } from '$types/common/table';
 
   interface Props {
     row: any;

@@ -5,7 +5,7 @@
   import { FilterService } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
   import { twMerge } from 'tailwind-merge';
-  import type { TableAction, TableHeader } from '../../types/components/Table';
+  import type { TableAction, TableHeader } from '../../types/common/tableee
   import type { Paginated } from '../../types/pagination';
 
   interface Props {

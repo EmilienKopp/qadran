@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { TableHeader } from "../../types/components/Table";
+  import type { TableHeader } from '$types/common/table';
 
   interface Props {
     headers: TableHeader<any>[];
-    data: Record<string,any>;
+    data?: Record<string,any>;
   }
 
   let { headers, data }: Props = $props();
