@@ -5,7 +5,7 @@ import { Organization } from '../../../models';
 import { TableContext } from '../common/context';
 import { TableStrategy } from '$types/common/table';
 
-export class OrganizationTableContext implements TableContext<Organization> {
+export class OrganizationContext implements TableContext<Organization> {
   strategy: TableStrategy<Organization>;
 
   constructor(role: string) {
