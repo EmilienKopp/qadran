@@ -70,7 +70,7 @@ class ClockEntry extends Model
                 isset($value) 
                 ? Carbon::parse($value)
                     ->setTimezone($this->timezone)
-                    ->format('Y-m-d H:i') 
+                    ->format('Y-m-d H:i:s') 
                 : null,
         );
     }
@@ -82,7 +82,7 @@ class ClockEntry extends Model
                 isset($value) 
                     ? Carbon::parse($value)
                         ->setTimezone($this->timezone)
-                        ->format('Y-m-d H:i') 
+                        ->format('Y-m-d H:i:s') 
                     : null,
         );
     }

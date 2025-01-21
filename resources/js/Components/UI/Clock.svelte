@@ -1,19 +1,21 @@
 <script lang="ts">
-  import dayjs from "dayjs";
-
-  let time = $state(dayjs().format('HH:mm:ss'));
+  import { clock } from '$lib/stores/global/time.svelte';
 
   $effect(() => {
     const interval = setInterval(() => {
-      time = dayjs().format('HH:mm:ss');
+      clock.refresh();
     }, 1000);
 
     return () => clearInterval(interval);
-  })
+  });
 </script>
 
-{#if time}
-  <div class="text-2xl font-bold text-center">
-    {time}
-  </div>
+{#if clock.time}
+  <span class="countdown font-mono text-2xl">
+    <span style="--value:{clock.h};"></span>
+    :
+    <span style="--value:{clock.m};"></span>
+    :
+    <span style="--value:{clock.s};"></span>
+  </span>
 {/if}
