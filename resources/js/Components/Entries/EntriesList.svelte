@@ -1,11 +1,9 @@
 <script lang="ts">
   import DeleteButton from '$components/Display/DeleteButton.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
-  import Clock from '$components/UI/Clock.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
   import { secondsToHHMM, time } from '$lib/utils/formatting';
   import { router } from '@inertiajs/svelte';
-  import dayjs from 'dayjs';
   import { X } from 'lucide-svelte';
   import { fade } from 'svelte/transition';
 
