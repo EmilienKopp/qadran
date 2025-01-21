@@ -1,4 +1,5 @@
 import { InertiaForm } from "$lib/inertia";
+import { Paginated } from "$types/pagination";
 
 export type TableHeader<T, V = any> = {
   key: string;
@@ -20,13 +21,19 @@ export type TableAction<T> = {
   css?: (row: T) => string;
   hidden?: (row: T) => boolean;
   href?: (row: T) => string;
+  position?: number;
 };
 
 export interface TableStrategy<T> {
-  getHeaders(h?: any[] | undefined): TableHeader<T>[];
-  getActions(h?: any[] | undefined): TableAction<T>[];
+  headers(h?: TableAction<T>[] | undefined): TableHeader<T>[];
+  actions(h?: TableAction<T>[] | undefined): TableAction<T>[];
   handleRowClick?(model: T): void;
-  setFilters?(filters: { key: string; filterHandler: ((row: T, form: InertiaForm<any>) => boolean) | undefined; }[]): void;
+  setFilters?(
+    filters: {
+      key: string;
+      filterHandler: ((row: T, form: InertiaForm<any>) => boolean) | undefined;
+    }[]
+  ): void;
 }
 
 export type TableConfig<T> = {

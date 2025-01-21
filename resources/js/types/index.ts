@@ -1,4 +1,3 @@
-import type { Role } from '$models';
 import type { User as UserModel } from '$models';
 
 export type User = UserModel;
