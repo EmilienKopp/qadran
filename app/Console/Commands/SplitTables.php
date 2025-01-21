@@ -94,7 +94,7 @@ TS;
         $strategyPath = $domainPath . '/strategies/' . Str::camel($role) . Str::studly($model) . 'Strategy.ts';
 
         $template = <<<TS
-import { TableAction, TableStrategy } from "\$types/components/Table";
+import { TableAction, TableStrategy } from "\$types/common/table";
 import { $modelName } from "\$models";
 import { date } from "\$lib/utils/formatting";
 
@@ -144,7 +144,7 @@ TS;
         // Add other necessary imports
         $imports[] = "import { $modelName } from '\$models';";
         $imports[] = "import { TableContext } from '../common/context';";
-        $imports[] = "import { TableStrategy } from '\$types/components/Table';";
+        $imports[] = "import { TableStrategy } from '\$types/common/table';";
 
         return implode("\n", $imports);
     }
