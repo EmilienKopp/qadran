@@ -3,7 +3,7 @@
   import { DataTable } from '$components/Display/DataTable';
   import Header from '$components/UI/Header.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import { ProjectTableContext } from '$lib/domain/Project/context';
+  import { ProjectContext } from '$lib/domain/Project/context';
   import { getAllUserRoles, getUserRoleName } from '$lib/inertia';
 
   interface Props {
@@ -12,7 +12,7 @@
   }
   let role = $state(getUserRoleName());
   let roles = $state(getAllUserRoles());
-  let context = $state(new ProjectTableContext(role));
+  let context = $state(new ProjectContext(role));
   let headers = $state(context.strategy.headers());
   let actions = $state(context.strategy.actions());
 
