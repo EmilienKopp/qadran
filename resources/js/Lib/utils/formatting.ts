@@ -1,3 +1,4 @@
+import { secondsToHHMM } from '$lib/utils/formatting';
 import { capitalize } from './strings';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -9,20 +10,25 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
-
 export const DATE_FORMAT = 'YYYY/MM/DD';
 export const TIME_FORMAT = 'HH:mm';
 export const DATETIME_FORMAT = `${DATE_FORMAT} ${TIME_FORMAT}`;
-
+export const DURATION_FORMAT = 'HH[h]mm[mn]ss[s]';
+export const DURATION_FORMAT_SHORT = 'HH[h]mm[mn]';
 
 export function date(date: Date | string | null, format?: string) {
-  if(!date) return '';
-  return dayjs(date).format(format ?? DATE_FORMAT)
+  if (!date) return '';
+  return dayjs(date).format(format ?? DATE_FORMAT);
 }
 
 export function time(date: Date | string | null, format?: string) {
   if (!date) return '';
   return dayjs(date).format(format ?? TIME_FORMAT);
+}
+
+export function diffSeconds(far: Date | string, near: Date | string) {
+  const seconds = dayjs(far).diff(near, 'seconds');
+  return seconds;
 }
 
 export function datetime(date: Date | string | null, format?: string) {
@@ -32,6 +38,19 @@ export function datetime(date: Date | string | null, format?: string) {
 
 export function secondsToHHMM(seconds: number | undefined): string {
   return dayjs.duration(seconds ?? 0, 'seconds').format('HH[h]mm[mn]');
+}
+
+export function secondsToHHMMSS(seconds: number | undefined): string {
+  return dayjs.duration(seconds ?? 0, 'seconds').format(DURATION_FORMAT);
+}
+
+export function timespan(
+  start: Date | string,
+  end: Date | string,
+  format: string = DURATION_FORMAT_SHORT
+) {
+  const seconds = dayjs(end).diff(start, 'seconds');
+  return dayjs.duration(seconds, 'seconds').format(format);
 }
 
 /**
@@ -44,7 +63,7 @@ export function currency(
   value: number | string,
   locale: 'ja-JP' | 'en-US' = 'ja-JP'
 ): string {
-  value = Number(value)
+  value = Number(value);
   if (isNaN(value)) return '';
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -60,7 +79,7 @@ export function currency(
  * @param nameColumn (optional) key to use as name
  * @returns an array of objects with value, label, and name keys
  */
-export function asSelectOptions<T extends {[key: string]: any}>(
+export function asSelectOptions<T extends { [key: string]: any }>(
   data?: Record<string, number | string>[] | string[] | T[],
   valueColumn?: string,
   nameColumn?: string
@@ -97,10 +116,10 @@ export function formatStringRangeToNumbers(
   range = range.replaceAll(/[\s.,]/g, ''); // remove spaces, commas, and dots
   const firstNumberMatch = range.match(/^(-?[0-9.,]+)/);
   const secondNumberMatch = range.match(/(-?[0-9.,]+)$/);
-  if(!secondNumberMatch) {
-    if(!firstNumberMatch) return [0, 0];
+  if (!secondNumberMatch) {
+    if (!firstNumberMatch) return [0, 0];
     return [Number(firstNumberMatch[0]), Number(firstNumberMatch[0])];
-  } else if(!firstNumberMatch) {
+  } else if (!firstNumberMatch) {
     return [Number(secondNumberMatch[0]), Number(secondNumberMatch[0])];
   }
 

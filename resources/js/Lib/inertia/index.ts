@@ -22,7 +22,7 @@ export function hookSuccess<T extends object>(
  * @returns The first role of the user
  */
 export function getUserRoleName(): string {
-  const role = get(page).props.auth.user.roles?.[0];
+  const role = get(page)?.props.auth.user.roles?.[0];
   return role?.name ?? 'guest';
 }
 
@@ -32,7 +32,7 @@ export function getUserRoleName(): string {
 export function getAllUserRoles(): string[] {
   return (
     get(page)
-      .props.auth.user.roles?.map((role: any) => role.name)
+      ?.props.auth.user.roles?.map((role: any) => role.name)
       .filter((r) => r != 'user') ?? []
   );
 }
