@@ -17,7 +17,7 @@ class ToastHandler {
     return this.#show;
   }
 
-  private show(
+  public show(
     message: string,
     type: ToastType,
     options: Partial<ToastOptions> = {}
@@ -29,6 +29,27 @@ class ToastHandler {
     setTimeout(() => {
       this.hide();
     }, this.options.duration);
+  }
+
+  /**
+   * Displays a toast notification with the specified message and options.
+   * Assumes the backed returns only one of the possible toast types as flash.
+   * @param {string} message - The message to display in the toast notification.
+   * @param {ToastType} type - The type of toast notification to display.
+   * @param {Partial<ToastOptions>} [options] - Optional settings to customize the toast notification.
+   * @param {string} [options.color='blue'] - The color of the toast notification.
+   * @param {number} [options.duration=3000] - The duration in milliseconds for which the toast notification is displayed.
+   * @param {string} [options.position='top-right'] - The position on the screen where the toast notification appears.
+   */
+  public fromFlash(flashData: Record<ToastType, string>) {
+    setTimeout(() => {
+      const entries = Object.entries(flashData);
+      if (entries.length === 0) return;
+      const firstEntry = entries.find(([type, message]) => message?.length);
+      if (!firstEntry) return;
+      const [type, message] = firstEntry;
+      this.show(message, type as ToastType, { duration: 5000 });
+    }, 500);
   }
 
   /**
