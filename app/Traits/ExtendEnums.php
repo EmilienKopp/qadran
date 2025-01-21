@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait ExtendEnums
 {
@@ -19,6 +20,18 @@ trait ExtendEnums
   public static function collect(): \Illuminate\Support\Collection
   {
     return collect(array_column(self::cases(), 'value'));
+  }
+
+  public static function toSelectOptions(): \Illuminate\Support\Collection
+  {
+    return self::collect()->map( function ($obj) {
+      $readable = Str::title(Str::replace('_', ' ', $obj));
+      return [
+        'value' => $obj,
+        'label' => $readable,
+        'name' => $readable,
+      ];
+    });
   }
 
   /**
