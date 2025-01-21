@@ -7,7 +7,11 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
-    };
+    },
+    enums: {
+      roles: SelectOption[];
+      
+    }
 };
 
 export type UTCDate = Date;
