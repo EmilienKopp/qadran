@@ -10,9 +10,6 @@
   import { asSelectOptions } from '$lib/utils/formatting';
   import { getTimezone } from '$lib/utils/timezone';
   import type { Project } from '$models';
-  import dayjs from 'dayjs';
-
-  
 
   interface Props {
     user: User;
@@ -36,26 +33,24 @@
 </svelte:head>
 
 <AuthenticatedLayout>
-  {#snippet header()}
-    <h2 class="text-xl font-semibold leading-tight text-gray-800">
-      <Clock />
-    </h2>
-  {/snippet}
-
   <div class="py-12 w-full">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
       <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-full">
         <div
           class="p-6 text-gray-900 flex flex-col items-center justify-between w-full"
         >
-          <Select
-            label="Select a project"
-            bind:value={$form.project_id}
-            options={projectOptions}
-          />
-          <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)} class="mt-4">
-            {nextAction}
-          </Button>
+          <fieldset class="p-4 flex items-center justify-center gap-8 border rounded-md">
+            <legend>
+              Punch
+            </legend>
+            <Select
+              bind:value={$form.project_id}
+              options={projectOptions}
+            />
+            <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)}>
+              {nextAction}
+            </Button>
+          </fieldset>
           <div class="w-full mt-4 flex flex-col items-center">
             <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8">
               Today's Entries
