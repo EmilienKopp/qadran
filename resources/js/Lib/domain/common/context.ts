@@ -1,7 +1,6 @@
-import { Role } from "$types/index";
-import { TableStrategy } from "$types/components/Table";
+import { TableStrategy } from "$types/common/table";
 
 export interface TableContext<T> {
   strategy: TableStrategy<T>;
-  getStrategyForRole(role: Role): TableStrategy<T>;
+  getStrategyForRole(role: string): TableStrategy<T>;
 }

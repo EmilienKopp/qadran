@@ -4,5 +4,4 @@ export { default as TableHeader } from './Header.svelte';
 export { default as Pagination } from './Pagination.svelte';
 export { default as DataTable } from './Wrapper.svelte';
 
-export type * from '$types/components/Table';
 
