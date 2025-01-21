@@ -5,9 +5,12 @@
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
   import { user } from '$lib/stores';
+  import type { DropdownAction, HTTPMethod } from '$types/index';
   import { Link, page } from '@inertiajs/svelte';
-  import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  import RoleSwitcher from '$components/UI/RoleSwitcher.svelte';
+  import Clock from '$components/UI/Clock.svelte';
+
   interface Props {
     header?: import('svelte').Snippet;
     children?: import('svelte').Snippet;
@@ -16,12 +19,6 @@
   let { header, children }: Props = $props();
 
   let showingNavigationDropdown = $state(false);
-  let supportsViewTransitions = false;
-
-  onMount(() => {
-    supportsViewTransitions = 'startViewTransition' in document;
-    //TODO: implement maybe one day
-  });
 
   const settingsDropdownActions: DropdownAction[] = [
     { text: 'Profile', href: route('profile.edit') },
@@ -34,21 +31,18 @@
   ];
 </script>
 
-
 <Toast show={false} />
 <div>
   <div class="min-h-screen bg-gray-100">
     <nav class="border-b border-gray-100 bg-white">
       <!-- Primary Navigation Menu -->
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex h-16 justify-between">
+        <div class="flex h-16 justify-between items-center">
           <div class="flex">
             <!-- Logo -->
-            <div class="flex shrink-0 items-center">
+            <div class="flex shrink-0 items-center w-36">
               <Link href={route('dashboard')}>
-                <ApplicationLogo
-                  class="block h-9 w-auto fill-current text-gray-800"
-                />
+                <Clock />
               </Link>
             </div>
 
@@ -56,10 +50,7 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              <NavLink
-                href={'dashboard'}
-                active={route().current('dashboard')}
-              >
+              <NavLink href={'dashboard'} active={route().current('dashboard')}>
                 Dashboard
               </NavLink>
               <NavLink
@@ -77,15 +68,14 @@
             </div>
           </div>
 
+          <RoleSwitcher />
+
           <div class="hidden sm:ms-6 sm:flex sm:items-center">
             <!-- Settings Dropdown -->
             <div class="ms-3">
               <Dropdown actions={settingsDropdownActions}>
                 {#snippet trigger()}
-                                <span
-                    class="inline-flex rounded-md items-center"
-                    
-                  >
+                  <span class="inline-flex rounded-md items-center">
                     {$page.props.auth.user.name}
                     <svg
                       class="-me-0.5 ms-2 h-4 w-4"
@@ -100,7 +90,7 @@
                       />
                     </svg>
                   </span>
-                              {/snippet}
+                {/snippet}
               </Dropdown>
             </div>
           </div>
