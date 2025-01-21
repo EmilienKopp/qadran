@@ -26,6 +26,7 @@ class RoleSeeder extends Seeder
             $user->assignRole(RoleEnum::User);
             if($user->id === 1) {
                 $user->assignRole(RoleEnum::Freelancer);
+                $user->assignRole(RoleEnum::Employer);
             } else {
                 $user->assignRole(RoleEnum::random());
             }
