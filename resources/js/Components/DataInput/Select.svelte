@@ -9,6 +9,7 @@
     options?: Option[];
     value: any;
     placeholder?: string;
+    onchange?: (e: Event) => void;
     [key: string]: any
   }
 
@@ -17,6 +18,7 @@
     options = [],
     value = $bindable(),
     placeholder = 'Select something',
+    onchange,
     ...rest
   }: Props = $props();
 
@@ -27,7 +29,7 @@
 
 </script>
 
-<div class="form-control mb-4">
+<div class="form-control">
   {#if label}
     <label class="label" for={rest.id}>
       <span class="label-text">{label}</span>
@@ -37,7 +39,7 @@
     class={twMerge('select select-bordered', rest.class)}
     {...rest}
     bind:value
-    onchange={bubble('change')}
+    onchange={(e) => onchange?.(e)}
   >
     {#if placeholder && !value}
       <option value="" disabled selected>{placeholder}</option>
