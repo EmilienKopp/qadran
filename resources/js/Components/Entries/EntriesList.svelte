@@ -2,9 +2,9 @@
   import DeleteButton from '$components/Display/DeleteButton.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
-  import { secondsToHHMM, time } from '$lib/utils/formatting';
+  import { clock } from '$lib/stores/global/time.svelte';
+  import { time, timespan } from '$lib/utils/formatting';
   import { router } from '@inertiajs/svelte';
-  import { X } from 'lucide-svelte';
   import { fade } from 'svelte/transition';
 
   interface Props {
@@ -28,43 +28,6 @@
     });
   }
 </script>
-
-{#snippet listItem(entry: ClockEntry)}
-  <tr in:fade>
-    <td>{entry.project?.name || 'No Project'}</td>
-    <td>{time(entry.in)}</td>
-    <td>{time(entry.out) || '-'}</td>
-    <td>{secondsToHHMM(entry.duration_seconds)}</td>
-    <td>
-      <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)}>
-        <X size={16} />
-      </DeleteButton>
-    </td>
-  </tr>
-{/snippet}
-
-<table class="w-full">
-  <thead>
-    <tr>
-      <th>Project</th>
-      <th>In</th>
-      <th>Out</th>
-      <th>Duration</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {#if !entries?.length}
-      <tr>
-        <td colspan="5">No entries yet</td>
-      </tr>
-    {:else}
-      {#each entries! as entry}
-        {@render listItem(entry)}
-      {/each}
-    {/if}
-  </tbody>
-</table>
 
 <style>
   table {
@@ -95,3 +58,46 @@
     cursor: pointer;
   }
 </style>
+
+{#snippet listItem(entry: ClockEntry)}
+  <tr in:fade>
+    <td>
+      {#if entry.project}
+        <a href={route('project.show', entry.project.id)} class="text-blue-500">
+          {entry.project.name}
+        </a>
+      {:else}
+        No project
+      {/if}
+    </td>
+    <td>{time(entry.in)}</td>
+    <td>{time(entry.out) || '-'}</td>
+    <td>{entry.out ? timespan(entry.in, entry.out) : clock.since(entry.in)}</td>
+    <td>
+      <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)} />
+    </td>
+  </tr>
+{/snippet}
+
+<table class="w-full">
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>In</th>
+      <th>Out</th>
+      <th>Duration</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {#if !entries?.length}
+      <tr>
+        <td colspan="5">No entries yet</td>
+      </tr>
+    {:else}
+      {#each entries! as entry}
+        {@render listItem(entry)}
+      {/each}
+    {/if}
+  </tbody>
+</table>
