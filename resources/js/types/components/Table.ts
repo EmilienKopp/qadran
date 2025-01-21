@@ -23,8 +23,8 @@ export type TableAction<T> = {
 };
 
 export interface TableStrategy<T> {
-  getHeaders(h: any[] | undefined): TableHeader<T>[];
-  getActions(h: any[] | undefined): TableAction[];
+  getHeaders(h?: any[] | undefined): TableHeader<T>[];
+  getActions(h?: any[] | undefined): TableAction<T>[];
   handleRowClick?(model: T): void;
   setFilters?(filters: { key: string; filterHandler: ((row: T, form: InertiaForm<any>) => boolean) | undefined; }[]): void;
 }

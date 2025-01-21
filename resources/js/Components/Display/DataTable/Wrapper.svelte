@@ -44,7 +44,6 @@
 
   let hasActions = $derived(Boolean(onDelete || actions?.length));
 
-  $inspect(data);
 </script>
 
 {#if data?.length === 0}
