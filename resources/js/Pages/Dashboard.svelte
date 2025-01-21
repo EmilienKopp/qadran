@@ -53,7 +53,7 @@
             bind:value={$form.project_id}
             options={projectOptions}
           />
-          <Button onclick={() => ClockEntry.push($form)} class="mt-4">
+          <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)} class="mt-4">
             {nextAction}
           </Button>
           <div class="w-full mt-4 flex flex-col items-center">
