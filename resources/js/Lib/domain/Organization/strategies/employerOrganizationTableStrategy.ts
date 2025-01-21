@@ -1,26 +1,25 @@
-import { TableAction, TableStrategy } from "$types/components/Table";
+import { TableAction, TableStrategy } from '$types/common/table';
 
-import { Organization } from "$models";
-import { date } from "$lib/utils/formatting";
+import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
+import { Organization } from '$models';
+import { date } from '$lib/utils/formatting';
 
-export class EmployerOrganizationTableStrategy implements TableStrategy<Organization>{
-
-  getHeaders() {
-    return [
-      { label: "Name", key: "name" },
-    ];
+export class EmployerOrganizationTableStrategy
+  extends BaseTableStrategy<Organization>
+  implements TableStrategy<Organization>
+{
+  defaultHeaders() {
+    return [{ label: 'Name', key: 'name' }];
   }
 
-  getActions(h: any[] | undefined): TableAction<Organization>[] {
+  defaultActions(): TableAction<Organization>[] {
     return [
-      { 
-        label: 'View', 
-        // href: (row: Organization) => route('organization.show', row.id)
+      {
+        label: 'View',
       },
-      { 
-        label: 'Edit', 
-        // href: (row: Organization) => route('organization.edit', row.id)
-      }
-    ]
+      {
+        label: 'Edit',
+      },
+    ];
   }
 }

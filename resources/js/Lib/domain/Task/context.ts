@@ -1,9 +1,9 @@
-import { FreelancerTaskTableStrategy } from './strategies/freelancerTaskStrategy';
 import { AdminTaskTableStrategy } from './strategies/adminTaskStrategy';
 import { EmployerTaskTableStrategy } from './strategies/employerTaskStrategy';
-import { Task } from '$models';
+import { FreelancerTaskTableStrategy } from './strategies/freelancerTaskStrategy';
 import { TableContext } from '../common/context';
-import { TableStrategy } from '$types/components/Table';
+import { TableStrategy } from '$types/common/table';
+import { Task } from '$models';
 
 export class TaskTableContext implements TableContext<Task> {
   strategy: TableStrategy<Task>;

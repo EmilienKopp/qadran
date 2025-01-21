@@ -1,4 +1,5 @@
-import { TableAction, TableStrategy } from "$types/components/Table";
+import { TableAction, TableStrategy } from "$types/common/table";
+
 import { Task } from "$models";
 import { date } from "$lib/utils/formatting";
 

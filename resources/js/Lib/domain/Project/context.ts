@@ -2,7 +2,7 @@ import { DefaultProjectTableStrategy } from './strategies/defaultProjectStrategy
 import { FreelancerProjectTableStrategy } from './strategies/freelancerProjectTableStrategy';
 import { Project } from '$models';
 import { TableContext } from '../common/context';
-import { TableStrategy } from '$types/components/Table';
+import { TableStrategy } from '$types/common/table';
 
 export class ProjectTableContext implements TableContext<Project> {
   strategy: TableStrategy<Project>;

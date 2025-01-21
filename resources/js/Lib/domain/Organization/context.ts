@@ -2,9 +2,8 @@ import { DefaultOrganizationTableStrategy } from './strategies/defaultOrganizati
 import { EmployerOrganizationTableStrategy } from './strategies/employerOrganizationTableStrategy';
 import { FreelancerOrganizationTableStrategy } from './strategies/freelancerOrganizationStrategy';
 import { Organization } from '../../../models';
-import { Role } from '$models';
 import { TableContext } from '../common/context';
-import { TableStrategy } from '$types/components/Table';
+import { TableStrategy } from '$types/common/table';
 
 export class OrganizationTableContext implements TableContext<Organization> {
   strategy: TableStrategy<Organization>;
