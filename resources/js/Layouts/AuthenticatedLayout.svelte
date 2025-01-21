@@ -68,6 +68,12 @@
               >
                 Projects
               </NavLink>
+              <NavLink
+                href={route('organization.index')}
+                active={route().current('organization.index')}
+              >
+                Organizations
+              </NavLink>
             </div>
           </div>
 
