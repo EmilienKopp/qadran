@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\OrganizationType;
 
 class StoreOrganizationRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreOrganizationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,9 @@ class StoreOrganizationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'in:' . OrganizationType::implode()],
+            'description' => ['nullable', 'string'],
         ];
     }
 }
