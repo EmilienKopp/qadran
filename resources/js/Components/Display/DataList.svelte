@@ -4,9 +4,10 @@
   interface Props {
     headers: TableHeader<any>[];
     data?: Record<string,any>;
+    editable?: boolean; //TODO: Implement inline editing
   }
 
-  let { headers, data }: Props = $props();
+  let { headers, data, editable = false }: Props = $props();
 </script>
 
 <dl>
