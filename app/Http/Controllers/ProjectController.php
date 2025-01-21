@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrganizationType;
+use App\Enums\ProjectStatus;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
@@ -44,7 +46,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return inertia('Project/Show', [
+            'project' => Inertia::always($project)
+        ]);
     }
 
     /**
@@ -52,7 +56,10 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return inertia('Project/Edit', [
+            'project' => Inertia::always($project),
+            'statusOptions' => Inertia::always(ProjectStatus::toSelectOptions()),
+        ]);
     }
 
     /**

@@ -27,7 +27,9 @@ class OrganizationController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Organization/Create', [
+            'organizationTypeOptions' => OrganizationType::toSelectOptions(),
+        ]);
     }
 
     /**
@@ -35,7 +37,11 @@ class OrganizationController extends Controller
      */
     public function store(StoreOrganizationRequest $request)
     {
-        //
+        
+        $validated = $request->validated();
+        Auth::user()->organizations()->create($validated);
+        return redirect()->route('organization.index')
+            ->with('success', 'Organization created.');
     }
 
     /**
@@ -72,6 +78,11 @@ class OrganizationController extends Controller
      */
     public function destroy(Organization $organization)
     {
-        //
+        try {
+            $organization->delete();
+            return redirect()->route('organization.index')->with('success', 'Organization deleted.');
+        } catch (\Exception $e) {
+            return redirect()->route('organization.index')->with('error', 'Organization cannot be deleted.');
+        }
     }
 }
