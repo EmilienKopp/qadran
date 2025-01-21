@@ -4,6 +4,7 @@ import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
 import type { Organization } from '$models';
 import { Trash2 } from 'lucide-svelte';
 import { date } from '$lib/utils/formatting';
+import { router } from '@inertiajs/svelte';
 
 export class FreelancerOrganizationTableStrategy
   extends BaseTableStrategy<Organization>
@@ -30,7 +31,8 @@ export class FreelancerOrganizationTableStrategy
         label: 'Delete',
         css: () => 'text-red-500',
         icon: () => Trash2,
-        href: (row: Organization) => route('organization.destroy', row.id),
+        callback: (row: Organization) =>
+          router.delete(route('organization.destroy', row.id)),
       },
     ];
   }
