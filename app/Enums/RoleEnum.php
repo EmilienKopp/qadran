@@ -9,8 +9,9 @@ enum RoleEnum: string
     use ExtendEnums;
     case Admin = 'admin';
     case Freelancer = 'freelancer';
+    case BusinessOwner = 'business_owner';
     case Employer = 'employer';
-    case Employee = 'employee';
+    case Staff = 'staff';
     case User = 'user';
 
 }
