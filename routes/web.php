@@ -8,7 +8,7 @@ use App\Http\Controllers\ClockEntryController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\ClockEntry;
+use App\Http\Controllers\OrganizationController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -41,6 +41,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
         Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
         Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    });
+
+    Route::group(['prefix' => 'organizations'] , function(){
+        Route::get('/', [OrganizationController::class, 'index'])->name('organization.index');
+        Route::get('/create', [OrganizationController::class, 'create'])->name('organization.create');
+        Route::post('/store', [OrganizationController::class, 'store'])->name('organization.store');
+        Route::get('/{organization}', [OrganizationController::class, 'show'])->name('organization.show');
+        Route::get('/{organization}/edit', [OrganizationController::class, 'edit'])->name('organization.edit');
+        Route::patch('/{organization}', [OrganizationController::class, 'update'])->name('organization.update');
+        Route::delete('/{organization}', [OrganizationController::class, 'destroy'])->name('organization.destroy');
     });
 
     Route::group(['prefix' => 'clock-entries'] , function(){

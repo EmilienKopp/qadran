@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Organization;
 use App\Http\Requests\StoreOrganizationRequest;
 use App\Http\Requests\UpdateOrganizationRequest;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use App\Enums\OrganizationType;
 
 class OrganizationController extends Controller
 {
@@ -13,7 +16,10 @@ class OrganizationController extends Controller
      */
     public function index()
     {
-        //
+        $organizations = Auth::user()->organizations;
+        return Inertia::render('Organization/Index', [
+            'organizations' => $organizations,
+        ]);
     }
 
     /**
@@ -45,7 +51,10 @@ class OrganizationController extends Controller
      */
     public function edit(Organization $organization)
     {
-        //
+        return Inertia::render('Organization/Edit', [
+            'organization' => $organization,
+            'organizationTypeOptions' => OrganizationType::toSelectOptions(),
+        ]);
     }
 
     /**
@@ -53,7 +62,9 @@ class OrganizationController extends Controller
      */
     public function update(UpdateOrganizationRequest $request, Organization $organization)
     {
-        //
+        $validated = $request->validated();
+        $organization->update($validated);
+        return redirect()->route('organization.index')->with('success', 'Organization updated.');
     }
 
     /**
