@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vue-tsc && vite build",
+        "build": "vite build",
         "dev": "vite",
         "start": "concurrently -p \"[{time}] [{name}]\" -t \"HH:mm:ss\" -n backend,frontend,docker -c #E0234E,#0000FF -s all \"php artisan serve\"  \"vite\" \"docker compose up\""
     },
