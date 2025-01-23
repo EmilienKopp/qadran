@@ -3,7 +3,6 @@
   import { asSelectOptions } from '$lib/utils/formatting';
   import { getAllUserRoles, getUserRoleName } from '$lib/inertia';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
-  import { page } from '@inertiajs/svelte';
 
   RoleContext.selected = getUserRoleName();
   RoleContext.available = getAllUserRoles();
