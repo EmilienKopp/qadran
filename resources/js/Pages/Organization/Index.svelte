@@ -2,7 +2,7 @@
   import Modal from '$components/Actions/Modal.svelte';
   import DataList from '$components/Display/DataList.svelte';
   import { DataTable } from '$components/Display/DataTable';
-  import type { TableAction } from '$types/common/table';
+  import type { DataAction } from '$types/common/dataDisplay';
   import Header from '$components/UI/Header.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { OrganizationContext } from '$lib/domain/Organization/context';
@@ -18,7 +18,7 @@
   let modal: Modal | undefined = $state();
   let selectedOrganization: Organization | undefined = $state();
 
-  const commonActions: TableAction<Organization>[] = [
+  const commonActions: DataAction<Organization>[] = [
     { label: 'View', callback: modalOpen, position: 1 },
   ];
 

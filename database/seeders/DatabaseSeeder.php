@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             ProjectUserSeeder::class,
             RoleSeeder::class,
+            RateTypeSeeder::class,
         ]);
     }
 }
