@@ -9,6 +9,8 @@ use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\RateController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -59,6 +61,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/{clockEntry}/edit', [ClockEntryController::class, 'edit'])->name('clock-entry.edit');
         Route::patch('/{clockEntry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
         Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
+    });
+
+    Route::group(['prefix' => 'rates'] , function(){
+        Route::get('/', [RateController::class, 'index'])->name('rate.index');
+        Route::get('/create', [RateController::class, 'create'])->name('rate.create');
+        Route::post('/store', [RateController::class, 'store'])->name('rate.store');
+        Route::get('/{rate}', [RateController::class, 'show'])->name('rate.show');
+        Route::get('/{rate}/edit', [RateController::class, 'edit'])->name('rate.edit');
+        Route::patch('/{rate}', [RateController::class, 'update'])->name('rate.update');
+        Route::delete('/{rate}', [RateController::class, 'destroy'])->name('rate.destroy');
     });
 
 });
