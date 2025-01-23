@@ -1,7 +1,7 @@
 import { AdminTaskTableStrategy } from './strategies/adminTaskStrategy';
 import { EmployerTaskTableStrategy } from './strategies/employerTaskStrategy';
 import { FreelancerTaskTableStrategy } from './strategies/freelancerTaskStrategy';
-import { TableContext } from '../common/context';
+import { TableContext } from '../../core/contexts/context';
 import { TableStrategy } from '$types/common/table';
 import { Task } from '$models';
 

@@ -1,18 +1,18 @@
-import { TableAction, TableStrategy } from '$types/common/table';
+import { DataAction, IDataStrategy } from '$types/common/dataDisplay';
 
-import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { Organization } from '$models';
 import { date } from '$lib/utils/formatting';
 
 export class EmployerOrganizationTableStrategy
-  extends BaseTableStrategy<Organization>
-  implements TableStrategy<Organization>
+  extends BaseDataDisplayStrategy<Organization>
+  implements IDataStrategy<Organization>
 {
   defaultHeaders() {
     return [{ label: 'Name', key: 'name' }];
   }
 
-  defaultActions(): TableAction<Organization>[] {
+  defaultActions(): DataAction<Organization>[] {
     return [
       {
         label: 'View',

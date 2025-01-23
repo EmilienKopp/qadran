@@ -1,12 +1,12 @@
-import { TableAction, TableStrategy } from '$types/common/table';
+import { DataAction, IDataStrategy } from '$types/common/dataDisplay';
 
-import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { Organization } from '$models';
 import { date } from '$lib/utils/formatting';
 
 export class DefaultOrganizationTableStrategy
-  extends BaseTableStrategy<Organization>
-  implements TableStrategy<Organization>
+  extends BaseDataDisplayStrategy<Organization>
+  implements IDataStrategy<Organization>
 {
   defaultHeaders() {
     return [
@@ -16,7 +16,7 @@ export class DefaultOrganizationTableStrategy
     ];
   }
 
-  defaultActions(): TableAction<Organization>[] {
+  defaultActions(): DataAction<Organization>[] {
     return [];
   }
 }

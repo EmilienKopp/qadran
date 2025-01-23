@@ -1,18 +1,18 @@
-import type { TableAction, TableHeader, TableStrategy } from '$types/common/table';
+import type { DataAction, DataHeader, IDataStrategy } from '$types/common/dataDisplay';
 
-import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import type { Organization } from '$models';
 import { Trash2 } from 'lucide-svelte';
 import { date } from '$lib/utils/formatting';
 import { router } from '@inertiajs/svelte';
 
 export class FreelancerOrganizationTableStrategy
-  extends BaseTableStrategy<Organization>
-  implements TableStrategy<Organization>
+  extends BaseDataDisplayStrategy<Organization>
+  implements IDataStrategy<Organization>
 {
   
 
-  protected defaultHeaders(): TableHeader<Organization>[] {
+  protected defaultHeaders(): DataHeader<Organization>[] {
     return [
       { label: 'Name', key: 'name' },
       { label: 'Description', key: 'description' },
@@ -21,7 +21,7 @@ export class FreelancerOrganizationTableStrategy
     ];
   }
 
-  protected defaultActions(): TableAction<Organization>[] {
+  protected defaultActions(): DataAction<Organization>[] {
     return [
       {
         label: 'Edit',

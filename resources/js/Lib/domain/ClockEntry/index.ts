@@ -8,7 +8,6 @@ export class ClockEntry extends ClockEntryBase {
     nextEntry: Partial<ClockEntry>,
     latestEntry: ClockEntry | undefined
   ) {
-    console.log(latestEntry?.project_id, nextEntry?.project_id);
     if (!latestEntry?.out) {
       if (latestEntry?.project_id !== nextEntry?.project_id) {
         return 'Switch Project';

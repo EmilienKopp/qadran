@@ -1,19 +1,17 @@
-import {
-  BaseTableStrategy,
-  ExtendTableAction,
-  ExtendTableHeader,
-} from '$lib/domain/common/tableStrategy';
-import type { TableAction, TableHeader, TableStrategy } from '$types/common/table';
+import type { DataAction, DataHeader, IDataStrategy } from '$types/common/dataDisplay';
 
+import {
+  BaseDataDisplayStrategy
+} from '$lib/core/strategies/dataDisplayStrategy';
 import { InertiaForm } from '$lib/inertia';
 import { Project } from '..';
 import { Trash2 } from 'lucide-svelte';
 
 export class FreelancerProjectTableStrategy
-  extends BaseTableStrategy<Project>
-  implements TableStrategy<Project>
+  extends BaseDataDisplayStrategy<Project>
+  implements IDataStrategy<Project>
 {
-  defaultHeaders(): TableHeader<Project>[] {
+  defaultHeaders(): DataHeader<Project>[] {
     return [
       { key: 'name', label: 'Name', searchable: true },
       { key: 'description', label: 'Description', searchable: true },
@@ -21,7 +19,7 @@ export class FreelancerProjectTableStrategy
     ];
   }
 
-  defaultActions(): TableAction<Project>[] {
+  defaultActions(): DataAction<Project>[] {
     return [
       { label: 'Edit', href: (row: Project) => route('project.edit', row.id) },
       {

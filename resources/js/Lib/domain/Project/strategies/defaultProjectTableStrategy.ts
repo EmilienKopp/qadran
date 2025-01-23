@@ -1,12 +1,12 @@
-import { TableAction, TableStrategy } from '$types/common/table';
+import { DataAction, IDataStrategy } from '$types/common/dataDisplay';
 
-import { BaseTableStrategy } from '$lib/domain/common/tableStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { Project } from '$models';
 import { date } from '$lib/utils/formatting';
 
 export class DefaultProjectTableStrategy
-  extends BaseTableStrategy<Project>
-  implements TableStrategy<Project>
+  extends BaseDataDisplayStrategy<Project>
+  implements IDataStrategy<Project>
 {
   defaultHeaders() {
     return [
@@ -16,7 +16,7 @@ export class DefaultProjectTableStrategy
     ];
   }
 
-  defaultActions(): TableAction<Project>[] {
+  defaultActions(): DataAction<Project>[] {
     return [
       {
         label: 'View',
