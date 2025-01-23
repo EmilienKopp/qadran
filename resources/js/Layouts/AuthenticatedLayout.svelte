@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import Dropdown from '$components/Actions/Dropdown.svelte';
-  import ApplicationLogo from '$components/ApplicationLogo.svelte';
   import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
@@ -10,6 +9,8 @@
   import { fade } from 'svelte/transition';
   import RoleSwitcher from '$components/UI/RoleSwitcher.svelte';
   import Clock from '$components/UI/Clock.svelte';
+  import { NavigationContext } from '$lib/core/contexts/navigationContext';
+  import { RoleContext } from '$lib/stores/global/roleContext.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -20,6 +21,11 @@
 
   let showingNavigationDropdown = $state(false);
 
+  let context = $derived(new NavigationContext(RoleContext.selected));
+  let navigationElements = $derived(context.strategy.navigationElements());
+
+  console.log(navigationElements);
+
   const settingsDropdownActions: DropdownAction[] = [
     { text: 'Profile', href: route('profile.edit') },
     {
@@ -29,6 +35,7 @@
       as: 'button',
     },
   ];
+
 </script>
 
 <Toast show={false} />
@@ -50,21 +57,11 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              <NavLink href={'dashboard'} active={route().current('dashboard')}>
-                Dashboard
-              </NavLink>
-              <NavLink
-                href={route('project.index')}
-                active={route().current('project.index')}
-              >
-                Projects
-              </NavLink>
-              <NavLink
-                href={route('organization.index')}
-                active={route().current('organization.index')}
-              >
-                Organizations
-              </NavLink>
+              {#each navigationElements as nav} 
+                <NavLink href={nav.href} active={route().current(nav.href)}>
+                  {nav.name}
+                </NavLink>
+              {/each}
             </div>
           </div>
 
@@ -137,12 +134,11 @@
         class:hidden={!showingNavigationDropdown}
       >
         <div class="space-y-1 pb-3 pt-2">
-          <ResponsiveNavLink
-            href={route('dashboard')}
-            active={route().current('dashboard')}
-          >
-            Dashboard
-          </ResponsiveNavLink>
+          {#each navigationElements as nav} 
+            <ResponsiveNavLink href={nav.href} active={route().current(nav.href)}>
+              {nav.name}
+            </ResponsiveNavLink>
+          {/each}
         </div>
 
         <!-- Responsive Settings Options -->
