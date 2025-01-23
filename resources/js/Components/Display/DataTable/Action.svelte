@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { TableAction } from '$types/common/table';
+  import type { DataAction } from '$types/common/dataDisplay';
   import { Link } from '@inertiajs/svelte';
   import { twMerge } from 'tailwind-merge';
 
   interface Props {
-    actions: TableAction<any>[];
+    actions: DataAction<any>[];
     row: any;
   }
 
   let { actions, row }: Props = $props();
 </script>
 
-{#snippet buttonContent(action: TableAction<any>, row: any)}
+{#snippet buttonContent(action: DataAction<any>, row: any)}
   {#if action.icon}
     {@const SvelteComponent = action.icon(row)}
     <SvelteComponent class="w-4 h-4" />

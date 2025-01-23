@@ -3,11 +3,11 @@
 
   import { Highlighter } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
-  import type { TableHeader } from '$types/common/table';
+  import type { DataHeader } from '$types/common/dataDisplay';
 
   interface Props {
     row: any;
-    header: TableHeader<any>;
+    header: DataHeader<any>;
     searchStrings?: string[];
     onRowClick?: ((row: any) => void) | undefined;
   }

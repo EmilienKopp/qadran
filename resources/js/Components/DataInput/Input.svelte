@@ -26,7 +26,7 @@
   }: Props = $props();
 </script>
 
-<div class="form-control w-full mb-4">
+<div class="form-control w-full">
   {#if label}
     <InputLabel for={rest.id} {required}>{label}</InputLabel>
   {/if}
