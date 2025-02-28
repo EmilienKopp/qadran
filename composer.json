@@ -21,6 +21,9 @@
         "php-http/curl-client": "^2.3",
         "spatie/laravel-medialibrary": "^11.11",
         "spatie/laravel-permission": "^6.10",
+        "splitstack/laravel-enum-friendly": "dev-main",
+        "splitstack/laravel-metamon": "dev-main",
+        "splitstack/laravel-stashable": "dev-main",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
@@ -78,6 +81,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
