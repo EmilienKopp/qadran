@@ -6,6 +6,7 @@
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { RateTableContext } from '$lib/domain/Rate/context';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
+  import { caseInsensitiveIncludes } from '$lib/utils/strings';
   import type { Rate } from '$models';
 
   interface Props {
@@ -21,12 +22,12 @@
 
   function search(query: string) {
     filteredRates = rates.filter((rate) => {
-      return rate.organization?.name.includes(query) 
-      || rate.user?.first_name.includes(query) 
-      || rate.user?.last_name.includes(query) 
-      || rate.project?.name.includes(query)
-      || rate.rate_type?.name.includes(query)
-      || rate.amount == Number(query)
+      return caseInsensitiveIncludes(rate.organization?.name, query)
+        || caseInsensitiveIncludes(rate.user?.first_name, query)
+        || caseInsensitiveIncludes(rate.user?.last_name, query)
+        || caseInsensitiveIncludes(rate.project?.name, query)
+        || caseInsensitiveIncludes(rate.rate_type?.name, query)
+        || rate.amount == Number(query);
     });
   }
 
