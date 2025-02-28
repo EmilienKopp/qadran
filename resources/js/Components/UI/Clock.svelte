@@ -11,11 +11,11 @@
 </script>
 
 {#if clock.time}
-  <span class="countdown font-mono text-2xl">
+  <div class="countdown font-mono text-2xl w-36">
     <span style="--value:{clock.h};"></span>
     :
     <span style="--value:{clock.m};"></span>
     :
     <span style="--value:{clock.s};"></span>
-  </span>
+  </div>
 {/if}
