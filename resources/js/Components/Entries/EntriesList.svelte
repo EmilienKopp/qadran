@@ -29,6 +29,51 @@
   }
 </script>
 
+{#snippet listItem(entry: ClockEntry)}
+  <tr in:fade>
+    <td>
+      {#if entry.project}
+        <a href={route('project.show', entry.project.id)} class="text-blue-500">
+          {entry.project.name}
+        </a>
+      {:else}
+        No project
+      {/if}
+    </td>
+    <td>{time(entry.in)}</td>
+    <td>{time(entry.out) || '-'}</td>
+    <td class="w-32">
+        {entry.out ? timespan(entry.in, entry.out) : clock.since(entry.in)}
+    </td>
+    <td>
+      <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)} />
+    </td>
+  </tr>
+{/snippet}
+
+<table class="w-full">
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>In</th>
+      <th>Out</th>
+      <th>Duration</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {#if !entries?.length}
+      <tr>
+        <td colspan="5">No entries yet</td>
+      </tr>
+    {:else}
+      {#each entries! as entry}
+        {@render listItem(entry)}
+      {/each}
+    {/if}
+  </tbody>
+</table>
+
 <style>
   table {
     border-collapse: collapse;
@@ -58,46 +103,3 @@
     cursor: pointer;
   }
 </style>
-
-{#snippet listItem(entry: ClockEntry)}
-  <tr in:fade>
-    <td>
-      {#if entry.project}
-        <a href={route('project.show', entry.project.id)} class="text-blue-500">
-          {entry.project.name}
-        </a>
-      {:else}
-        No project
-      {/if}
-    </td>
-    <td>{time(entry.in)}</td>
-    <td>{time(entry.out) || '-'}</td>
-    <td>{entry.out ? timespan(entry.in, entry.out) : clock.since(entry.in)}</td>
-    <td>
-      <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)} />
-    </td>
-  </tr>
-{/snippet}
-
-<table class="w-full">
-  <thead>
-    <tr>
-      <th>Project</th>
-      <th>In</th>
-      <th>Out</th>
-      <th>Duration</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {#if !entries?.length}
-      <tr>
-        <td colspan="5">No entries yet</td>
-      </tr>
-    {:else}
-      {#each entries! as entry}
-        {@render listItem(entry)}
-      {/each}
-    {/if}
-  </tbody>
-</table>
