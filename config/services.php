@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'ai' => [
+        'key' => env('AI_API_KEY'),
+        'base_url' => env('AI_BASE_URL'),
+        'version' => env('AI_VERSION', 'v1'),
+        'endpoint' => env('AI_ENDPOINT', 'messages'),
+    ],
+
 ];
