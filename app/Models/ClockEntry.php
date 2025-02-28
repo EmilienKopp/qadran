@@ -28,6 +28,11 @@ class ClockEntry extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
     public function scopeToday($query)
     {
         return $query->whereDate('in', now());
@@ -65,6 +70,9 @@ class ClockEntry extends Model
 
     protected function in(): Attribute
     {
+        if (!$this->timezone) {
+            $this->timezone = config('app.timezone');
+        }
         return Attribute::make(
             get: fn($value) => 
                 isset($value) 
@@ -77,6 +85,9 @@ class ClockEntry extends Model
 
     protected function out(): Attribute
     {
+        if(!$this->timezone) {
+            $this->timezone = config('app.timezone');
+        }
         return Attribute::make(
             get: fn($value) => 
                 isset($value) 
@@ -89,6 +100,9 @@ class ClockEntry extends Model
 
     protected function date(): Attribute
     {
+        if (!$this->timezone) {
+            $this->timezone = config('app.timezone');
+        }
         return Attribute::make(
             get: fn($value) => 
                 Carbon::parse($value)

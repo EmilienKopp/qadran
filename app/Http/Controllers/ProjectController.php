@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrganizationType;
+use App\Domain\Project\ProjectCost;
+use App\Domain\Project\ProjectActivitySummary;
 use App\Enums\ProjectStatus;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
@@ -56,6 +57,11 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        $costManager = new ProjectCost($project);
+        $taskManager = new ProjectActivitySummary($project);
+        $cost = $costManager->calculateCost();
+        $summary = $taskManager->getActivityLogs();
+
         return inertia('Project/Edit', [
             'project' => Inertia::always($project),
             'statusOptions' => Inertia::always(ProjectStatus::toSelectOptions()),
