@@ -3,7 +3,6 @@
   import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
-  import { user } from '$lib/stores';
   import type { DropdownAction, HTTPMethod } from '$types/index';
   import { Link, page } from '@inertiajs/svelte';
   import { fade } from 'svelte/transition';
@@ -11,6 +10,7 @@
   import Clock from '$components/UI/Clock.svelte';
   import { NavigationContext } from '$lib/core/contexts/navigationContext';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
+  import { appUser } from '$lib/stores/global/user.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -73,7 +73,7 @@
               <Dropdown actions={settingsDropdownActions}>
                 {#snippet trigger()}
                   <span class="inline-flex rounded-md items-center">
-                    {$page.props.auth.user.name}
+                    {appUser('shortName')}
                     <svg
                       class="-me-0.5 ms-2 h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"
@@ -145,10 +145,10 @@
         <div class="border-t border-gray-200 pb-1 pt-4">
           <div class="px-4">
             <div class="text-base font-medium text-gray-800">
-              {$user.name}
+              {appUser('name')}
             </div>
             <div class="text-sm font-medium text-gray-500">
-              {$user.email}
+              {appUser('email')}
             </div>
           </div>
 
