@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum BudgetStatus: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
 
     case Draft = 'draft';
     case Approved = 'approved';

@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum RateTypeScope: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
     case Organization = 'organization';
     case Project = 'project';
     case User = 'user';

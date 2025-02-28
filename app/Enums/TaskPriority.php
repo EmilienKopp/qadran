@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum TaskPriority: int
 {
-    use ExtendEnums;
+    use ExtendedEnum;
     case None = 0;
     case Low = 1;
     case Medium = 2;

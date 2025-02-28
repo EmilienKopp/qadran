@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum RateType: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
 
     case Standard = 'standard';
     case Overtime = 'overtime';
