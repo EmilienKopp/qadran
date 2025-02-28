@@ -30,15 +30,4 @@ export class FreelancerProjectTableStrategy
       },
     ];
   }
-
-  setFilters(
-    filters: {
-      key: string;
-      filterHandler:
-        | ((row: Project, form: InertiaForm<any>) => boolean)
-        | undefined;
-    }[]
-  ): void {
-    super.setFilters(filters);
-  }
 }
