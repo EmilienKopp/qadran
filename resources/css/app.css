@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 
-@plugin '@tailwindcss/forms';
-@plugin "daisyui" {
+@plugin 'daisyui' {
   themes: lofi;
-}
+};
+@plugin '@tailwindcss/forms';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../resources/js/**/*.svelte';
 
 @theme {
   --font-sans:
@@ -28,5 +29,17 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+  
+  /* Ensure DaisyUI input styles override Tailwind Forms plugin */
+  .input {
+    border-width: var(--border, 1px);
+    border-color: var(--color-base-300, currentcolor);
+  }
+  
+  .input:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: var(--color-primary, currentcolor);
   }
 }

@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->clockEntries()->today()->orderBy('created_at', 'desc');
     }
 
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

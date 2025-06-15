@@ -1,7 +1,4 @@
-import { Organization, Project, Rate, RateType, User } from '$models';
-
-import { router } from '@inertiajs/svelte';
-import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
+import { RateType, Organization, Project, User, Rate } from '$models';
 
 export class RateBase implements Rate {
     id: number;
@@ -27,17 +24,14 @@ export class RateBase implements Rate {
     created_at?: Date | string;
     updated_at?: Date | string;
 
+
     constructor(data: Rate) {
         this.id = data.id;
         this.rate_type_id = data.rate_type_id;
-        this.rate_type = data.rate_type;
         this.rate_frequency = data.rate_frequency;
         this.organization_id = data.organization_id;
-        this.organization = data.organization;
         this.project_id = data.project_id;
-        this.project = data.project;
         this.user_id = data.user_id;
-        this.user = data.user;
         this.amount = data.amount;
         this.currency = data.currency;
         this.overtime_multiplier = data.overtime_multiplier;
@@ -51,16 +45,4 @@ export class RateBase implements Rate {
         this.created_at = data.created_at;
         this.updated_at = data.updated_at;
     }
-
-    static async delete(rate: Rate) {
-        router.delete(route('rate.destroy', rate.id), {
-            onSuccess: () => {
-                toaster.success('Rate deleted successfully');
-            },
-            onError: (errors: Record<string, string>) => {
-                toaster.error('An error occurred while deleting the rate');
-                console.log(errors);
-            },
-        });
-    }
-} 
+}

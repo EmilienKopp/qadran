@@ -39,6 +39,7 @@ export interface ClockEntry {
     updated_at?: Date | string;
     duration_seconds?: number;
     rate_id?: number;
+    rate?: Rate;
     applied_rate?: number;
     currency: string;
     amount?: number;
@@ -93,6 +94,7 @@ export interface Project {
     metadata?: any;
     created_at?: Date | string;
     updated_at?: Date | string;
+    deleted_at?: Date | string;
 }
 
 export interface ProjectUser {
@@ -102,6 +104,59 @@ export interface ProjectUser {
     user_id: number;
     user?: User;
     roles: any;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
+export interface Rate {
+    id: number;
+    rate_type_id: number;
+    rate_type?: RateType;
+    rate_frequency: string;
+    organization_id?: number;
+    organization?: Organization;
+    project_id?: number;
+    project?: Project;
+    user_id?: number;
+    user?: User;
+    amount: number;
+    currency: string;
+    overtime_multiplier: number;
+    holiday_multiplier: number;
+    special_multiplier: number;
+    custom_multiplier_rate?: number;
+    custom_multiplier_label?: string;
+    is_default: boolean;
+    effective_from?: Date | string;
+    effective_until?: Date | string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
+export interface RateType {
+    id: number;
+    name: string;
+    description?: string;
+    scope: string;
+    organization_id?: number;
+    organization?: Organization;
+    project_id?: number;
+    project?: Project;
+    user_id?: number;
+    user?: User;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
+export interface Report {
+    id: number;
+    user_id: number;
+    user?: User;
+    title?: string;
+    content?: string;
+    report_type: string;
+    original_log?: string;
+    aggregated_diff?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
 }
@@ -191,50 +246,6 @@ export interface User {
     website?: string;
     github?: string;
     dashboard_preferences?: any;
-    roles?: Role[];
-    organizations?: Organization[];
-    todays_entries?: ClockEntry[];
-    projects?: Project[];
 }
 
-export interface Rate {
-    id: number;
-    rate_type_id: number;
-    rate_type?: RateType;
-    rate_frequency: string;
-    organization_id?: number;
-    organization?: Organization;
-    project_id?: number;
-    project?: Project;
-    user_id?: number;
-    user?: User;
-    amount: number;
-    currency: string;
-    overtime_multiplier: number;
-    holiday_multiplier: number;
-    special_multiplier: number;
-    custom_multiplier_rate?: number;
-    custom_multiplier_label?: string;
-    is_default: boolean;
-    effective_from?: Date | string;
-    effective_until?: Date | string;
-    created_at?: Date | string;
-    updated_at?: Date | string;
-}
-
-export interface RateType {
-    id: number;
-    name: string;
-    description?: string;
-    scope: string;
-    organization_id?: number;
-    organization?: Organization;
-    project_id?: number;
-    project?: Project;
-    user_id?: number;
-    user?: User;
-    created_at?: Date | string;
-    updated_at?: Date | string;
-}
-
-export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User | Rate | RateType;
+export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Rate | RateType | Report | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;

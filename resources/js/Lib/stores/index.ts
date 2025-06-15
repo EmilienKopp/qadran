@@ -25,7 +25,7 @@ export const props = derived([page], ([$page]: any) => {
 /**
  * Holds all the enums from the backend as a Record of string[]
  */
-export const enums: Readable<Record<string, string[]>> = derived(
+export const enums: Readable<Record<string, {label:string; value: string;}[]>> = derived(
   [page],
   ([$page]: any) => {
     return $page.props.enums;

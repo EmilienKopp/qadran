@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'enums' => [
                 'roles' => \App\Enums\RoleEnum::toSelectOptions(),
+                'report_types' => \App\Enums\ReportTypes::toSelectOptions(),
             ],
         ];
     }

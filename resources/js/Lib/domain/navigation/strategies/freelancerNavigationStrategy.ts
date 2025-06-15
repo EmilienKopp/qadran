@@ -22,6 +22,10 @@ export class FreelancerNavigationStrategy extends DefaultNavigationStrategy {
         name: 'Rates',
         href: route('rate.index'),
         active: false,
+      },
+      {
+        name: 'Reports',
+        href: route('report.index'),
       }
     ];
   }

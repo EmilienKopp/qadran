@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
+use App\Http\Controllers\GitReportController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -71,6 +73,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/{rate}/edit', [RateController::class, 'edit'])->name('rate.edit');
         Route::patch('/{rate}', [RateController::class, 'update'])->name('rate.update');
         Route::delete('/{rate}', [RateController::class, 'destroy'])->name('rate.destroy');
+    });
+
+
+    Route::group(['prefix' => 'report'], function () {
+        Route::get('/', [ReportController::class, 'index'])->name('report.index');
+        Route::get('/create', [ReportController::class, 'create'])->name('report.create');
+        Route::post('/store', [ReportController::class, 'store'])->name('report.store');
+        Route::post('/generate', [ReportController::class, 'generate'])->name('report.generate');
+        Route::get('/{report}', [ReportController::class, 'show'])->name('report.show');
+        Route::get('/{report}/edit', [ReportController::class, 'edit'])->name('report.edit');
+        Route::patch('/{report}', [ReportController::class, 'update'])->name('report.update');
+        Route::delete('/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
     });
 
 });
