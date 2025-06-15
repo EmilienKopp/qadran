@@ -35,18 +35,19 @@
 
 <AuthenticatedLayout>
   <Header>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      Edit {report.name}
+    <h2 class="font-semibold text-xl leading-tight">
+      Edit {report.title}
     </h2>
   </Header>
 
   <div class="p-8">
     <form onsubmit={handleSubmit} class="grid grid-cols-1 gap-4">
-      <Input label="Name" name="name" bind:value={$form.name} />
+      <Input label="Title" name="title" bind:value={$form.title} />
       <Textarea
-        label="Description"
-        name="description"
-        bind:value={$form.description}
+        label="Content"
+        name="content"
+        class="w-full h-64"
+        bind:value={$form.content}
       />
       <Button>Update Report</Button>
     </form>

@@ -16,7 +16,7 @@
         "laravel/prompts": "^0.3.2",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.11",
-        "laravel/socialite": "^5.16",
+        "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.9",
         "php-http/curl-client": "^2.3",
         "prism-php/prism": "^0.71.1",

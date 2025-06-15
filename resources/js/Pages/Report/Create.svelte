@@ -11,22 +11,33 @@
   import { router } from '@inertiajs/svelte';
   import { enums } from '$lib/stores';
   import FloatingFormBar from '$components/FloatingFormBar/FloatingFormBar.svelte';
-  import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
+  import {
+    adjectives,
+    animals,
+    uniqueNamesGenerator,
+  } from 'unique-names-generator';
 
   interface Props {
     content?: string;
+    repositories?: any[];
+    branches?: any[];
   }
 
-  let { content }: Props = $props();
+  let { content, repositories, branches }: Props = $props();
+  const dummyTitle = uniqueNamesGenerator({
+    dictionaries: [adjectives, animals],
+    length: 2,
+    separator: ' ',
+  });
 
   const form = superUseForm<Report>({
-    title: uniqueNamesGenerator({
-      dictionaries: [adjectives, animals],
-      length: 2,
-      separator: ' ',
-    }),
+    title: dummyTitle,
     content: content || '',
-    report_type: $enums.report_types[0].value,
+    repository: undefined,
+    since: undefined,
+    until: undefined,
+    branch: undefined,
+    report_type: undefined,
     original_log: `8f72be8 (HEAD -> main, origin/main, origin/HEAD) refactor: update daisyui plugin configuration for theme support        
 60dbad0 chore: remove tailwind.config.js file
 e8bf021 chore: tailwind-upgrade
@@ -39,6 +50,14 @@ ba4c31d chore: update daisyui version and refactor app.css imports
   });
 
   let loading = $state(false);
+  let filteredBranches = $derived((branches?.[$form.repository] || []).map((branch) => ({
+    value: branch.name,
+    name: branch.name,
+  })));
+  let title = $derived.by(() => {
+    if(!$form.repository) return dummyTitle;
+    return `${$form.repository} - ${$form.branch || 'default branch'} Report (${new Date().toLocaleDateString()})`;
+  });
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
@@ -57,60 +76,132 @@ ba4c31d chore: update daisyui version and refactor app.css imports
   async function handleGenerate() {
     loading = true;
     console.log('Handling report generation with git log:', $form.original_log);
-    $form.post(
-      route('report.generate'),
-      {
-        onSuccess: (event: any) => {
-          toaster.success('Summary generated successfully');
-          console.log('Generated report:', event);
-          $form.content = event.props?.content || '';
-          console.log('Generated content:', $form?.content);
-        },
-        onError: (errors: Record<string, string>) => {
-          toaster.error('Failed to generate report');
-          console.log(errors);
-        },
-        onFinish: () => {
-          loading = false;
-        },
-        preserveUrl: true,
-        preserveState: true,
-        preserveScroll: true,
-      }
-    );
+    $form.post(route('report.generate'), {
+      onSuccess: (event: any) => {
+        toaster.success('Summary generated successfully');
+        console.log('Generated report:', event);
+        $form.content = event.props?.content || '';
+        console.log('Generated content:', $form?.content);
+      },
+      onError: (errors: Record<string, string>) => {
+        toaster.error('Failed to generate report');
+        console.log(errors);
+      },
+      onFinish: () => {
+        loading = false;
+      },
+      preserveUrl: true,
+      preserveState: true,
+      preserveScroll: true,
+    });
   }
 
-  $effect(() => {
-    // display $form.progress percentage every 10%
-    if ($form.progress?.percentage && $form.progress.percentage % 10 === 0) {
-      console.log(`Progress: ${$form.progress.percentage}%`);
-    }
-  })
+  async function handleFetchCommits() {
+    $form.post(route('report.fetch-commits'), {
+      onSuccess: (event: any) => {
+        toaster.success('Commits fetched successfully');
+        console.log('Fetched commits:', event);
+      },
+      onError: (errors: Record<string, string>) => {
+        toaster.error('Failed to fetch commits');
+        console.log(errors);
+      },
+      preserveUrl: true,
+      preserveState: true,
+      preserveScroll: true,
+      only: ['logs'],
+    });
+  }
 </script>
 
 <AuthenticatedLayout>
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="max-w-4xl mx-auto p-6 pb-12">
     <form onsubmit={handleSubmit} class="flex flex-col space-y-6">
       <!-- Header Section -->
       <div class="card">
         <div class="card-body">
-          <Header title="Create Report">
-          </Header>
+          <Header title="Create Report"></Header>
         </div>
       </div>
 
-      <!-- Report Title -->
+      <!-- Report Details -->
       <div class="card">
         <div class="card-body">
           <h3 class="card-title text-lg mb-4">Report Details</h3>
           <Input
             label="Report Title"
             name="title"
-            bind:value={$form.title}
+            bind:value={title}
             placeholder="Enter a descriptive title for your report"
             class="input-lg"
             error={$form.errors.title}
           />
+
+          <div class="flex flex-col md:flex-row gap-4 mt-4">
+            <Select
+              options={repositories?.map((repo) => ({
+                value: repo.name,
+                name: repo.name,
+              }))}
+              name="repository"
+              placeholder="Select a repository"
+              bind:value={$form.repository}
+              class="select select-bordered w-full max-w-xs mt-4"
+              error={$form.errors.repository}
+            />
+            <Select
+              options={filteredBranches}
+              name="branch"
+              placeholder="Select a branch"
+              bind:value={$form.branch}
+              class="select select-bordered w-full max-w-xs mt-4"
+              error={$form.errors.branch}
+            />
+          </div>
+
+          <!-- Commit Range selection (since/until) -->
+          <div class="form-control mt-4">
+            <label class="label">
+              <span class="label-text">Commit Range</span>
+            </label>
+            <div class="flex gap-4">
+              <Input
+                type="date"
+                name="since"
+                bind:value={$form.since}
+                placeholder="Since (optional)"
+                class="input input-bordered w-full max-w-xs"
+              />
+              <Input
+                type="date"
+                name="until"
+                bind:value={$form.until}
+                placeholder="Until (optional)"
+                class="input input-bordered w-full max-w-xs"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn btn-secondary mt-2"
+              onclick={handleFetchCommits}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+              Fetch Commits
+            </button>
+          </div>
         </div>
       </div>
 
@@ -152,10 +243,10 @@ ba4c31d chore: update daisyui version and refactor app.css imports
             </div>
           </div>
 
-          <div class="card-actions justify-end mt-4">
-            <Select 
-              label="Report Type"
+          <div class="card-actions justify-end items-center mt-4">
+            <Select
               name="report_type"
+              placeholder="Select report type"
               bind:value={$form.report_type}
               options={$enums.report_types}
               class="select select-bordered w-full max-w-xs"
@@ -254,12 +345,16 @@ ba4c31d chore: update daisyui version and refactor app.css imports
       </div>
 
       <!-- Action Buttons -->
-      <FloatingFormBar errors={$form.errors} >
-        <Button type="button" class="btn-ghost" onclick={() => $form.reset()}>Cancel</Button>
+      <FloatingFormBar errors={$form.errors}>
+        <Button type="button" class="btn-ghost" onclick={() => $form.reset()}
+          >Cancel</Button
+        >
         <Button
           type="submit"
           class="btn-primary"
-          disabled={!$form?.title?.trim() || !$form?.content?.trim() || $form.processing}
+          disabled={!$form?.title?.trim() ||
+            !$form?.content?.trim() ||
+            $form.processing}
         >
           Save Report
         </Button>

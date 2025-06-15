@@ -13,9 +13,8 @@ export class FreelancerReportTableStrategy
 {
   defaultHeaders(): DataHeader<Report>[] {
     return [
-      { key: 'name', label: 'Name', searchable: true },
-      { key: 'description', label: 'Description', searchable: true },
-      { key: 'organization.name', label: 'Organization', searchable: true },
+      { key: 'title', label: 'Title', searchable: true },
+      { key: 'created_at', label: 'Created At' },
     ];
   }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Services\GitHubService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\AIService;
@@ -54,7 +55,25 @@ class ReportController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Report/Create');
+        $gh = GitHubService::forUser(auth()->id());
+        $repositories = $gh->getRepositories();
+        $branches = collect();
+        foreach ($repositories as $repo) {
+            try {
+                $branches[$repo['name']] = $gh->getBranches($repo['name']);
+            } catch (\Exception $e) {
+                \Log::error('Failed to fetch branches for repository', [
+                    'repository' => $repo['name'],
+                    'error' => $e->getMessage(),
+                ]);
+                $branches[$repo['name']] = collect(); // Fallback to empty collection
+            }
+        }
+
+        return Inertia::render('Report/Create', [
+            'repositories' => $repositories,
+            'branches' => $branches,
+        ]);
     }
 
     /**
@@ -81,6 +100,30 @@ class ReportController extends Controller
         ]);
     }
 
+    public function fetchCommits(Request $request)
+    {
+        $validated = $request->validate([
+            'repository' => 'required|string',
+            'branch' => 'required|string',
+            'since' => 'nullable|date',
+            'until' => 'nullable|date',
+        ]);
+
+        $gh = GitHubService::forUser(auth()->id());
+        $logRequest = new \App\DTOs\GitLogRequest(
+            repository: $validated['repository'],
+            branch: $validated['branch'],
+            since: isset($validated['since']) ? \Carbon\Carbon::parse($validated['since']) : now()->subDay(),
+            until: isset($validated['until']) ? \Carbon\Carbon::parse($validated['until']) : now(),
+            author: auth()->user()->gitHubConnection?->username ?? null,
+        );
+        $logs = $gh->getGitLogs($logRequest);
+
+        return Inertia::render('Report/Create', [
+            'logs' => $logs
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -94,7 +137,9 @@ class ReportController extends Controller
      */
     public function edit(Report $report)
     {
-        //
+        return Inertia::render('Report/Edit', [
+            'report' => $report,
+        ]);
     }
 
     /**
