@@ -92,7 +92,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
   <div class="max-w-4xl mx-auto p-6">
     <form onsubmit={handleSubmit} class="flex flex-col space-y-6">
       <!-- Header Section -->
-      <div class="card bg-base-100 shadow-sm border border-base-300">
+      <div class="card">
         <div class="card-body">
           <Header title="Create Report">
           </Header>
@@ -100,7 +100,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
       </div>
 
       <!-- Report Title -->
-      <div class="card bg-base-100 shadow-sm border border-base-300">
+      <div class="card">
         <div class="card-body">
           <h3 class="card-title text-lg mb-4">Report Details</h3>
           <Input
@@ -115,7 +115,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
       </div>
 
       <!-- Git Log Section -->
-      <div class="card bg-base-100 shadow-sm border border-base-300">
+      <div class="card">
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <h3 class="card-title text-lg">Git Log Input</h3>
@@ -194,7 +194,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
       </div>
 
       <!-- Generated Content Section -->
-      <div class="card bg-base-100 shadow-sm border border-base-300">
+      <div class="card">
         <div class="card-body">
           <div class="flex items-center justify-between mb-4">
             <h3 class="card-title text-lg">Generated Report Content</h3>
@@ -253,14 +253,12 @@ ba4c31d chore: update daisyui version and refactor app.css imports
         </div>
       </div>
 
-      <button class="btn btn-error" type="button">ERROR</button>
-
       <!-- Action Buttons -->
       <FloatingFormBar errors={$form.errors} >
-        <Button type="button" class="btn-ghost btn-lg" onclick={() => $form.reset()}>Cancel</Button>
+        <Button type="button" class="btn-ghost" onclick={() => $form.reset()}>Cancel</Button>
         <Button
           type="submit"
-          class="btn-primary btn-lg"
+          class="btn-primary"
           disabled={!$form?.title?.trim() || !$form?.content?.trim() || $form.processing}
         >
           Save Report

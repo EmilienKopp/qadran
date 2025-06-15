@@ -146,7 +146,7 @@
 </script>
 
 <div 
-  class="card fixed! bottom-12 left-1/2 -translate-x-1/2 max-w-[600px] w-[calc(100%-2rem)] z-[999] bg-zinc-200 dark:bg-zinc-800 border-0 shadow-lg transition-all duration-300 relative overflow-hidden"
+  class="card fixed! bottom-12 left-1/2 -translate-x-1/2 max-w-[600px] w-[calc(100%-2rem)] z-[999] bg-transparent dark:border dark:border-zinc-300 shadow-lg dark:shadow-slate-600/20 transition-all duration-300 relative overflow-hidden"
 >
   <!-- Progress overlay -->
   {#if currentProgress > 0}
