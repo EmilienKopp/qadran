@@ -59,7 +59,7 @@
 
 {#if toaster.showing}
   <div
-    class="toast toast-top toast-end z-[999] mt-16"
+    class="toast toast-top toast-end z-999 mt-16"
     in:fly={{ x: 100 }}
     out:fly={{ x: 100 }}
   >

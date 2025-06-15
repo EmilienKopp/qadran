@@ -35,7 +35,7 @@
 <AuthenticatedLayout>
   <div class="py-12 w-full">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
-      <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-full">
+      <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg w-full">
         <div
           class="p-6 text-gray-900 flex flex-col items-center justify-between w-full"
         >

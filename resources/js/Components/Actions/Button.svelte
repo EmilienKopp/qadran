@@ -29,7 +29,7 @@
         'btn-primary': variant === 'primary',
         'btn-secondary': variant === 'secondary',
         'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline',
+        'btn-outline': variant === 'outline-solid',
         'btn-link': variant === 'link',
       }),
       rest.class
@@ -48,7 +48,7 @@
         'btn-primary': variant === 'primary',
         'btn-secondary': variant === 'secondary',
         'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline',
+        'btn-outline': variant === 'outline-solid',
         'btn-link': variant === 'link',
       }),
       rest.class

@@ -97,7 +97,7 @@
             <button
               onclick={() =>
                 (showingNavigationDropdown = !showingNavigationDropdown)}
-              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-hidden"
             >
               <svg
                 class="h-6 w-6"
@@ -166,7 +166,7 @@
 
     <!-- Page Heading -->
     {#if header}
-      <header class="bg-white shadow sticky top-0 z-10">
+      <header class="bg-white shadow-sm sticky top-0 z-10">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {@render header?.()}
         </div>

@@ -13,6 +13,6 @@
     name="role"
     bind:value={RoleContext.selected}
     options={asSelectOptions(RoleContext.available)}
-    class="select-primary select w-full bg-white shadow-sm transition-all hover:shadow-md"
+    class="select-primary select w-full bg-white shadow-xs transition-all hover:shadow-md"
   />
 </div>
