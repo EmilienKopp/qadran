@@ -14,8 +14,8 @@
   let { report }: Props = $props();
 
   const headers = [
-    { key: "name", label: "Name" },
-    { key: "description", label: "Description" },
+    { key: "title", label: "Title" },
+    { key: "content", label: "Content" },
     { key: "created_at", label: "Created At", formatter: date },
     { key: "updated_at", label: "Updated At", formatter: date },
   ];
@@ -24,7 +24,7 @@
 <AuthenticatedLayout>
   <Header>
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {report.name}
+      {report.title}
       
       <Button type="button" href={route('report.edit', report.id)} class="ml-4">
         Edit

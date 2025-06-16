@@ -19,15 +19,16 @@ class AIService
     and will be suitable for stakeholders to understand what features or tasks were completed without needing to know the technical.
     Tasks might be things like "Bug fixes on feature X", "Implemented feature Y", "Refactored code for better performance", etc... and
     will NOT include file names, class names, or any other technical jargon that a non-technical stakeholder would not understand or care about.
+    If the logs have dates, you will summarize the work done **PER DAY**, and if the logs do not have dates, you will summarize the work done in a single report.
   ';
   private string $dev_prompt = 'You will generate a report of development activity based on this git log text output. The report will be concise, informative, easy to read at a glance. t will **NOT** contain commit information.';
 
   private string $non_tech_prompt = 'You will generate a non-tech stakeholder friendly report of activity based on this git log text output. The report will be concise, informative, easy to read at a glance. It will **NOT** contain commit information,
     but rather describe the work in terms of features and tasks worked on.
   ';
-  public function generateGitSummary(?string $log, ?string $prompt = null, ReportTypes|string $reportType = ReportTypes::TASK_BASED)
+  public function generateGitSummary(?string $log, ?string $prompt = null, ReportTypes|string|null $reportType = ReportTypes::TASK_BASED)
   {
-    if (!$reportType instanceof ReportTypes) {
+    if ($reportType && !$reportType instanceof ReportTypes) {
       $reportType = ReportTypes::from($reportType);
     }
     switch($reportType) {

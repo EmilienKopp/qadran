@@ -16,6 +16,7 @@
     animals,
     uniqueNamesGenerator,
   } from 'unique-names-generator';
+  import { datetime } from '$lib/utils/formatting';
 
   interface Props {
     content?: string;
@@ -37,16 +38,8 @@
     since: undefined,
     until: undefined,
     branch: undefined,
-    report_type: undefined,
-    original_log: `8f72be8 (HEAD -> main, origin/main, origin/HEAD) refactor: update daisyui plugin configuration for theme support        
-60dbad0 chore: remove tailwind.config.js file
-e8bf021 chore: tailwind-upgrade
-ba4c31d chore: update daisyui version and refactor app.css imports
-8bfed12 refactor: utilize caseInsensitiveIncludes utility for improved search functionality
-41f04c6 refactor: replace user store with appUser utility for improved user data access
-66fe5c7 fix: change countdown element from span to div for better layout control
-217bf96 refactor: reorganize styles in EntriesList component for better readability
-4fa509c feat: implement AppUser class and utility function for accessing current user data`,
+    report_type: 'task_based',
+    original_log: '',
   });
 
   let loading = $state(false);
@@ -61,7 +54,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
-
+    $form.title = title;
     $form.post(route('report.store'), {
       onSuccess: (event: any) => {
         toaster.success('Report created successfully');
@@ -101,6 +94,9 @@ ba4c31d chore: update daisyui version and refactor app.css imports
       onSuccess: (event: any) => {
         toaster.success('Commits fetched successfully');
         console.log('Fetched commits:', event.props.logs.commits);
+        $form.original_log = event.props.logs.commits.map((commit: any) => {
+          return `${datetime(commit.date)} ${commit.message}`;
+        }).join('\n');
       },
       onError: (errors: Record<string, string>) => {
         toaster.error('Failed to fetch commits');
