@@ -19,7 +19,7 @@ class GitHubService
     private const CACHE_TTL = 300; // 5 minutes
 
     public function __construct(
-        public GitHubConnection $connection
+        private GitHubConnection $connection
     ) {}
 
     /**
@@ -171,9 +171,9 @@ class GitHubService
         $since = $request->since ? $request->since->utc()->toISOString() : null;
         $until = $request->until ? $request->until->utc()->toISOString() : null;
         $params = [
-            'sha' => 'main',
-            'since' => now()->subDays(1),
-            'until' => now(),
+            'sha' => $request->branch,
+            'since' => $since,
+            'until' => $until,
             'per_page' => 100,
         ];
 
@@ -189,7 +189,6 @@ class GitHubService
         do {
             $params['page'] = $page;
             $response = $this->makeGitHubRequest("/repos/{$owner}/{$request->repository}/commits", $params);
-            dd($owner, $request->repository,$params,$response->json());
             if (!$response->successful()) {
                 throw new \Exception('Failed to fetch commits');
             }

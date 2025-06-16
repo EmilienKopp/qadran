@@ -122,32 +122,6 @@ Route::middleware('auth')->group(function () {
             ->name('github.status');
     });
 
-    // Add this temporary route to test
-    Route::get('/test-git-logs', function () {
-        $service = GitHubService::forUser(auth()->id());
-
-        // Test 1: Without date filters (should work)
-        $request1 = new GitLogRequest(
-            repository: 'qadran',
-            branch: 'main',
-            since: now()->subDays(1),
-            until: now(),
-        );
-
-        $result1 = $service->getGitLogs($request1);
-
-        return [
-            'with_dates' => [
-                'count' => $result1->totalCount,
-                'date_from' => $request1->since->toISOString(),
-                'date_to' => $request1->until->toISOString(),
-                'commits' => $result1->commits->take(3)->map(fn($c) => [
-                    'message' => $c->message,
-                    'date' => $c->date->toISOString()
-                ])
-            ]
-        ];
-    });
 });
 
 require __DIR__ . '/auth.php';
