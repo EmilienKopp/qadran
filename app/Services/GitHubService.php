@@ -19,7 +19,7 @@ class GitHubService
     private const CACHE_TTL = 300; // 5 minutes
 
     public function __construct(
-        private GitHubConnection $connection
+        public GitHubConnection $connection
     ) {}
 
     /**
@@ -111,9 +111,10 @@ class GitHubService
         $cacheKey = "github_repos_{$this->connection->id}";
         $owner = $this->connection->username;
         
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use($owner) {
+        // return Cache::remember($cacheKey, self::CACHE_TTL, function () use($owner) {
             $response = $this->makeGitHubRequest("/users/{$owner}/repos", [
                 'sort' => 'updated',
+                'direction' => 'desc',
                 'per_page' => 100,
             ]);
 
@@ -130,7 +131,7 @@ class GitHubService
                     'updated_at' => $repo['updated_at'],
                 ];
             });
-        });
+        // });
     }
 
     /**
@@ -167,10 +168,12 @@ class GitHubService
      */
     private function fetchCommits(GitLogRequest $request): Collection
     {
+        $since = $request->since ? $request->since->utc()->toISOString() : null;
+        $until = $request->until ? $request->until->utc()->toISOString() : null;
         $params = [
-            'sha' => $request->branch,
-            'since' => $request->since ? $request->since->toISOString() : null,
-            'until' => $request->until ? $request->until->toISOString() : null,
+            'sha' => 'main',
+            'since' => now()->subDays(1),
+            'until' => now(),
             'per_page' => 100,
         ];
 
@@ -182,10 +185,11 @@ class GitHubService
         $allCommits = collect();
         $page = 1;
 
+
         do {
             $params['page'] = $page;
             $response = $this->makeGitHubRequest("/repos/{$owner}/{$request->repository}/commits", $params);
-
+            dd($owner, $request->repository,$params,$response->json());
             if (!$response->successful()) {
                 throw new \Exception('Failed to fetch commits');
             }

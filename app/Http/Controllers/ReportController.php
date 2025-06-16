@@ -113,8 +113,8 @@ class ReportController extends Controller
         $logRequest = new \App\DTOs\GitLogRequest(
             repository: $validated['repository'],
             branch: $validated['branch'],
-            since: isset($validated['since']) ? \Carbon\Carbon::parse($validated['since']) : now()->subDay(),
-            until: isset($validated['until']) ? \Carbon\Carbon::parse($validated['until']) : now(),
+            since: isset($validated['since']) ? \Carbon\Carbon::parse($validated['since']) : null,
+            until: isset($validated['until']) ? \Carbon\Carbon::parse($validated['until']) : null,
             author: auth()->user()->gitHubConnection?->username ?? null,
         );
         $logs = $gh->getGitLogs($logRequest);

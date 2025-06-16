@@ -100,7 +100,7 @@ ba4c31d chore: update daisyui version and refactor app.css imports
     $form.post(route('report.fetch-commits'), {
       onSuccess: (event: any) => {
         toaster.success('Commits fetched successfully');
-        console.log('Fetched commits:', event);
+        console.log('Fetched commits:', event.props.logs.commits);
       },
       onError: (errors: Record<string, string>) => {
         toaster.error('Failed to fetch commits');

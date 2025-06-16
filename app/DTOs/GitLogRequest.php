@@ -11,7 +11,7 @@ class GitLogRequest
         public string $repository,
         public string $branch,
         public ?Carbon $since,
-        public Carbon $until,
+        public ?Carbon $until,
         public bool $includeDiff = false,
         public ?string $author = null
     ) {}
@@ -21,8 +21,8 @@ class GitLogRequest
         return new self(
             repository: $data['repository'],
             branch: $data['branch'],
-            since: Carbon::parse($data['since']),
-            until: Carbon::parse($data['until']),
+            since: isset($data['since']) ? Carbon::parse($data['since']) : null,
+            until: isset($data['until']) ? Carbon::parse($data['until']) : null,
             includeDiff: $data['include_diff'] ?? false,
             author: $data['author'] ?? null
         );
