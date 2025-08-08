@@ -24,10 +24,12 @@ class Rate extends Model
         'is_default',
         'effective_from',
         'effective_until',
+        'value',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'value' => 'encrypt',
         'overtime_multiplier' => 'decimal:2',
         'holiday_multiplier' => 'decimal:2',
         'special_multiplier' => 'decimal:2',

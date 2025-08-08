@@ -63,6 +63,8 @@ class RateController extends Controller
             'effective_until' => 'nullable|date|after:effective_from',
         ]);
 
+        $validated['value'] = $validated['amount'];
+
         $rate = Rate::create($validated);
 
         return redirect()

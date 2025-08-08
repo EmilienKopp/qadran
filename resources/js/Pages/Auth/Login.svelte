@@ -1,17 +1,19 @@
-<!-- @migration-task Error while migrating Svelte code: migrating this component would require adding a `$props` rune but there's already a variable named props.
-     Rename the variable and try again or migrate by hand. -->
-<!-- @migration-task Error while migrating Svelte code: migrating this component would require adding a `$props` rune but there's already a variable named props.
-     Rename the variable and try again or migrate by hand. -->
 <script lang="ts">
   import Button from '$components/Actions/Button.svelte';
   import Checkbox from '$components/DataInput/Checkbox.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import GuestLayout from '$layouts/GuestLayout.svelte';
-  import { props } from '$lib/stores';
   import { Link, useForm } from '@inertiajs/svelte';
 
-  export let canResetPassword = false;
-  export let status: string | undefined = undefined;
+  interface Props {
+    canResetPassword: boolean;
+    status: string | undefined;
+  }
+
+  let {
+    canResetPassword = false,
+    status = undefined
+  }: Props = $props();
 
   const form = useForm({
     email: '',
@@ -21,7 +23,8 @@
 
   function submit() {
     $form.post('/login', {
-      onFinish: () => {
+      onFinish: (event) => {
+        console.log("form", event,$form);
         $form.reset('password');
       },
     });
@@ -48,12 +51,13 @@
         label="Email"
         id="email"
         type="email"
+        name="email"
         class="mt-1 block w-full"
         bind:value={$form.email}
         required
         autofocus
         autocomplete="username"
-        errors={$form.errors?.email}
+        error={$form.errors?.email}
       />
     </div>
 
@@ -62,11 +66,12 @@
         label="Password"
         id="password"
         type="password"
+        name="password"
         class="mt-1 block w-full"
         bind:value={$form.password}
         required
         autocomplete="current-password"
-        errors={$form.errors?.password}
+        error={$form.errors?.password}
       />
     </div>
 
@@ -94,13 +99,4 @@
       </Button>
     </div>
   </form>
-  {#if $props.localEnv && location.href.includes("localhost")}
-    <div>
-      <ul>
-        <li>candidate login: test@example.com</li>
-        <li>employer login: employer@example.com</li>
-        <li> <a href={route('facebook.redirect')}>Facebook Login</a></li>
-      </ul> 
-    </div>
-  {/if}
 </GuestLayout>
