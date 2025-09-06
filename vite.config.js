@@ -1,6 +1,6 @@
 import { URL, fileURLToPath } from 'node:url';
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
@@ -12,9 +12,8 @@ export default defineConfig({
       input: 'resources/js/app.js',
       refresh: true,
     }),
-    svelte({
-      preprocess: vitePreprocess(),
-    }),
+    svelte(),
+    tailwindcss(),
   ],
   resolve: {
     alias: {

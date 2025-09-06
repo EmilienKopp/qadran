@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { createBubbler } from 'svelte/legacy';
-
-  const bubble = createBubbler();
-  import { createEventDispatcher } from 'svelte';
   import { twMerge } from 'tailwind-merge';
+  import InputLabel from './InputLabel.svelte';
   interface Props {
     label?: string;
     options?: Option[];
     value: any;
     placeholder?: string;
+    error?: string | null;
     onchange?: (e: Event) => void;
     [key: string]: any
   }
@@ -18,6 +16,7 @@
     options = [],
     value = $bindable(),
     placeholder = 'Select something',
+    error,
     onchange,
     ...rest
   }: Props = $props();
@@ -29,14 +28,15 @@
 
 </script>
 
-<div class="form-control">
+<fieldset class="fieldset" data-error={error ? 'true' : 'false'}>
   {#if label}
-    <label class="label" for={rest.id}>
-      <span class="label-text">{label}</span>
-    </label>
+    <InputLabel for={rest.id} required={rest.required}>
+      {label}
+    </InputLabel>
   {/if}
   <select
-    class={twMerge('select select-bordered', rest.class)}
+    class='select border rounded-md border-zinc-400'
+    name={rest.name}
     {...rest}
     bind:value
     onchange={(e) => onchange?.(e)}
@@ -48,4 +48,4 @@
       <option value={option.value}>{option.name}</option>
     {/each}
   </select>
-</div>
+</fieldset>

@@ -1,4 +1,4 @@
-import { User, Project, ClockEntry } from '$models';
+import { User, Project, Rate, ClockEntry } from '$models';
 
 export class ClockEntryBase implements ClockEntry {
     id: number;
@@ -14,6 +14,7 @@ export class ClockEntryBase implements ClockEntry {
     updated_at?: Date | string;
     duration_seconds?: number;
     rate_id?: number;
+    rate?: Rate;
     applied_rate?: number;
     currency: string;
     amount?: number;

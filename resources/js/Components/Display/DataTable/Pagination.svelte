@@ -33,9 +33,6 @@
 </div>
 
 <style>
-  .active {
-    @apply btn-outline;
-  }
   /* Hide middle pagination items on smaller screens */
   @media (max-width: 768px) {
     .pagination-link:not(.pagination-end) {

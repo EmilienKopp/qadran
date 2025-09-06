@@ -15,7 +15,7 @@
   <Button
     type="button"
     variant="outline"
-    class=" hover:bg-gray-100 hover:text-primary"
+    class="btn"
     on:click={onCancel}>Cancel</Button
   >
   <Button type="submit" on:click={onSave}>Save</Button>

@@ -16,6 +16,7 @@ export class ProjectBase implements Project {
     metadata?: any;
     created_at?: Date | string;
     updated_at?: Date | string;
+    deleted_at?: Date | string;
 
 
     constructor(data: Project) {
@@ -33,5 +34,6 @@ export class ProjectBase implements Project {
         this.metadata = data.metadata;
         this.created_at = data.created_at;
         this.updated_at = data.updated_at;
+        this.deleted_at = data.deleted_at;
     }
 }

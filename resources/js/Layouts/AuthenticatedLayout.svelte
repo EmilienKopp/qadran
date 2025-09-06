@@ -11,6 +11,7 @@
   import { NavigationContext } from '$lib/core/contexts/navigationContext';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import { appUser } from '$lib/stores/global/user.svelte';
+  import ThemeToggle from '$components/UI/ThemeToggle.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -23,8 +24,6 @@
 
   let context = $derived(new NavigationContext(RoleContext.selected));
   let navigationElements = $derived(context.strategy.navigationElements());
-
-  console.log(navigationElements);
 
   const settingsDropdownActions: DropdownAction[] = [
     { text: 'Profile', href: route('profile.edit') },
@@ -40,8 +39,8 @@
 
 <Toast show={false} />
 <div>
-  <div class="min-h-screen bg-gray-100">
-    <nav class="border-b border-gray-100 bg-white">
+  <div class="min-h-screen">
+    <nav class="border-b border-gray-100">
       <!-- Primary Navigation Menu -->
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between items-center">
@@ -52,6 +51,7 @@
                 <Clock />
               </Link>
             </div>
+            <ThemeToggle />
 
             <!-- Navigation Links -->
             <div
@@ -94,10 +94,10 @@
 
           <!-- Hamburger -->
           <div class="-me-2 flex items-center sm:hidden">
-            <button
+            <button aria-label="Toggle Navigation"
               onclick={() =>
                 (showingNavigationDropdown = !showingNavigationDropdown)}
-              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-hidden"
             >
               <svg
                 class="h-6 w-6"
@@ -166,7 +166,7 @@
 
     <!-- Page Heading -->
     {#if header}
-      <header class="bg-white shadow sticky top-0 z-10">
+      <header class="shadow-sm sticky top-0 z-10">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {@render header?.()}
         </div>

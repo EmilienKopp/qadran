@@ -1,3 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin "daisyui" {
+  themes: lofi --default, black --prefersdark;
+}
+
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@source "../**/*.blade.php";
+@source "../**/*.js";
+@source "../**/*.svelte";
+@source "../../storage/framework/views/*.php";
+
+
+/* Webkit browsers (Chrome, Safari, newer Edge) */
+-webkit-scrollbar {
+    width: 6px;
+    /* Thin scrollbar */
+}
+
+-webkit-scrollbar-track {
+    background: transparent;
+}
+
+-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    /* Gray-400 with opacity */
+    border-radius: 3px;
+}
+
+-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.7);
+    /* Gray-500 with opacity on hover */
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    /* "thin", "auto", or "none" */
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    /* thumb and track color */
+}

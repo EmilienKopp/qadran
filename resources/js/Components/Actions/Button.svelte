@@ -7,6 +7,7 @@
     children?: import('svelte').Snippet;
     href?: string;
     onclick?: (e: MouseEvent) => void;
+    loading?: boolean;
     [key: string]: any;
   }
 
@@ -15,6 +16,7 @@
     children,
     onclick,
     href,
+    loading,
     ...rest
   }: Props = $props();
 </script>
@@ -29,16 +31,20 @@
         'btn-primary': variant === 'primary',
         'btn-secondary': variant === 'secondary',
         'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline',
+        'btn-outline': variant === 'outline-solid',
         'btn-link': variant === 'link',
       }),
       rest.class
     )}
   >
+    {#if loading}
+      <span class="loading loading-spinner"></span>
+    {/if}
     {@render children?.()}
   </a>
 {:else}
   <button
+    disabled={loading}
     {...rest}
     {onclick}
     class={twMerge(
@@ -48,12 +54,15 @@
         'btn-primary': variant === 'primary',
         'btn-secondary': variant === 'secondary',
         'btn-accent': variant === 'accent',
-        'btn-outline': variant === 'outline',
+        'btn-outline': variant === 'outline-solid',
         'btn-link': variant === 'link',
       }),
       rest.class
     )}
   >
+    {#if loading}
+      <span class="loading loading-spinner"></span>
+    {/if}
     {@render children?.()}
   </button>
 {/if}

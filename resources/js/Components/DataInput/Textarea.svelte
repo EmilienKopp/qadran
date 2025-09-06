@@ -3,10 +3,14 @@
 
   const bubble = createBubbler();
   import { twMerge } from 'tailwind-merge';
+  import InputLabel from './InputLabel.svelte';
   interface Props {
     label?: string;
     required?: boolean;
     value?: string;
+    error?: string | null;
+    placeholder?: string;
+    name?: string;
     [key: string]: any;
   }
 
@@ -15,29 +19,34 @@
     required = false,
     value = $bindable(),
     class: className,
+    placeholder = 'Enter text here',
+    error,
+    name = '',
     ...rest
   }: Props = $props();
 </script>
 
-<div class={twMerge('form-control w-full mb-4', className)}>
+<fieldset class="fieldset" data-error={error ? 'true' : 'false'}>
+
   {#if label}
-    <label class="label" for={rest.id}>
-      <span class="label-text flex items-center">
-        {label}
-        {#if required}
-          <span
-            class="text-error
-                ml-1">*</span
-          >
-        {/if}
-      </span>
-    </label>
+    <InputLabel {required}>{label}</InputLabel>
   {/if}
+
   <textarea
-    class="textarea textarea-bordered"
+    class={twMerge(
+      "textarea h-24 border rounded-md border-zinc-400",
+      className
+    )}
     bind:value
+    {name}
     onchange={bubble('change')}
     oninput={bubble('input')}
     {...rest}
+    {placeholder}
   ></textarea>
-</div>
+
+  {#if error}
+    <p class="label text-error text-xs mt-1">{error}</p>
+  {/if}
+
+</fieldset>

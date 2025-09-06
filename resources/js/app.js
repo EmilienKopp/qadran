@@ -9,11 +9,7 @@ createInertiaApp({
     const pages = import.meta.glob('./Pages/**/*.svelte', { eager: true })
     return pages[`./Pages/${name}.svelte`]
   },
-  progress: {
-    delay: 150,
-    color: '#29d',
-    
-  },
+  progress: false,
   setup({ el, App, props }) {
     mount(App, { target: el, props })
   },

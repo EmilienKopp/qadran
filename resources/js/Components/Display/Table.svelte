@@ -200,11 +200,6 @@
     top: 0;
     z-index: 10;
   }
-
-  .active {
-    @apply btn-outline;
-  }
-
   /* Hide middle pagination items on smaller screens */
   @media (max-width: 768px) {
     .pagination-link:not(.pagination-end) {
