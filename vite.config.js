@@ -1,8 +1,8 @@
 import { URL, fileURLToPath } from 'node:url';
-import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import tailwindcss from '@tailwindcss/vite'
+
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
@@ -34,8 +34,14 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
+    port: 5173,
     hmr: {
-      clientPort: 5173,
+      host: 'localhost',
+    },
+    watch: {
+      usePolling: true,
+      interval: 1000,
     },
   },
 });
