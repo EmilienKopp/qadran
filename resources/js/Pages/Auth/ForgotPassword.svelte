@@ -51,7 +51,7 @@
         required
         autofocus
         autocomplete="username"
-        errors={form.errors?.email}
+        error={form.errors?.email}
       />
     </div>
 

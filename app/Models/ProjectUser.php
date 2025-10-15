@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class ProjectUser extends Pivot
 {
     /** @use HasFactory<\Database\Factories\ProjectUserFactory> */
-    use HasFactory;
+    use HasFactory, UsesTenantConnection;
 
     // protected function roles(): Attribute
     // {

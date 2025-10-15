@@ -47,9 +47,9 @@
           <div class="flex">
             <!-- Logo -->
             <div class="flex shrink-0 items-center w-36">
-              <Link href={route('dashboard')}>
+              <!-- <Link href={route('dashboard',{ account: appUser('id')})}>
                 <Clock />
-              </Link>
+              </Link> -->
             </div>
             <ThemeToggle />
 

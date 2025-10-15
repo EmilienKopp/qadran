@@ -8,7 +8,8 @@
   import { Link, useForm } from '@inertiajs/svelte';
 
   const form = useForm({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -29,17 +30,30 @@
     <div class="flex flex-row gap-4">
       <Input
         label="First Name"
-        id="name"
-        name="name"
+        id="first_name"
+        name="first_name"
         type="text"
         class=""
-        bind:value={$form.name}
+        bind:value={$form.first_name}
         required
         autofocus
         autocomplete="name"
-        errors={$form.errors.name}
+        error={$form.errors.first_name}
+      />
+      <Input
+        label="Last Name"
+        id="last_name"
+        name="last_name"
+        type="text"
+        class=""
+        bind:value={$form.last_name}
+        required
+        autofocus
+        autocomplete="name"
+        error={$form.errors.last_name}
       />
     </div>
+    
 
     <div class="mt-4">
       <Input
@@ -51,7 +65,7 @@
         bind:value={$form.email}
         required
         autocomplete="username"
-        errors={$form.errors.email}
+        error={$form.errors.email}
       />
     </div>
 
@@ -64,7 +78,7 @@
         bind:value={$form.password}
         required
         autocomplete="new-password"
-        errors={$form.errors.password}
+        error={$form.errors.password}
       />
     </div>
 
@@ -77,7 +91,7 @@
         bind:value={$form.password_confirmation}
         required
         autocomplete="new-password"
-        errors={$form.errors.password_confirmation}
+        error={$form.errors.password_confirmation}
       />
     </div>
 

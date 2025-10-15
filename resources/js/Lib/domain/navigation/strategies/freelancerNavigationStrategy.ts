@@ -3,11 +3,11 @@ import { DefaultNavigationStrategy } from "$lib/core/strategies/navigationStrate
 export class FreelancerNavigationStrategy extends DefaultNavigationStrategy {
   navigationElements() {
     return [
-      {
-        name: 'Dashboard',
-        href: route('dashboard'),
-        active: false,
-      },
+      // {
+      //   name: 'Dashboard',
+      //   href: route('dashboard'),
+      //   active: false,
+      // },
       {
         name: 'Projects',
         href: route('project.index'),

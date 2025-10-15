@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use WorkOS\UserManagement;
+use WorkOS\WorkOS;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        app()->singleton(UserManagement::class, function ($app) {
+            return new UserManagement();
+        });
+
     }
 
     /**
@@ -21,5 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        WorkOS::setApiKey(config('workos.api_key'));
     }
 }

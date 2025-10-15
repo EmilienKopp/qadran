@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class GitHubConnection extends Model
 {
+    use UsesTenantConnection;
+    
     protected $table = "github_connections";
     protected $fillable = [
         'user_id',

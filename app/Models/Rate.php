@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Enums\RateFrequency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class Rate extends Model
 {
+    use UsesTenantConnection;
+    
     protected $fillable = [
         'rate_type_id',
         'rate_frequency',

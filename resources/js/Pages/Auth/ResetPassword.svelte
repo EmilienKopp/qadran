@@ -47,7 +47,7 @@
         required
         autofocus
         autocomplete="username"
-        errors={form.errors?.email}
+        error={form.errors?.email}
       />
     </div>
 
@@ -60,7 +60,7 @@
         bind:value={form.password}
         required
         autocomplete="new-password"
-        errors={form.errors?.password}
+        error={form.errors?.password}
       />
     </div>
 
@@ -73,7 +73,7 @@
         bind:value={form.password_confirmation}
         required
         autocomplete="new-password"
-        errors={form.errors?.password_confirmation}
+        error={form.errors?.password_confirmation}
       />
     </div>
 

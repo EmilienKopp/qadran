@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class ClockEntry extends Model
 {
     /** @use HasFactory<\Database\Factories\ClockEntryFactory> */
-    use HasFactory, FormatsDates;
+    use HasFactory, FormatsDates, UsesTenantConnection;
 
     protected $fillable = [
         'in',

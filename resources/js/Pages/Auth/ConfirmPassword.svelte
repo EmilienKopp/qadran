@@ -42,7 +42,7 @@
         required
         autocomplete="current-password"
         autofocus
-        errors={form.errors?.password}
+        error={form.errors?.password}
       />
     </div>
 

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { stopPropagation } from 'svelte/legacy';
-
   import { createEventDispatcher } from 'svelte';
+  import InputLabel from './InputLabel.svelte';
+  import InputError from './InputError.svelte';
   
   interface Props {
     options?: Array<{ name: string, value: string | number }>;
@@ -9,8 +10,10 @@
     placeholder?: string;
     disabled?: boolean;
     label: string;
-    errors?: string[];
+    error?: string | null;
+    errors?: string | string[] | null;
     required?: boolean;
+    class?: string;
   }
 
   let {
@@ -19,8 +22,10 @@
     placeholder = 'Select items...',
     disabled = false,
     label,
-    errors = [],
-    required = false
+    error,
+    errors,
+    required = false,
+    class: className = ''
   }: Props = $props();
 
   let isOpen = $state(false);
@@ -28,6 +33,12 @@
   let inputElement: HTMLDivElement = $state();
   
   const dispatch = createEventDispatcher();
+
+  // Normalize error handling - support both 'error' and 'errors' props
+  const normalizedError = $derived(
+    error || 
+    (typeof errors === 'string' ? errors : Array.isArray(errors) ? errors[0] : null)
+  );
   
   let filteredOptions = $derived(searchText 
     ? options.filter(option => 
@@ -69,180 +80,74 @@
 
 <svelte:window onclick={handleClickOutside} onkeydown={handleKeydown} />
 
-<div class="multiselect w-full" bind:this={inputElement}>
+<fieldset class="fieldset w-full {className}" data-error={normalizedError ? 'true' : 'false'}>
   {#if label}
-    <label class="label" for="deezNuts">
-      <span class="label-text">{label}</span>
-    </label>
+    <InputLabel {required}>{label}</InputLabel>
   {/if}
-  <button type="button"
-    class="select-input w-full"
-    class:disabled
-    onclick={() => !disabled && (isOpen = !isOpen)}
-  >
-    {#if selectedLabels.length > 0}
-      <div class="selected-items">
-        {#each selectedLabels as label, i}
-          <span class="selected-tag">
-            {label}
-            <button type="button"
-              class="remove-btn"
-              onclick={stopPropagation(() => removeOption(selected[i]))}
-              disabled={disabled}
-            >
-              ×
-            </button>
-          </span>
-        {/each}
-      </div>
-    {:else}
-      <span class="placeholder">{placeholder}</span>
-    {/if}
-    <span class="arrow" class:open={isOpen}>▼</span>
-  </button>
   
-  {#if isOpen && !disabled}
-    <div class="dropdown">
-      <input
-        type="text"
-        class="search-input"
-        bind:value={searchText}
-        placeholder="Search..."
-      />
-      <div class="options-list">
-        {#each filteredOptions as option}
-          <button type="button"
-            class="option"
-            class:selected={selected.includes(option.value.toString())}
-            onclick={stopPropagation(() => toggleOption(option.value.toString()))}
-          >
-            <input
-              type="checkbox"
-              checked={selected.includes(option.value.toString())}
-              readonly
-            />
-            {option.name}
-          </button>
-        {/each}
-        {#if filteredOptions.length === 0}
-          <div class="no-results">No options found</div>
-        {/if}
-      </div>
+  <div class="dropdown dropdown-bottom w-full" bind:this={inputElement}>
+    <div 
+      tabindex="0" 
+      role="button" 
+      class="btn btn-outline w-full justify-between {normalizedError ? 'btn-error' : ''}"
+      class:btn-disabled={disabled}
+      onclick={() => !disabled && (isOpen = !isOpen)}
+    >
+      {#if selectedLabels.length > 0}
+        <div class="flex flex-wrap gap-1 max-w-full overflow-hidden">
+          {#each selectedLabels.slice(0, 3) as label, i}
+            <span class="badge badge-primary badge-sm">
+              {label}
+              <button type="button"
+                class="ml-1 text-xs"
+                onclick={stopPropagation(() => removeOption(selected[i]))}
+                disabled={disabled}
+              >
+                ×
+              </button>
+            </span>
+          {/each}
+          {#if selectedLabels.length > 3}
+            <span class="badge badge-ghost badge-sm">+{selectedLabels.length - 3}</span>
+          {/if}
+        </div>
+      {:else}
+        <span class="text-base-content/60">{placeholder}</span>
+      {/if}
+      <svg class="h-4 w-4 transform transition-transform {isOpen ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
     </div>
-  {/if}
-</div>
-
-<style>
-  .multiselect {
-    position: relative;
-    width: 100%;
-    font-family: inherit;
-  }
+    
+    {#if isOpen && !disabled}
+      <div class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 border">
+        <div class="form-control">
+          <input
+            type="text"
+            class="input input-bordered input-sm mb-2"
+            bind:value={searchText}
+            placeholder="Search..."
+          />
+        </div>
+        <div class="max-h-48 overflow-y-auto">
+          {#each filteredOptions as option}
+            <label class="label cursor-pointer justify-start gap-2 p-2 hover:bg-base-200 rounded">
+              <input
+                type="checkbox"
+                class="checkbox checkbox-sm"
+                checked={selected.includes(option.value.toString())}
+                onchange={() => toggleOption(option.value.toString())}
+              />
+              <span class="label-text">{option.name}</span>
+            </label>
+          {/each}
+          {#if filteredOptions.length === 0}
+            <div class="text-center text-base-content/60 p-4">No options found</div>
+          {/if}
+        </div>
+      </div>
+    {/if}
+  </div>
   
-  .select-input {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 8px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    background: white;
-  }
-  
-  .select-input.disabled {
-    background: #f5f5f5;
-    cursor: not-allowed;
-  }
-  
-  .selected-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  
-  .selected-tag {
-    background: #e9ecef;
-    border-radius: 3px;
-    padding: 2px 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .remove-btn {
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 16px;
-    cursor: pointer;
-    color: #666;
-  }
-  
-  .remove-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-  
-  .placeholder {
-    color: #6c757d;
-  }
-  
-  .arrow {
-    font-size: 12px;
-    transition: transform 0.2s;
-  }
-  
-  .arrow.open {
-    transform: rotate(180deg);
-  }
-  
-  .dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 4px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 1000;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    outline: none;
-  }
-  
-  .options-list {
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  
-  .option {
-    padding: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .option:hover {
-    background: #f8f9fa;
-  }
-  
-  .option.selected {
-    background: #e9ecef;
-  }
-  
-  .no-results {
-    padding: 8px;
-    color: #6c757d;
-    text-align: center;
-  }
-</style>
+  <InputError message={normalizedError} />
+</fieldset>

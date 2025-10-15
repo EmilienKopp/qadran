@@ -7,12 +7,13 @@ use App\Traits\HasGitHubConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasGitHubConnection;
+    use HasFactory, Notifiable, HasRoles, HasGitHubConnection, UsesTenantConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -20,9 +21,17 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'handle',
+        'title',
+        'phone_main',
+        'phone_secondary',
+        'github',
         'email',
         'password',
+        'workos_id',
     ];
 
     /**
@@ -34,6 +43,29 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    public static function booted()
+    {
+        static::creating(function ($user) {
+            if(!$user->handle) {
+                $user->handle = $user->email;
+            }
+            $user->assignRole('user');
+        });
+    }
 
     public function organizations()
     {
@@ -67,16 +99,5 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    
 }

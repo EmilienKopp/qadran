@@ -7,5 +7,5 @@
 </script>
 
 {#if message}
-    <p class="text-error text-xs mt-2s">{message}</p>
+    <p class="text-error text-xs mt-2">{message}</p>
 {/if}

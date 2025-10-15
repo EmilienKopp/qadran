@@ -19,6 +19,7 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Auth::user()->projects->load('organization');
+        dd(tenant());
         return inertia('Project/Index', [
             'projects' => Inertia::always($projects)
         ]);

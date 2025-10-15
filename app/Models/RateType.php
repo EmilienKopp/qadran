@@ -6,9 +6,12 @@ use App\Enums\RateTypeScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class RateType extends Model
 {
+    use UsesTenantConnection;
+    
     protected $fillable = [
         'name',
         'description',

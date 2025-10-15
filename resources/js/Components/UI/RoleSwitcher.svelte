@@ -8,7 +8,7 @@
   RoleContext.available = getAllUserRoles();
 </script>
 
-<div class="form-control w-full max-w-xs">
+<div class="form-control w-full max-w-xs" class:hidden={RoleContext.available.length <= 1}>
   <Select
     name="role"
     bind:value={RoleContext.selected}

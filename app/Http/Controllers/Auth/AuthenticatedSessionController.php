@@ -10,18 +10,62 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use WorkOS\UserManagement;
+use App\Models\Landlord\Tenant;
+use WorkOS\WorkOS;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(public UserManagement $userManager)
+    {}
+
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
-        ]);
+        $authURL = $this->userManager->getAuthorizationUrl(
+            redirectUri: route('authenticate'),
+            organizationId: Tenant::current()->org_id,
+            provider: 'authkit'
+        );
+        // return Inertia::render('Auth/Login', [
+        //     'canResetPassword' => Route::has('password.request'),
+        //     'status' => session('status'),
+        // ]);
+        return redirect($authURL);
+    }
+
+    public function authenticate(Request $request)
+    {
+        $code = $request->get('code');
+        if (!$code) {
+            return redirect()->route('login')->withErrors(['msg' => 'Authorization code not provided.']);
+        }
+
+        $response = $this->userManager->authenticateWithCode(
+             code: $code,
+             clientId: config('workos.client_id'),
+        );
+
+        $appUser = \App\Models\User::where('workos_id', $response->user->id)->first();
+        if (!$appUser) {
+            //Create user if not exists
+            $appUser = \App\Models\User::create([
+                'first_name' => $response->user->firstName,
+                'last_name' => $response->user->lastName,
+                'email' => $response->user->email,
+                'workos_id' => $response->user->id,
+                'password' => bcrypt(str()->random(16)),
+                'email_verified_at' => now(), // Users authenticated via WorkOS are considered verified
+            ]);
+            $appUser->assignRole(['user']);
+        }
+
+        Auth::login($appUser);
+
+
+        return to_route('dashboard', parameters: ['user' => $appUser->load(['roles'])]);
     }
 
     /**
@@ -34,7 +78,7 @@ class AuthenticatedSessionController extends Controller
         \Log::info("auth");
         $request->session()->regenerate();
         \Log::info("AWDASDASD");
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', ['account' => 'account'],absolute: false));
     }
 
     /**

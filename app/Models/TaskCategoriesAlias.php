@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class TaskCategoriesAlias extends Model
 {
-    //
+    use UsesTenantConnection;
 }
