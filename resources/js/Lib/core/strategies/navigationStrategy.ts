@@ -5,14 +5,9 @@ export class DefaultNavigationStrategy implements INavigationStrategy<Navigation
     return [
       {
         name: 'Home',
-        href: '/',
+        href: '/dashboard',
         active: false,
       },
-      {
-        name: 'About',
-        href: '/about',
-        active: false,
-      }
     ];
   }
 }

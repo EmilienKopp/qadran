@@ -64,8 +64,7 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($appUser);
 
-
-        return to_route('dashboard', parameters: ['user' => $appUser->load(['roles'])]);
+        return to_route('dashboard');
     }
 
     /**

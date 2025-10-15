@@ -12,6 +12,7 @@
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import { appUser } from '$lib/stores/global/user.svelte';
   import ThemeToggle from '$components/UI/ThemeToggle.svelte';
+  import TerminalDialog from '$components/TerminalDialog.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -66,6 +67,7 @@
           </div>
 
           <RoleSwitcher />
+          <TerminalDialog />
 
           <div class="hidden sm:ms-6 sm:flex sm:items-center">
             <!-- Settings Dropdown -->

@@ -36,4 +36,8 @@ if (app()->isProduction()) {
         require __DIR__ . '/tenant.php';
     });
 }
+
+
+
+
 require __DIR__ . '/auth.php';

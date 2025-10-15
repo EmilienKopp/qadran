@@ -22,8 +22,16 @@ export function hookSuccess<T extends object>(
  * @returns The first role of the user
  */
 export function getUserRoleName(): string {
-  const role = get(page)?.props.auth.user.roles?.[0];
-  return role?.name ?? 'guest';
+  const roles = get(page)?.props.auth.user.roles;
+  if(!roles || roles.length === 0) {
+    return 'guest';
+  }
+
+  if(roles.filter((r: any) => r.name !== 'user').length > 0) {
+    return roles.filter((r: any) => r.name !== 'user')[0].name;
+  }
+
+  return 'user';
 }
 
 /**

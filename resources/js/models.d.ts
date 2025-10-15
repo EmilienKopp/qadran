@@ -246,6 +246,9 @@ export interface User {
     website?: string;
     github?: string;
     dashboard_preferences?: any;
+    roles?: any[];
+    todays_entries?: ClockEntry[];
+    projects?: Project[];
 }
 
 export type ModelTypes = ActivityLog | ActivityType | ClockEntry | Industry | Organization | OrganizationUser | Project | ProjectUser | Rate | RateType | Report | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User;
