@@ -32,8 +32,8 @@
         toaster.success('Project created successfully');
       },
       onError: (errors: Record<string,string>) => {
-        toaster.error('Failed to create project');
-        console.log(errors);
+        const messages = Object.values(errors).join('\n');
+        toaster.error(messages);
       },
     });
   }
