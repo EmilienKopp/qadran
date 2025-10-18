@@ -27,11 +27,6 @@ export class FreelancerNavigationStrategy extends DefaultNavigationStrategy {
         name: 'Reports',
         href: route('report.index'),
       },
-      {
-        name: 'CLI',
-        href: route('terminal'),
-        active: false,
-      }
     ];
   }
 }
