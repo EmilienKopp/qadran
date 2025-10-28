@@ -22,10 +22,8 @@ class AppServiceProvider extends ServiceProvider
             return new UserManagement();
         });
 
-        // Only register multitenancy when NOT in native mode
-        if (!RequestContextResolver::isDesktop()) {
-            $this->app->register(\Spatie\Multitenancy\MultitenancyServiceProvider::class);
-        }
+        // Register multitenancy service provider
+        $this->app->register(\Spatie\Multitenancy\MultitenancyServiceProvider::class);
     }
 
     /**

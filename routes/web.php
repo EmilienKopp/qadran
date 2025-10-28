@@ -4,7 +4,9 @@ use App\DataAccess\Facades\Tenant;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Support\InstanceUrl;
+use App\Support\RequestContextResolver;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
@@ -42,10 +44,18 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     if (!$tenant) {
         return back()->withErrors(['space' => 'Space not found. Please check the name and try again.']);
     }
-    $instanceUrl = InstanceUrl::build($tenant['host']);
-    Settings::set('instance_url', $instanceUrl );
-    dd(Settings::get('instance_url'));
-    return Inertia::location("login");
+    $instanceUrl = InstanceUrl::fetch($tenant['host']);
+    if(RequestContextResolver::isDesktop()) {
+        Settings::set('instance_url', $instanceUrl );
+        Settings::set('tenant', $tenant );
+    }
+    Config::set('services.api.base_url', $instanceUrl);
+    $tenant->makeCurrent();
+    return Inertia::render('TenantWelcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'domain' => $tenant->domain,
+    ]);
 })->name('find-tenant');
 
 if (app()->isProduction()) {

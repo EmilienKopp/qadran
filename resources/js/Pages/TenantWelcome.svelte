@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Link, router, page } from '@inertiajs/svelte';
+  import { Link, router, page, inertia } from '@inertiajs/svelte';
 
   interface Props {
     canLogin?: boolean;
@@ -35,10 +35,13 @@
       space: spaceInput.trim()
     }, {
       preserveState: false,
+      preserveUrl: true,
       onError: () => {
         loading = false;
       },
       onFinish: () => {
+        loading = false;
+        console.log('Finished tenant lookup');
         // Inertia.location will handle the redirect
         // Keep loading true if successful
       }
@@ -78,12 +81,12 @@
               </Link> -->
             {/if}
 
-            <a
+            <Link
               href={route('login')}
               class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
             >
               Log in
-            </a>
+            </Link>
 
             {#if canRegister}
               <Link

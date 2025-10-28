@@ -37,7 +37,7 @@ class RequestContextResolver
     return $host;
   }
 
-  public static function isDev(string $host = null)
+  public static function isDev(?string $host = null)
   {
     $host ??= RequestContextResolver::getHost();
     return !app()->isProduction() && ($host === 'localhost' || str($host)->contains('127.0.0.1'));

@@ -13,6 +13,10 @@ class Tenant extends BaseRemoteAccess implements TenantDataAccess
         'identifier' => $identifier,
       ],
     ]);
-    return json_decode($response->getBody()->getContents(), true);
+
+    $data = json_decode($response->getBody()->getContents(), true);
+    $model = new \App\Models\Landlord\Tenant($data);
+    $model->exists = true;
+    return $model;
   }
 }

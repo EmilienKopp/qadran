@@ -16,7 +16,7 @@ abstract class BaseRemoteAccess implements BaseDataAccess
 
   public function find($id)
   {
-    $response = $this->client->get("{$this->resourceEndpoint}/{$id}");
+    $response = $this->client->get("{$this->resourceEndpoint}/find/{$id}");
     return json_decode($response->getBody()->getContents(), true);
   }
 
