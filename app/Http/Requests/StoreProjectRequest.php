@@ -26,7 +26,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['string', 'nullable'],
-            'organization_id' => ['sometimes', 'integer', 'exists:tenant.organizations,id'],
+            'organization_id' => ['nullable', 'integer', 'exists:tenant.organizations,id'],
             'type' => ['required', 'string', 'in:'.ProjectType::collect()->implode(',')],
             'status' => ['required', 'string', 'in:'.ProjectStatus::collect()->implode(',')],
             'start_date' => ['required', 'date'],

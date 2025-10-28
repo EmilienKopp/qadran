@@ -19,6 +19,9 @@ use App\Models\Landlord\Tenant;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
 
+// Set default guard for tenant routes
+config(['auth.defaults.guard' => 'tenant']);
+
 
 
 Route::get('/', function () {

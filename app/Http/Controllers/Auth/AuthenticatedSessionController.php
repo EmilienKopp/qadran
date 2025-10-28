@@ -62,7 +62,7 @@ class AuthenticatedSessionController extends Controller
             $appUser->assignRole(['user']);
         }
 
-        Auth::login($appUser);
+        Auth::guard('tenant')->login($appUser);
 
         return to_route('dashboard');
     }
