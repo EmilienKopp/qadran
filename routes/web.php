@@ -1,7 +1,9 @@
 <?php
 
+use App\DataAccess\Facades\Tenant;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Support\InstanceUrl;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +17,7 @@ use App\Http\Controllers\GitHubOAuthController;
 use App\Services\GitHubService;
 use App\Http\Controllers\RateController;
 use App\DTOs\GitLogRequest;
+use Native\Desktop\Facades\Settings;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
 
@@ -26,6 +29,24 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
+    $spaceName = $request->input('space');
+
+    if (!$spaceName) {
+        return back()->withErrors(['space' => 'Space name is required']);
+    }
+
+    $tenant = Tenant::getByDomainOrHost($spaceName);
+
+    if (!$tenant) {
+        return back()->withErrors(['space' => 'Space not found. Please check the name and try again.']);
+    }
+    $instanceUrl = InstanceUrl::build($tenant['host']);
+    Settings::set('instance_url', $instanceUrl );
+    dd(Settings::get('instance_url'));
+    return Inertia::location("login");
+})->name('find-tenant');
 
 if (app()->isProduction()) {
     Route::domain('{account}.' . $APP_HOST)->group(function () {
