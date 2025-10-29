@@ -1,7 +1,9 @@
 <?php
 
 return [
-    App\Providers\AppServiceProvider::class,
     App\Providers\AIServiceProvider::class,
+    App\Providers\AppServiceProvider::class,
+    App\Providers\DataAccessServiceProvider::class,
     App\Providers\GitHubServiceProvider::class,
+    App\Providers\RepositoryServiceProvider::class,
 ];

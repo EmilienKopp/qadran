@@ -24,9 +24,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
+        $tenant = Tenant::current();
+
+        if (!$tenant) {
+            return redirect()->route('tenant.welcome')
+                ->withErrors(['msg' => 'No tenant found. Please select your space first.']);
+        }
         $authURL = $this->userManager->getAuthorizationUrl(
             redirectUri: route('authenticate'),
-            organizationId: Tenant::current()->org_id,
+            organizationId: $tenant->org_id,
             provider: 'authkit'
         );
         // return Inertia::render('Auth/Login', [
@@ -62,7 +68,7 @@ class AuthenticatedSessionController extends Controller
             $appUser->assignRole(['user']);
         }
 
-        Auth::login($appUser);
+        Auth::guard('tenant')->login($appUser);
 
         return to_route('dashboard');
     }

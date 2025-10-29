@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Support\RequestContextResolver;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
+use Native\Desktop\App;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;
 
@@ -18,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
             return new UserManagement();
         });
 
+        // Register multitenancy service provider
+        $this->app->register(\Spatie\Multitenancy\MultitenancyServiceProvider::class);
     }
 
     /**

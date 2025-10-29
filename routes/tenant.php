@@ -2,22 +2,22 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
-use App\Http\Controllers\GitReportController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\GitHubOAuthController;
-use App\Services\GitHubService;
 use App\Http\Controllers\RateController;
-use App\DTOs\GitLogRequest;
+use App\Support\RequestContextResolver;
 use App\Models\Landlord\Tenant;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
+
+// Set default guard for tenant routes
+config(['auth.defaults.guard' => 'tenant']);
 
 
 
@@ -25,7 +25,7 @@ Route::get('/', function () {
   return Inertia::render('TenantWelcome', [
     'canLogin' => Route::has('login'),
     'canRegister' => Route::has('register'),
-    'domain' => Tenant::current()->domain,
+    'domain' => Tenant::current()?->domain,
   ]);
 })->name('tenant.welcome');
 
