@@ -15,8 +15,13 @@ use App\Http\Controllers\GitHubOAuthController;
 use App\Services\GitHubService;
 use App\Http\Controllers\RateController;
 use App\DTOs\GitLogRequest;
+use App\Http\Controllers\KnownIssuesController;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
+
+// Public known issues page (landlord-scoped, no auth required)
+Route::get('/known-issues', [KnownIssuesController::class, 'index'])
+    ->name('known-issues.index');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
