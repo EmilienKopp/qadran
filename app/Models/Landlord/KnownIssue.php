@@ -27,6 +27,9 @@ class KnownIssue extends Model
         'last_updated_at',
         'current_status_since',
         'metadata',
+        'is_deployed',
+        'deployment_metadata',
+        'deployed_at',
     ];
 
     protected $casts = [
@@ -34,6 +37,9 @@ class KnownIssue extends Model
         'last_updated_at' => 'datetime',
         'current_status_since' => 'datetime',
         'metadata' => 'array',
+        'is_deployed' => 'boolean',
+        'deployment_metadata' => 'array',
+        'deployed_at' => 'datetime',
     ];
 
     /**

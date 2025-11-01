@@ -34,6 +34,9 @@ class KnownIssuesController extends Controller
                     'current_status_since' => $issue->current_status_since?->toISOString(),
                     'current_status_duration' => $issue->getCurrentStatusDurationInSeconds(),
                     'current_status_duration_human' => $issue->getCurrentStatusDurationHuman(),
+                    'is_deployed' => $issue->is_deployed,
+                    'deployed_at' => $issue->deployed_at?->toISOString(),
+                    'deployment_metadata' => $issue->deployment_metadata,
                 ];
             });
 

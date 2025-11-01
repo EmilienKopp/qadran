@@ -20,6 +20,23 @@
     current_status_since: string | null;
     current_status_duration: number;
     current_status_duration_human: string;
+    is_deployed: boolean;
+    deployed_at: string | null;
+    deployment_metadata: {
+      pr?: {
+        number: number;
+        title: string;
+        url: string;
+        branch: string;
+        merged_at: string | null;
+      } | null;
+      commits?: Array<{
+        sha: string;
+        message: string;
+        url: string;
+        date: string;
+      }>;
+    } | null;
   }
 
   interface Props {
@@ -33,6 +50,7 @@
     reported: false,
     'In Progress': false,
     solved: false,
+    deployed: false,
   });
 
   function toggleSection(section: string) {
@@ -76,15 +94,22 @@
     return 'text-gray-600';
   }
 
-  // Group issues by status category
+  // Group issues by status category and deployment status
   let groupedIssues = $derived.by(() => {
     const groups: Record<string, Issue[]> = {
+      'deployed': [],
       'reported': [],
       'In Progress': [],
       'solved': [],
     };
 
     issues.forEach(issue => {
+      // Deployed issues go to their own category
+      if (issue.is_deployed) {
+        groups['deployed'].push(issue);
+        return;
+      }
+
       const category = issue.status_category_name || 'To Do';
       // Map the category names to our display names
       let displayCategory = category;
@@ -154,11 +179,13 @@
               >
                 <div class="flex items-center gap-3">
                   <span
-                    class="inline-block w-3 h-3 rounded-full {categoryName === 'solved'
-                      ? 'bg-green-500'
-                      : categoryName === 'In Progress'
-                        ? 'bg-yellow-500'
-                        : 'bg-blue-500'}"
+                    class="inline-block w-3 h-3 rounded-full {categoryName === 'deployed'
+                      ? 'bg-purple-500'
+                      : categoryName === 'solved'
+                        ? 'bg-green-500'
+                        : categoryName === 'In Progress'
+                          ? 'bg-yellow-500'
+                          : 'bg-blue-500'}"
                   ></span>
                   <h2 class="text-xl font-semibold text-gray-900 dark:text-white capitalize">
                     {categoryName}
@@ -192,12 +219,21 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
                           Priority
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-36">
-                          Reported
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
-                          Duration
-                        </th>
+                        {#if categoryName === 'deployed'}
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">
+                            Deployed
+                          </th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                            PR/Commits
+                          </th>
+                        {:else}
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-36">
+                            Reported
+                          </th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                            Duration
+                          </th>
+                        {/if}
                       </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -240,12 +276,43 @@
                               <span class="text-sm text-gray-400">-</span>
                             {/if}
                           </td>
-                          <td class="px-6 py-4 whitespace-nowrap w-36 text-sm text-gray-600 dark:text-gray-400">
-                            {issue.first_reported_human}
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap w-32 text-sm text-gray-600 dark:text-gray-400">
-                            {issue.current_status_duration_human}
-                          </td>
+                          {#if categoryName === 'deployed'}
+                            <td class="px-6 py-4 whitespace-nowrap w-48 text-sm text-gray-600 dark:text-gray-400">
+                              {#if issue.deployed_at}
+                                {new Date(issue.deployed_at).toLocaleDateString()}
+                              {:else}
+                                <span class="text-gray-400">-</span>
+                              {/if}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap w-32">
+                              {#if issue.deployment_metadata?.pr}
+                                <a
+                                  href={issue.deployment_metadata.pr.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  class="text-sm text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 flex items-center gap-1"
+                                >
+                                  <span>PR #{issue.deployment_metadata.pr.number}</span>
+                                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </a>
+                              {:else if issue.deployment_metadata?.commits && issue.deployment_metadata.commits.length > 0}
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                  {issue.deployment_metadata.commits.length} commit{issue.deployment_metadata.commits.length > 1 ? 's' : ''}
+                                </span>
+                              {:else}
+                                <span class="text-sm text-gray-400">-</span>
+                              {/if}
+                            </td>
+                          {:else}
+                            <td class="px-6 py-4 whitespace-nowrap w-36 text-sm text-gray-600 dark:text-gray-400">
+                              {issue.first_reported_human}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap w-32 text-sm text-gray-600 dark:text-gray-400">
+                              {issue.current_status_duration_human}
+                            </td>
+                          {/if}
                         </tr>
                       {/each}
                     </tbody>
