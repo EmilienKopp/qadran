@@ -33,7 +33,7 @@ class AIService
     if ($reportType && !$reportType instanceof ReportTypes) {
       $reportType = ReportTypes::from($reportType);
     }
-    switch($reportType) {
+    switch ($reportType) {
       case ReportTypes::TECHNICAL:
         $prompt ??= $this->dev_prompt;
         break;
@@ -107,6 +107,103 @@ class AIService
 
     } catch (\Exception $e) {
       Log::error('Audio transcription failed:', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+      ]);
+      throw $e;
+    }
+  }
+
+  /**
+   * Convert natural language text to a structured command via n8n webhook
+   *
+   * @param string $text The natural language input
+   * @return \App\DTOs\VoiceCommand The structured command
+   * @throws \Exception If command generation fails
+   */
+  public function textToCommand(string $text, array $extraData): \App\DTOs\VoiceCommand
+  {
+    $availableCommands = CommandHandler::COMMANDS;
+
+    $systemPrompt = "You are an AI assistant that converts voice commands into structured commands for a developer productivity application.
+
+Your job is to parse natural language input and extract:
+1. The command name from the available commands
+2. All relevant parameters with their proper types (string, number, boolean, date, datetime, time, array, object)
+3. Parameter labels that match common field names
+
+Available commands:
+" . implode("\n", array_map(fn($cmd, $desc) => "- {$cmd}: {$desc}", array_keys($availableCommands), $availableCommands)) . "
+
+Extra context data (available projects, tasks):
+" . json_encode($extraData, JSON_PRETTY_PRINT) . "
+
+Guidelines:
+- Extract dates in ISO 8601 format (YYYY-MM-DD HH:mm:ss)
+- Use 'number' type for hours, quantities, IDs
+- Use 'string' type for names, descriptions, text content
+- Use 'boolean' type for true/false flags
+- Use 'date' or 'datetime' type for date/time values
+- Common labels: task, title, description, hours, from, to, date, id, name, content, keyword, status, period, project, project_id, task_id
+- If user doesn't specify a date/time, use current date/time: " . now()->format('Y-m-d H:i:s') . "
+- Set confidence (0-1) based on how clear the user's intent is
+- Mark parameters as optional: true if they weren't explicitly mentioned
+
+Clock in/out specific guidelines:
+- clock_in: Requires either 'project', 'project_id', 'task', or 'task_id' parameter. Optional 'timestamp' for backdated clock-ins
+- clock_out: Optional 'timestamp' for backdated clock-outs. No project/task needed (assumes current active session)
+- Match project names from the provided projects list (case-insensitive). Use project_id if exact match found
+- Examples: 'clock in to project X', 'start working on task Y', 'clock out', 'stop timer'
+
+Example output structures:
+{
+  \"command\": \"clock_in\",
+  \"params\": [
+    {\"label\": \"project_id\", \"type\": \"number\", \"value\": 5},
+    {\"label\": \"project\", \"type\": \"string\", \"value\": \"invoicing\"},
+    {\"label\": \"timestamp\", \"type\": \"datetime\", \"value\": \"" . now()->format('Y-m-d H:i:s') . "\", \"optional\": true}
+  ],
+  \"confidence\": 0.95
+}
+
+{
+  \"command\": \"clock_out\",
+  \"params\": [
+    {\"label\": \"timestamp\", \"type\": \"datetime\", \"value\": \"" . now()->format('Y-m-d H:i:s') . "\", \"optional\": true}
+  ],
+  \"confidence\": 0.98
+}";
+
+    try {
+      $client = new \GuzzleHttp\Client();
+      $response = $client->post('http://host.docker.internal:5678/webhook/4ffc04bd-d7c9-46b7-be49-1245185ae742', [
+        'json' => [
+          'system_prompt' => $systemPrompt,
+          'user_input' => $text,
+          'timestamp' => now()->toIso8601String(),
+        ],
+        'timeout' => 30,
+      ]);
+
+      if ($response->getStatusCode() !== 200) {
+        Log::error('n8n webhook error:', [
+          'status' => $response->getStatusCode(),
+          'body' => $response->getBody()->getContents(),
+        ]);
+        throw new \Exception('Command generation failed: ' . $response->getBody()->getContents());
+      }
+
+      [$data] = json_decode($response->getBody()->getContents(), true);
+
+      return \App\DTOs\VoiceCommand::fromArray($data['output'] ?? []);
+
+    } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+      Log::error('n8n webhook request failed:', [
+        'error' => $e->getMessage(),
+      ]);
+      throw new \Exception('Failed to connect to command processing service: ' . $e->getMessage());
+    } catch (\Exception $e) {
+      Log::error('Command generation failed:', [
         'error' => $e->getMessage(),
         'trace' => $e->getTraceAsString(),
       ]);

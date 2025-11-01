@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClockEntry;
+use App\Repositories\ClockEntryRepository;
 use App\Http\Requests\StoreClockEntryRequest;
 use App\Http\Requests\UpdateClockEntryRequest;
 use App\Utils\InertiaHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Validation\ValidationException;
-use Validator;
 
 class ClockEntryController extends Controller
 {
@@ -36,31 +35,15 @@ class ClockEntryController extends Controller
     {
         $validated = $request->validated();
 
-        $entry = ClockEntry::where('user_id', Auth::id())
-            ->whereNull('out')
-            ->orderBy('in', 'desc')
-            ->first();
-
-        if(!$entry) {
-            $entry = ClockEntry::create([
-                ...$validated,
-                'in' => now()->parse($request->in),
-            ]);
+        // If this is a clock out (has 'out' field), handle it separately
+        if (isset($validated['out'])) {
+            ClockEntryRepository::clockOut(Auth::id(), $validated['out']);
         } else {
-            if($entry->project_id !== $validated['project_id']) {
-                $entry->update([
-                    'out' => now(),
-                ]);
-                $entry = ClockEntry::create([
-                    ...$validated,
-                    'in' => now()->parse($request->in),
-                ]);
-            } else {
-                $entry->update([
-                    ...$validated,
-                    'out' => now()->parse($request->out),
-                ]);
-            }
+            // Clock in
+            ClockEntryRepository::clockIn([
+                'user_id' => Auth::id(),
+                ...$validated,
+            ]);
         }
 
         return to_route('dashboard');
@@ -70,10 +53,12 @@ class ClockEntryController extends Controller
     {
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'in' => ['required', 'date']
+            'project_id' => ['required', 'exists:projects,id'],
+            'in' => ['nullable', 'date'],
+            'timezone' => ['nullable', 'string'],
         ]);
-        
-        ClockEntry::create($validated);
+
+        ClockEntryRepository::clockIn($validated);
 
         return to_route('dashboard');
     }
@@ -108,14 +93,14 @@ class ClockEntryController extends Controller
     public function destroy(ClockEntry $clockEntry)
     {
         try {
-            $success = $clockEntry->delete();
+            $success = ClockEntryRepository::delete($clockEntry);
             if(!$success) {
                 InertiaHelper::fail('Could not delete the clock entry.');
             }
         } catch (\Exception $e) {
             InertiaHelper::fail('Could not delete the clock entry.');
         }
-        
+
         return redirect()->back();
     }
 }

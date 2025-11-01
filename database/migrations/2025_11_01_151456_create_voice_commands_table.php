@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->text('transcript');
+            $table->jsonb('parsed_command')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
 

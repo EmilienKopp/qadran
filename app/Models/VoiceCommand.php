@@ -12,10 +12,12 @@ class VoiceCommand extends Model
     protected $fillable = [
         'user_id',
         'transcript',
+        'parsed_command',
         'metadata',
     ];
 
     protected $casts = [
+        'parsed_command' => 'array',
         'metadata' => 'array',
     ];
 
