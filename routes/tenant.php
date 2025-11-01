@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\GitHubOAuthController;
 use App\Http\Controllers\RateController;
+use App\Http\Controllers\AudioController;
 use App\Support\RequestContextResolver;
 use App\Models\Landlord\Tenant;
 
@@ -46,6 +47,10 @@ Route::middleware('auth')->group(function () {
 
   Route::group(['prefix' => 'clock-entry'], function () {
     Route::post('/store', [ClockEntryController::class, 'store'])->name('clock-entry.store');
+  });
+
+  Route::group(['prefix' => 'audio'], function () {
+    Route::post('/transcribe', [AudioController::class, 'transcribe'])->name('audio.transcribe');
   });
 
   Route::group(['prefix' => 'projects'], function () {

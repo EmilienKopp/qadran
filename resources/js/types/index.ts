@@ -54,6 +54,16 @@ export type Variants =
 export type FeedbackType = 'success' | 'error' | 'info';
 
 /**
+ * Flash message structure from Laravel backend
+ */
+export interface FlashMessages {
+    success?: string | null;
+    error?: string | null;
+    info?: string | null;
+    data?: Record<string, any> | null;
+}
+
+/**
  * Avoids annoying "Property 'name' does not exist on export type 'EventTarget'" errors
  */
 export type AnyEvent =

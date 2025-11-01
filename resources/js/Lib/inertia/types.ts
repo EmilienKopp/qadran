@@ -1,3 +1,5 @@
+export type { RequestPayload, VisitHelperOptions, Page } from '@inertiajs/core';
+
 export type InertiaForm<T> = {
   data: T;
   errors: Partial<Record<keyof T, string>>;
@@ -17,3 +19,11 @@ export type InertiaForm<T> = {
   submit(method: string, url: string, options?: object): void;
   transform(callback: (data: T) => object): void;
 } & T;
+
+export type RouterCallbacks = {
+  onStart?: (event: any) => void;
+  onProgress?: (event: any) => void;
+  onFinish?: (event: any) => void;
+  onSuccess?: (event: any) => void;
+  onError?: (event: any) => void;
+};

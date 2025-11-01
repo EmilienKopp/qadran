@@ -13,6 +13,7 @@
   import { appUser } from '$lib/stores/global/user.svelte';
   import ThemeToggle from '$components/UI/ThemeToggle.svelte';
   import TerminalDialog from '$components/TerminalDialog.svelte';
+  import VoiceInput from '$components/DataInput/VoiceInput.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -180,4 +181,7 @@
       {@render children?.()}
     </main>
   </div>
+
+  <!-- Voice Input Component (always visible) -->
+  <VoiceInput />
 </div>

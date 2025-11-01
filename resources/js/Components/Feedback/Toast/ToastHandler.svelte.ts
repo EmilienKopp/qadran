@@ -41,14 +41,18 @@ class ToastHandler {
    * @param {number} [options.duration=3000] - The duration in milliseconds for which the toast notification is displayed.
    * @param {string} [options.position='top-right'] - The position on the screen where the toast notification appears.
    */
-  public fromFlash(flashData: Record<ToastType, string>) {
+  public fromFlash(flashData: { success?: string | null; error?: string | null; info?: string | null; data?: any }) {
     setTimeout(() => {
-      const entries = Object.entries(flashData);
-      if (entries.length === 0) return;
-      const firstEntry = entries.find(([type, message]) => message?.length);
+      // Only check toast-related fields (success, error, info), not data
+      const toastEntries: [ToastType, string | null | undefined][] = [
+        ['success', flashData.success],
+        ['error', flashData.error],
+        ['info', flashData.info]
+      ];
+      const firstEntry = toastEntries.find(([_, message]) => message?.length);
       if (!firstEntry) return;
       const [type, message] = firstEntry;
-      this.show(message, type as ToastType, { duration: 5000 });
+      this.show(message as string, type, { duration: 5000 });
     }, 500);
   }
 
