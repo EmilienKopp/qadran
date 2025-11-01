@@ -6,5 +6,9 @@ use App\DataAccess\{UserDataAccess};
 
 class User extends BaseRemoteAccess implements UserDataAccess
 {
-    protected string $resourceEndpoint = 'api/users';
+    // Override getEndpoint to use singular 'user' to match API route pattern
+    protected function getEndpoint()
+    {
+        return "{$this->baseUrl}/api/user";
+    }
 }

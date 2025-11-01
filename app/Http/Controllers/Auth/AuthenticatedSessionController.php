@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\DataAccess\Facades\User as UserDataAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,8 +31,12 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('tenant.welcome')
                 ->withErrors(['msg' => 'No tenant found. Please select your space first.']);
         }
+        // Generate redirect URI using the current request's base URL
+        // This ensures it works in both web (localhost:8000) and NativePHP (127.0.0.1:8100)
+        $redirectUri = url('/authenticate');
+
         $authURL = $this->userManager->getAuthorizationUrl(
-            redirectUri: route('authenticate'),
+            redirectUri: $redirectUri,
             organizationId: $tenant->org_id,
             provider: 'authkit'
         );
@@ -39,7 +44,10 @@ class AuthenticatedSessionController extends Controller
         //     'canResetPassword' => Route::has('password.request'),
         //     'status' => session('status'),
         // ]);
-        return redirect($authURL);
+
+        // Use Inertia::location() for external OAuth redirects to avoid CORS issues
+        // This forces a full page redirect instead of XHR
+        return Inertia::location($authURL);
     }
 
     public function authenticate(Request $request)
@@ -54,9 +62,18 @@ class AuthenticatedSessionController extends Controller
              clientId: config('workos.client_id'),
         );
 
-        $appUser = \App\Models\User::where('workos_id', $response->user->id)->first();
+        // Use DataAccess abstraction to support both web and desktop modes
+        $appUser = UserDataAccess::firstWhere('workos_id', $response->user->id);
+
         if (!$appUser) {
-            //Create user if not exists
+            // In desktop mode, user creation should happen on the web API
+            // For now, we'll fetch user data through the API or fail gracefully
+            if (\App\Support\RequestContextResolver::isDesktop()) {
+                return redirect()->route('login')
+                    ->withErrors(['msg' => 'User not found. Please sign in through the web application first.']);
+            }
+
+            //Create user if not exists (web mode only)
             $appUser = \App\Models\User::create([
                 'first_name' => $response->user->firstName,
                 'last_name' => $response->user->lastName,
