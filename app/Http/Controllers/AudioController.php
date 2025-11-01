@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\VoiceCommand;
 use App\Services\AIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -29,6 +30,12 @@ class AudioController extends Controller
 
             // Get the transcript from the AI service
             $transcript = $this->aiService->transcribeAudio($audioFile);
+
+            // Save the voice command to database
+            VoiceCommand::create([
+                'user_id' => $request->user()->id,
+                'transcript' => $transcript,
+            ]);
 
             return back()->with('data', [
                 'transcript' => $transcript,

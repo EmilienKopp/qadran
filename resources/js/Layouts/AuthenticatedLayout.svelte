@@ -14,6 +14,7 @@
   import ThemeToggle from '$components/UI/ThemeToggle.svelte';
   import TerminalDialog from '$components/TerminalDialog.svelte';
   import VoiceInput from '$components/DataInput/VoiceInput.svelte';
+  import Button from '$components/Actions/Button.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -36,7 +37,6 @@
       as: 'button',
     },
   ];
-
 </script>
 
 <Toast show={false} />
@@ -59,7 +59,7 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              {#each navigationElements as nav} 
+              {#each navigationElements as nav}
                 <NavLink href={nav.href} active={route().current(nav.href)}>
                   {nav.name}
                 </NavLink>
@@ -97,7 +97,8 @@
 
           <!-- Hamburger -->
           <div class="-me-2 flex items-center sm:hidden">
-            <button aria-label="Toggle Navigation"
+            <button
+              aria-label="Toggle Navigation"
               onclick={() =>
                 (showingNavigationDropdown = !showingNavigationDropdown)}
               class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-hidden"
@@ -137,8 +138,11 @@
         class:hidden={!showingNavigationDropdown}
       >
         <div class="space-y-1 pb-3 pt-2">
-          {#each navigationElements as nav} 
-            <ResponsiveNavLink href={nav.href} active={route().current(nav.href)}>
+          {#each navigationElements as nav}
+            <ResponsiveNavLink
+              href={nav.href}
+              active={route().current(nav.href)}
+            >
               {nav.name}
             </ResponsiveNavLink>
           {/each}
@@ -183,5 +187,12 @@
   </div>
 
   <!-- Voice Input Component (always visible) -->
-  <VoiceInput />
+  <svelte:boundary>
+    {#snippet failed(error, reset)}
+    <Button on:click={reset} class="btn btn-error">
+      Reload Voice Input
+    </Button>
+    {/snippet}
+    <VoiceInput />
+  </svelte:boundary>
 </div>

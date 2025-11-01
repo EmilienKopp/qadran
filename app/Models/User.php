@@ -99,5 +99,8 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
-    
+    public function voiceCommands()
+    {
+        return $this->hasMany(VoiceCommand::class);
+    }
 }
