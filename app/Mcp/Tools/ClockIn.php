@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Http\Resources\ClockEntryResource;
 use App\Models\ClockEntry;
 use Illuminate\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;

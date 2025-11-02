@@ -24,12 +24,12 @@ class ClockOut extends Tool
     public function handle(Request $request): Response
     {
         $entryId = $request->input('clock_entry_id');
-        
+
         if ($entryId) {
             // Clock out from a specific entry
             $entry = ClockEntry::find($entryId);
-            
-            if (!$entry) {
+
+            if (! $entry) {
                 return Response::content([
                     [
                         'type' => 'text',
@@ -37,7 +37,7 @@ class ClockOut extends Tool
                     ],
                 ]);
             }
-            
+
             if ($entry->out) {
                 return Response::content([
                     [
@@ -51,12 +51,12 @@ class ClockOut extends Tool
             $entry = ClockEntry::where('user_id', $request->input('user_id'))
                 ->whereNull('out')
                 ->first();
-                
-            if (!$entry) {
+
+            if (! $entry) {
                 return Response::content([
                     [
                         'type' => 'text',
-                        'text' => "No active clock entry found. Please clock in first.",
+                        'text' => 'No active clock entry found. Please clock in first.',
                     ],
                 ]);
             }

@@ -4,7 +4,6 @@ namespace App\Mcp\Tools;
 
 use App\Http\Resources\ReportResource;
 use App\Models\ClockEntry;
-use Carbon\Carbon;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -42,6 +41,7 @@ class GenerateReport extends Tool
 
         $projectBreakdown = $entries->groupBy('project_id')->map(function ($projectEntries) {
             $project = $projectEntries->first()->project;
+
             return [
                 'project_id' => $project?->id,
                 'project_name' => $project?->name ?? 'No Project',
