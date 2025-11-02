@@ -25,6 +25,10 @@ class ClockEntry extends Model
         'timezone',
     ];
 
+    protected $appends = [
+        'duration_seconds',
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class);
@@ -109,6 +113,19 @@ class ClockEntry extends Model
             get: fn ($value) => Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('Y-m-d'),
+        );
+    }
+
+    protected function durationSeconds(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (! $this->in || ! $this->out) {
+                    return null;
+                }
+
+                return Carbon::parse($this->out)->diffInSeconds(Carbon::parse($this->in));
+            }
         );
     }
 }
