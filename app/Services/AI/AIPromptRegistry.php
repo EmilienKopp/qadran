@@ -44,7 +44,7 @@ class AIPromptRegistry
      */
     public static function getVoiceCommandSystemPrompt(array $availableCommands, array $extraData, string $currentDateTime): string
     {
-        return "You are an AI assistant that converts voice commands into structured commands for a developer productivity application.
+        return 'You are an AI assistant that converts voice commands into structured commands for a developer productivity application.
 
 Your job is to parse natural language input and extract:
 1. The command name from the available commands
@@ -52,10 +52,10 @@ Your job is to parse natural language input and extract:
 3. Parameter labels that match common field names
 
 Available commands:
-" . implode("\n", array_map(fn($cmd, $desc) => "- {$cmd}: {$desc}", array_keys($availableCommands), $availableCommands)) . "
+'.implode("\n", array_map(fn ($cmd, $desc) => "- {$cmd}: {$desc}", array_keys($availableCommands), $availableCommands)).'
 
 Extra context data (available projects, tasks):
-" . json_encode($extraData, JSON_PRETTY_PRINT) . "
+'.json_encode($extraData, JSON_PRETTY_PRINT)."
 
 Guidelines:
 - Extract dates in ISO 8601 format (YYYY-MM-DD HH:mm:ss)
@@ -64,7 +64,7 @@ Guidelines:
 - Use 'boolean' type for true/false flags
 - Use 'date' or 'datetime' type for date/time values
 - Common labels: task, title, description, hours, from, to, date, id, name, content, keyword, status, period, project, project_id, task_id
-- If user doesn't specify a date/time, use current date/time: " . $currentDateTime . "
+- If user doesn't specify a date/time, use current date/time: ".$currentDateTime."
 - Set confidence (0-1) based on how clear the user's intent is
 - Mark parameters as optional: true if they weren't explicitly mentioned
 
@@ -80,17 +80,17 @@ Example output structures:
   \"params\": [
     {\"label\": \"project_id\", \"type\": \"number\", \"value\": 5},
     {\"label\": \"project\", \"type\": \"string\", \"value\": \"invoicing\"},
-    {\"label\": \"timestamp\", \"type\": \"datetime\", \"value\": \"" . $currentDateTime . "\", \"optional\": true}
+    {\"label\": \"timestamp\", \"type\": \"datetime\", \"value\": \"".$currentDateTime.'", "optional": true}
   ],
-  \"confidence\": 0.95
+  "confidence": 0.95
 }
 
 {
-  \"command\": \"clock_out\",
-  \"params\": [
-    {\"label\": \"timestamp\", \"type\": \"datetime\", \"value\": \"" . $currentDateTime . "\", \"optional\": true}
+  "command": "clock_out",
+  "params": [
+    {"label": "timestamp", "type": "datetime", "value": "'.$currentDateTime.'", "optional": true}
   ],
-  \"confidence\": 0.98
-}";
+  "confidence": 0.98
+}';
     }
 }

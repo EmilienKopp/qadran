@@ -40,7 +40,7 @@ class N8nAIAction implements AIActionInterface
         }
 
         try {
-            $client = new \GuzzleHttp\Client();
+            $client = new \GuzzleHttp\Client;
             $response = $client->post($webhookUrl, [
                 'json' => [
                     'system_prompt' => $systemPrompt,
@@ -55,7 +55,7 @@ class N8nAIAction implements AIActionInterface
                     'status' => $response->getStatusCode(),
                     'body' => $response->getBody()->getContents(),
                 ]);
-                throw new \Exception('Command generation failed: ' . $response->getBody()->getContents());
+                throw new \Exception('Command generation failed: '.$response->getBody()->getContents());
             }
 
             [$data] = json_decode($response->getBody()->getContents(), true);
@@ -66,7 +66,7 @@ class N8nAIAction implements AIActionInterface
             Log::error('n8n webhook request failed:', [
                 'error' => $e->getMessage(),
             ]);
-            throw new \Exception('Failed to connect to command processing service: ' . $e->getMessage());
+            throw new \Exception('Failed to connect to command processing service: '.$e->getMessage());
         } catch (\Exception $e) {
             Log::error('Command generation failed:', [
                 'error' => $e->getMessage(),

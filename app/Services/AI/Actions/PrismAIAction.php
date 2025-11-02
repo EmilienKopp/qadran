@@ -6,9 +6,9 @@ use App\Services\AI\Contracts\AIActionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Prism\Prism\Prism;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Exceptions\PrismException;
+use Prism\Prism\Prism;
 
 /**
  * Direct Prism implementation of AI actions
@@ -64,12 +64,12 @@ class PrismAIAction implements AIActionInterface
                     'response_format' => 'json',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('OpenAI Whisper API error:', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-                throw new \Exception('Audio transcription failed: ' . $response->body());
+                throw new \Exception('Audio transcription failed: '.$response->body());
             }
 
             $data = $response->json();

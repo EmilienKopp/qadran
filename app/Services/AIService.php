@@ -17,6 +17,7 @@ class AIService
      * The AI action implementation (Prism or N8n)
      */
     private AIActionInterface $textAction;
+
     private AIActionInterface $commandAction;
 
     /**
@@ -31,15 +32,16 @@ class AIService
     /**
      * Generate a git summary report using AI
      *
-     * @param string|null $log The git log text
-     * @param string|null $prompt Optional custom prompt
-     * @param ReportTypes|string|null $reportType The type of report to generate
+     * @param  string|null  $log  The git log text
+     * @param  string|null  $prompt  Optional custom prompt
+     * @param  ReportTypes|string|null  $reportType  The type of report to generate
      * @return string The generated report
+     *
      * @throws \Exception If generation fails
      */
     public function generateGitSummary(?string $log, ?string $prompt = null, ReportTypes|string|null $reportType = ReportTypes::TASK_BASED)
     {
-        if ($reportType && !$reportType instanceof ReportTypes) {
+        if ($reportType && ! $reportType instanceof ReportTypes) {
             $reportType = ReportTypes::from($reportType);
         }
 
@@ -56,7 +58,7 @@ class AIService
                 break;
         }
 
-        $prompt .= "\n\nHere is the git log text output:\n\n" . $log;
+        $prompt .= "\n\nHere is the git log text output:\n\n".$log;
         $systemPrompt = AIPromptRegistry::getGitReportSystemPrompt();
 
         return $this->textAction->generateText($systemPrompt, $prompt);
@@ -65,8 +67,9 @@ class AIService
     /**
      * Transcribe audio file to text using OpenAI's Whisper API
      *
-     * @param UploadedFile $audioFile The audio file to transcribe
+     * @param  UploadedFile  $audioFile  The audio file to transcribe
      * @return string The transcribed text
+     *
      * @throws \Exception If transcription fails
      */
     public function transcribeAudio(UploadedFile $audioFile): string
@@ -77,9 +80,10 @@ class AIService
     /**
      * Convert natural language text to a structured command
      *
-     * @param string $text The natural language input
-     * @param array $extraData Extra context data (available projects, tasks, etc.)
+     * @param  string  $text  The natural language input
+     * @param  array  $extraData  Extra context data (available projects, tasks, etc.)
      * @return \App\DTOs\VoiceCommand The structured command
+     *
      * @throws \Exception If command generation fails
      */
     public function textToCommand(string $text, array $extraData): \App\DTOs\VoiceCommand
