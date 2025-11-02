@@ -7,5 +7,5 @@ use App\Models\Organization as OrganizationModel;
 
 class Organization extends BaseLocalAccess implements OrganizationDataAccess
 {
-    protected string $model = Organization::class;
+    protected string $model = OrganizationModel::class;
 }

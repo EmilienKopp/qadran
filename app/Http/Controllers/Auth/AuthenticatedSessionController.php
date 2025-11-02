@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\DataAccess\Facades\User as UserDataAccess;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Native\Desktop\Facades\Settings;
 use WorkOS\UserManagement;
 use App\Models\Landlord\Tenant;
 use WorkOS\WorkOS;
@@ -18,7 +20,8 @@ use WorkOS\WorkOS;
 class AuthenticatedSessionController extends Controller
 {
     public function __construct(public UserManagement $userManager)
-    {}
+    {
+    }
 
     /**
      * Display the login view.
@@ -58,17 +61,31 @@ class AuthenticatedSessionController extends Controller
         }
 
         $response = $this->userManager->authenticateWithCode(
-             code: $code,
-             clientId: config('workos.client_id'),
+            code: $code,
+            clientId: config('workos.client_id'),
         );
 
-        // Use DataAccess abstraction to support both web and desktop modes
-        $appUser = UserDataAccess::firstWhere('workos_id', $response->user->id);
+        $appUser = app(UserRepositoryInterface::class)->findByWorkosId($response->user->id);
+
+        
+
+        \Log::debug('AuthenticatedSessionController authenticate', [
+            'workos_user_id' => $response->user->id,
+            'appUser' => $appUser,
+            'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
+            'repository_class' => get_class(app(UserRepositoryInterface::class)),
+        ]);
+        
 
         if (!$appUser) {
+            \Log::debug('Creating new user for WorkOS ID', [
+                'workos_id' => $response->user->id,
+                'email' => $response->user->email,
+            ]);
             // In desktop mode, user creation should happen on the web API
             // For now, we'll fetch user data through the API or fail gracefully
             if (\App\Support\RequestContextResolver::isDesktop()) {
+                \Log::debug('User not found in desktop mode, redirecting to login');
                 return redirect()->route('login')
                     ->withErrors(['msg' => 'User not found. Please sign in through the web application first.']);
             }
@@ -85,7 +102,18 @@ class AuthenticatedSessionController extends Controller
             $appUser->assignRole(['user']);
         }
 
+        if (\App\Support\RequestContextResolver::isDesktop()) {
+            // Set user in settings
+            Settings::set('authenticated_user', $appUser->toArray());
+        }
+
         Auth::guard('tenant')->login($appUser);
+
+        \Log::debug('User authenticated', [
+            'user_id' => $appUser->id,
+            'session_id' => $request->session()->getId(),
+            'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
+        ]);
 
         return to_route('dashboard');
     }
@@ -100,7 +128,7 @@ class AuthenticatedSessionController extends Controller
         \Log::info("auth");
         $request->session()->regenerate();
         \Log::info("AWDASDASD");
-        return redirect()->intended(route('dashboard', ['account' => 'account'],absolute: false));
+        return redirect()->intended(route('dashboard', ['account' => 'account'], absolute: false));
     }
 
     /**

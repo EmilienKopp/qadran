@@ -7,5 +7,5 @@ use App\Models\Report as ReportModel;
 
 class Report extends BaseLocalAccess implements ReportDataAccess
 {
-    protected string $model = Report::class;
+    protected string $model = ReportModel::class;
 }
