@@ -407,8 +407,8 @@ class VoiceCommandsService {
 
   stopListening = () => {
     if (this.#recognition && this.#isListening) {
-      this.#continuousMode = false; // Stop continuous mode
-      this.saveContinuousModeState();
+      // Only stop the recognition, don't change continuous mode
+      // Continuous mode should only be changed by user action
       this.#recognition.stop();
     }
   };
@@ -420,9 +420,12 @@ class VoiceCommandsService {
     if (this.#continuousMode && !this.#isListening) {
       // Start listening if enabling continuous mode
       this.startListening();
-    } else if (!this.#continuousMode && this.#isListening) {
-      // Stop listening if disabling continuous mode
-      this.stopListening();
+    } else if (!this.#continuousMode) {
+      // Disable continuous mode - this will prevent auto-restart
+      // Stop recognition if currently listening
+      if (this.#recognition && this.#isListening) {
+        this.#recognition.stop();
+      }
     }
   };
 
@@ -432,8 +435,12 @@ class VoiceCommandsService {
 
     if (enabled && !this.#isListening) {
       this.startListening();
-    } else if (!enabled && this.#isListening) {
-      this.stopListening();
+    } else if (!enabled) {
+      // Disable continuous mode - this will prevent auto-restart
+      // Stop recognition if currently listening
+      if (this.#recognition && this.#isListening) {
+        this.#recognition.stop();
+      }
     }
   };
 

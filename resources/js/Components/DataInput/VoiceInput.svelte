@@ -22,7 +22,8 @@
 
   onDestroy(() => {
     voiceAssistant.stopListening();
-    voiceCommands.stopListening();
+    // Don't stop voiceCommands here - it's a global singleton that should persist
+    // across component lifecycles. Continuous mode is controlled by user action only.
     window.removeEventListener('keydown', handleKeydown);
   });
 
