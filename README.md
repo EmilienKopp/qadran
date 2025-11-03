@@ -50,6 +50,13 @@ The system separates time logs from activity breakdowns, allowing users to recor
 - Detailed activity breakdowns
 - Visual data representations
 
+### Voice Commands
+- Client-side voice commands for quick navigation
+- Hands-free browsing experience
+- Commands for page navigation, scrolling, and voice assistant control
+- Keyboard shortcut: Ctrl/Cmd + Shift + C
+- Support for natural language patterns
+
 ## Technical Architecture
 
 ### Core Technologies
@@ -151,6 +158,54 @@ docker compose up
    - Filter by date range
    - Select specific projects
    - Export data in various formats
+
+### Voice Commands
+
+The application includes client-side voice commands for hands-free navigation and control. These commands use the Web Speech Recognition API and work entirely in the browser without requiring server communication.
+
+#### Activating Voice Commands
+
+- **Button**: Click the "Voice Command" button in the Voice Assistant widget (bottom-right corner)
+- **Keyboard**: Press `Ctrl + Shift + C` (or `Cmd + Shift + C` on Mac)
+- **Speech**: Say "help" to see all available commands
+
+#### Available Commands
+
+**Navigation Commands:**
+- "go to projects" / "open projects"
+- "go to organizations" / "open organizations"
+- "go to rates" / "open rates"
+- "go to reports" / "open reports"
+- "go to settings" / "open settings"
+- "go to profile" / "my profile"
+
+**Browser Navigation:**
+- "go back" / "back"
+- "go forward" / "forward"
+- "refresh" / "reload page"
+
+**Scrolling:**
+- "scroll down" / "page down"
+- "scroll up" / "page up"
+- "scroll to top" / "go to top"
+- "scroll to bottom" / "go to bottom"
+
+**Voice Assistant Control:**
+- "start voice listening" / "enable voice"
+- "stop voice listening" / "disable voice"
+
+**Help:**
+- "help" / "show commands" - Display all available voice commands
+
+#### Browser Compatibility
+
+Voice commands require a modern browser with Web Speech Recognition API support:
+- Google Chrome (recommended)
+- Microsoft Edge
+- Safari (partial support)
+- Firefox (limited support)
+
+If your browser doesn't support voice commands, the feature will be hidden automatically.
 
 ## Contributing
 
