@@ -8,6 +8,7 @@ use App\Support\RequestContextResolver;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Uri;
 use Inertia\Inertia;
 use App\Http\Controllers\KnownIssuesController;
 use Native\Desktop\Facades\Settings;
