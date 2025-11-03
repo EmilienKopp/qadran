@@ -148,8 +148,14 @@
         isMinimized = false;
       }
       await tick();
-      if (voiceCommands.isSupported && !voiceCommands.isListening) {
-        voiceCommands.startListening();
+      if (voiceCommands.isSupported) {
+        // Toggle continuous mode - if already in continuous mode, stop it
+        if (voiceCommands.continuousMode) {
+          voiceCommands.setContinuousMode(false);
+        } else {
+          // Enable continuous mode
+          voiceCommands.setContinuousMode(true);
+        }
       }
     }
   }
@@ -522,6 +528,22 @@
         <div class="divider my-2 text-xs">Quick Commands</div>
         
         {#if voiceCommands.isSupported}
+          <!-- Continuous Mode Toggle -->
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium">Continuous Listening</span>
+              {#if voiceCommands.continuousMode && voiceCommands.isListening}
+                <span class="badge badge-success badge-xs animate-pulse">ACTIVE</span>
+              {/if}
+            </div>
+            <input
+              type="checkbox"
+              class="toggle toggle-sm toggle-secondary"
+              checked={voiceCommands.continuousMode}
+              onchange={voiceCommands.toggleContinuousMode}
+            />
+          </div>
+
           <!-- Voice Command Status -->
           {#if voiceCommands.lastCommand}
             <div class="bg-base-100 p-2 rounded-lg text-xs mb-2">
@@ -590,38 +612,40 @@
           {/if}
 
           <!-- Voice Command Button -->
-          <div class="flex gap-2 justify-center">
-            <button
-              onclick={handleVoiceCommand}
-              class="btn btn-secondary btn-sm gap-2"
-              disabled={voiceCommands.isListening}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          {#if !voiceCommands.continuousMode}
+            <div class="flex gap-2 justify-center">
+              <button
+                onclick={handleVoiceCommand}
+                class="btn btn-secondary btn-sm gap-2"
+                disabled={voiceCommands.isListening}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-              {#if voiceCommands.isListening}
-                <span class="animate-pulse">Listening...</span>
-              {:else}
-                Voice Command
-              {/if}
-            </button>
-          </div>
-          
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+                {#if voiceCommands.isListening}
+                  <span class="animate-pulse">Listening...</span>
+                {:else}
+                  Voice Command
+                {/if}
+              </button>
+            </div>
+          {/if}
+
           <div class="text-xs text-center mt-2 opacity-60">
             <div>Try: "go to projects", "scroll down", "help"</div>
             <div class="mt-1">
-              <kbd class="kbd kbd-xs">Ctrl</kbd>+<kbd class="kbd kbd-xs">Shift</kbd>+<kbd class="kbd kbd-xs">C</kbd> to activate
+              <kbd class="kbd kbd-xs">Ctrl</kbd>+<kbd class="kbd kbd-xs">Shift</kbd>+<kbd class="kbd kbd-xs">C</kbd> to {voiceCommands.continuousMode ? 'stop' : 'start'}
             </div>
           </div>
         {:else}

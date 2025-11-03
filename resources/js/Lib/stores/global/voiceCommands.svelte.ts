@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/svelte';
 import { voiceAssistant } from './voiceAssistant.svelte';
+import { xPost, Page } from '$lib/inertia';
 
 // Type for Web Speech Recognition API
 interface SpeechRecognitionEvent extends Event {
@@ -40,16 +41,40 @@ class VoiceCommandsService {
   #lastCommand = $state('');
   #error = $state('');
   #isSupported = $state(false);
+  #continuousMode = $state(false);
 
   // Private state
   #recognition: SpeechRecognition | null = null;
   #commands: Map<string, VoiceCommand> = new Map();
+  #localStorageKey = 'voiceCommands_continuousMode';
 
   constructor() {
     this.#isSupported = this.checkBrowserSupport();
     if (this.#isSupported) {
       this.initializeRecognition();
       this.registerDefaultCommands();
+      this.restoreContinuousModeState();
+    }
+  }
+
+  private restoreContinuousModeState() {
+    try {
+      const saved = localStorage.getItem(this.#localStorageKey);
+      if (saved === 'true') {
+        // Restore continuous mode and start listening
+        this.#continuousMode = true;
+        this.startListening();
+      }
+    } catch (err) {
+      console.error('Failed to restore continuous mode state:', err);
+    }
+  }
+
+  private saveContinuousModeState() {
+    try {
+      localStorage.setItem(this.#localStorageKey, String(this.#continuousMode));
+    } catch (err) {
+      console.error('Failed to save continuous mode state:', err);
     }
   }
 
@@ -58,13 +83,13 @@ class VoiceCommandsService {
   }
 
   private initializeRecognition() {
-    const SpeechRecognitionConstructor = 
+    const SpeechRecognitionConstructor =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    
+
     if (!SpeechRecognitionConstructor) return;
 
     this.#recognition = new SpeechRecognitionConstructor() as SpeechRecognition;
-    this.#recognition.continuous = false; // Stop after one command
+    this.#recognition.continuous = false; // Will be set dynamically
     this.#recognition.interimResults = false;
     this.#recognition.lang = 'en-US';
 
@@ -73,16 +98,44 @@ class VoiceCommandsService {
       console.log('Voice command heard:', transcript);
       this.#lastCommand = transcript;
       this.processCommand(transcript);
+
+      // Restart if in continuous mode
+      if (this.#continuousMode && this.#recognition) {
+        // Small delay to prevent rapid restarts
+        setTimeout(() => {
+          if (this.#continuousMode && !this.#isListening) {
+            this.startListening();
+          }
+        }, 100);
+      }
     };
 
     this.#recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
       this.#error = `Speech recognition error: ${event.error}`;
       this.#isListening = false;
+
+      // Restart if in continuous mode and not a fatal error
+      if (this.#continuousMode && event.error !== 'no-speech' && event.error !== 'aborted') {
+        setTimeout(() => {
+          if (this.#continuousMode) {
+            this.startListening();
+          }
+        }, 500);
+      }
     };
 
     this.#recognition.onend = () => {
       this.#isListening = false;
+
+      // Restart if in continuous mode
+      if (this.#continuousMode) {
+        setTimeout(() => {
+          if (this.#continuousMode) {
+            this.startListening();
+          }
+        }, 100);
+      }
     };
 
     this.#recognition.onstart = () => {
@@ -259,10 +312,34 @@ class VoiceCommandsService {
       }
     }
 
+    // No command match - send to backend AI for interpretation
     if (!commandFound) {
-      console.log('No matching command found for:', transcript);
-      this.#error = `Command not recognized: "${transcript}". Say "help" to see available commands.`;
+      console.log('No matching command found, sending to AI:', transcript);
+      this.sendToAI(transcript);
     }
+  }
+
+  private sendToAI(transcript: string) {
+    this.#error = 'Processing with AI...';
+
+    xPost(route('ai.text-to-command'), { text: transcript }, {
+      onSuccess: (event: Page) => {
+        this.#error = '';
+        console.log('AI command executed successfully');
+      },
+      onError: (errors: any) => {
+        this.#error = `AI processing failed: ${errors.text || Object.values(errors)[0] || 'Unknown error'}`;
+        console.error('AI processing error:', errors);
+      },
+      onFinish: () => {
+        // Clear processing message after a delay
+        setTimeout(() => {
+          if (this.#error === 'Processing with AI...') {
+            this.#error = '';
+          }
+        }, 2000);
+      },
+    });
   }
 
   private showAvailableCommands() {
@@ -310,7 +387,33 @@ class VoiceCommandsService {
 
   stopListening = () => {
     if (this.#recognition && this.#isListening) {
+      this.#continuousMode = false; // Stop continuous mode
+      this.saveContinuousModeState();
       this.#recognition.stop();
+    }
+  };
+
+  toggleContinuousMode = () => {
+    this.#continuousMode = !this.#continuousMode;
+    this.saveContinuousModeState();
+
+    if (this.#continuousMode && !this.#isListening) {
+      // Start listening if enabling continuous mode
+      this.startListening();
+    } else if (!this.#continuousMode && this.#isListening) {
+      // Stop listening if disabling continuous mode
+      this.stopListening();
+    }
+  };
+
+  setContinuousMode = (enabled: boolean) => {
+    this.#continuousMode = enabled;
+    this.saveContinuousModeState();
+
+    if (enabled && !this.#isListening) {
+      this.startListening();
+    } else if (!enabled && this.#isListening) {
+      this.stopListening();
     }
   };
 
@@ -337,6 +440,10 @@ class VoiceCommandsService {
 
   get isSupported() {
     return this.#isSupported;
+  }
+
+  get continuousMode() {
+    return this.#continuousMode;
   }
 
   get commands() {
