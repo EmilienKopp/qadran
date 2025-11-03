@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/svelte';
+import { voiceAssistant } from './voiceAssistant.svelte';
 
 // Type for Web Speech Recognition API
 interface SpeechRecognitionEvent extends Event {
@@ -202,7 +203,6 @@ class VoiceCommandsService {
     this.registerCommand('start-voice', {
       patterns: ['start voice listening', 'enable voice', 'voice on', 'start listening'],
       action: async () => {
-        const { voiceAssistant } = await import('./voiceAssistant.svelte');
         if (!voiceAssistant.voiceActivationEnabled) {
           voiceAssistant.voiceActivationEnabled = true;
           await voiceAssistant.startListening();
@@ -214,7 +214,6 @@ class VoiceCommandsService {
     this.registerCommand('stop-voice', {
       patterns: ['stop voice listening', 'disable voice', 'voice off', 'stop listening'],
       action: async () => {
-        const { voiceAssistant } = await import('./voiceAssistant.svelte');
         if (voiceAssistant.voiceActivationEnabled) {
           voiceAssistant.voiceActivationEnabled = false;
           voiceAssistant.stopListening();
@@ -272,7 +271,8 @@ class VoiceCommandsService {
       .join('\n');
     
     console.log('Available voice commands:\n', commandList);
-    alert('Available voice commands:\n\n' + commandList);
+    // Store commands in error state to display in UI
+    this.#error = 'Voice commands available. Check console for full list.';
   }
 
   // Public methods
