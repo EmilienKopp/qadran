@@ -7,5 +7,6 @@ use App\Models\User as UserModel;
 
 class User extends BaseLocalAccess implements UserDataAccess
 {
-    protected string $model = User::class;
+    protected string $model = UserModel::class;
+
 }

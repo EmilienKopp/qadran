@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
@@ -31,7 +32,8 @@ Route::get('/', function () {
 })->name('tenant.welcome');
 
 Route::get('/dashboard', function () {
-  $user = User::find(Auth::id())->load(['projects', 'todaysEntries']);
+  $user = auth('tenant')->user();
+  $user = app(UserRepositoryInterface::class)->find($user->id, ['projects', 'todaysEntries']);
   return Inertia::render('Dashboard', compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 

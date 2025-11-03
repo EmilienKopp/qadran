@@ -35,9 +35,9 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
-        ->name('authenticate');
 });
+Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
+    ->name('authenticate');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

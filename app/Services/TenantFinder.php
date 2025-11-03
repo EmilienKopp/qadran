@@ -31,7 +31,11 @@ class TenantFinder extends BaseTenantFinder
 
   private function findDesktopTenant(): ?Tenant
   {
-    $tenant = new Tenant(Settings::get('tenant'));
+    $settingsTenant = Settings::get('tenant');
+    if(! $settingsTenant) {
+      return null;
+    }
+    $tenant = new Tenant($settingsTenant);
     return $tenant;
   }
 

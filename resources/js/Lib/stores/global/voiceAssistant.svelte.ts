@@ -19,9 +19,11 @@ class VoiceAssistant {
   #audioContext: AudioContext | null = null;
   #analyser: AnalyserNode | null = null;
   #microphone: MediaStreamAudioSourceNode | null = null;
-  #animationFrameId: number | null = null;
+  #monitorIntervalId: number | null = null;
   #listeningStream: MediaStream | null = null;
   #secondsBelowThresholdToStop = 3;
+  #belowThresholdCounter = 0;
+  #belowThresholdIntervalId: number | null = null;
 
   // Callbacks
   private onSuccess: (event: Page) => any = () => {};
@@ -102,9 +104,14 @@ class VoiceAssistant {
   stopListening = () => {
      this.#isListening = false;
 
-     if (this.#animationFrameId !== null) {
-       cancelAnimationFrame(this.#animationFrameId);
-       this.#animationFrameId = null;
+     if (this.#monitorIntervalId !== null) {
+       clearInterval(this.#monitorIntervalId);
+       this.#monitorIntervalId = null;
+     }
+
+     if (this.#belowThresholdIntervalId !== null) {
+       clearInterval(this.#belowThresholdIntervalId);
+       this.#belowThresholdIntervalId = null;
      }
 
      if (this.#microphone) {
@@ -128,6 +135,7 @@ class VoiceAssistant {
      }
 
      this.#currentVolume = 0;
+     this.#belowThresholdCounter = 0;
   };
 
   monitorAudioLevel = () => {
@@ -136,8 +144,16 @@ class VoiceAssistant {
     const bufferLength = this.#analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    const checkLevel = () => {
-      if (!this.#isListening || !this.#analyser) return;
+    // Use setInterval instead of requestAnimationFrame so it works when window is not focused
+    // Check every 100ms for responsive voice activation
+    this.#monitorIntervalId = setInterval(() => {
+      if (!this.#isListening || !this.#analyser) {
+        if (this.#monitorIntervalId !== null) {
+          clearInterval(this.#monitorIntervalId);
+          this.#monitorIntervalId = null;
+        }
+        return;
+      }
 
       this.#analyser.getByteFrequencyData(dataArray);
 
@@ -155,33 +171,42 @@ class VoiceAssistant {
         !this.#isProcessing &&
         this.voiceActivationEnabled
       ) {
+        this.#belowThresholdCounter = 0;
+        if (this.#belowThresholdIntervalId !== null) {
+          clearInterval(this.#belowThresholdIntervalId);
+          this.#belowThresholdIntervalId = null;
+        }
         this.startRecording();
       }
 
-      // Stop recording if volume is below threshold for a certain duration
+      // Start counter if volume drops below threshold while recording
       if (
         this.#currentVolume < this.volumeThreshold &&
         this.#isRecording &&
-        this.voiceActivationEnabled
+        this.voiceActivationEnabled &&
+        this.#belowThresholdIntervalId === null
       ) {
-        let secondsBelowThreshold = 0;
-        const intervalId = setInterval(() => {
-          if (this.#currentVolume < this.volumeThreshold) {
-            secondsBelowThreshold++;
-            if (secondsBelowThreshold >= this.#secondsBelowThresholdToStop) {
-              this.stopRecording();
-              clearInterval(intervalId);
+        this.#belowThresholdCounter = 0;
+        this.#belowThresholdIntervalId = setInterval(() => {
+          this.#belowThresholdCounter++;
+          if (this.#belowThresholdCounter >= this.#secondsBelowThresholdToStop) {
+            this.stopRecording();
+            if (this.#belowThresholdIntervalId !== null) {
+              clearInterval(this.#belowThresholdIntervalId);
+              this.#belowThresholdIntervalId = null;
             }
-          } else {
-            secondsBelowThreshold = 0;
+            this.#belowThresholdCounter = 0;
           }
         }, 1000);
       }
 
-      this.#animationFrameId = requestAnimationFrame(checkLevel);
-    };
-
-    checkLevel();
+      // Reset counter if volume goes back above threshold
+      if (this.#currentVolume >= this.volumeThreshold && this.#belowThresholdIntervalId !== null) {
+        clearInterval(this.#belowThresholdIntervalId);
+        this.#belowThresholdIntervalId = null;
+        this.#belowThresholdCounter = 0;
+      }
+    }, 100); // Check every 100ms
   };
 
   sendAudioToServer = (audioBlob: Blob) => {
@@ -259,7 +284,12 @@ class VoiceAssistant {
     this.stopListening();
     this.stopRecording();
     this.#audioContext?.close();
-    this.#animationFrameId && cancelAnimationFrame(this.#animationFrameId);
+    if (this.#monitorIntervalId !== null) {
+      clearInterval(this.#monitorIntervalId);
+    }
+    if (this.#belowThresholdIntervalId !== null) {
+      clearInterval(this.#belowThresholdIntervalId);
+    }
     this.#listeningStream?.getTracks().forEach((track) => track.stop());
   }
 }
