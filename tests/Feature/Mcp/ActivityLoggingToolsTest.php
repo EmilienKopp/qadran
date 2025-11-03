@@ -11,7 +11,10 @@ use Tests\TestCase;
 
 class ActivityLoggingToolsTest extends TestCase
 {
-    public function test_create_activity_tool_exists(): void
+    /**
+     * Helper method to get registered tools from the server.
+     */
+    private function getServerTools(): array
     {
         $transporter = new FakeTransporter;
         $server = new QadranServer($transporter);
@@ -19,34 +22,25 @@ class ActivityLoggingToolsTest extends TestCase
         $reflection = new \ReflectionClass($server);
         $toolsProperty = $reflection->getProperty('tools');
         $toolsProperty->setAccessible(true);
-        $tools = $toolsProperty->getValue($server);
+        
+        return $toolsProperty->getValue($server);
+    }
 
+    public function test_create_activity_tool_exists(): void
+    {
+        $tools = $this->getServerTools();
         $this->assertContains(CreateActivity::class, $tools);
     }
 
     public function test_create_activity_batch_tool_exists(): void
     {
-        $transporter = new FakeTransporter;
-        $server = new QadranServer($transporter);
-
-        $reflection = new \ReflectionClass($server);
-        $toolsProperty = $reflection->getProperty('tools');
-        $toolsProperty->setAccessible(true);
-        $tools = $toolsProperty->getValue($server);
-
+        $tools = $this->getServerTools();
         $this->assertContains(CreateActivityBatch::class, $tools);
     }
 
     public function test_list_activity_types_tool_exists(): void
     {
-        $transporter = new FakeTransporter;
-        $server = new QadranServer($transporter);
-
-        $reflection = new \ReflectionClass($server);
-        $toolsProperty = $reflection->getProperty('tools');
-        $toolsProperty->setAccessible(true);
-        $tools = $toolsProperty->getValue($server);
-
+        $tools = $this->getServerTools();
         $this->assertContains(ListActivityTypes::class, $tools);
     }
 
