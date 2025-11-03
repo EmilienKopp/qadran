@@ -4,9 +4,12 @@ namespace App\Mcp\Servers;
 
 use App\Mcp\Tools\ClockIn;
 use App\Mcp\Tools\ClockOut;
+use App\Mcp\Tools\CreateActivity;
+use App\Mcp\Tools\CreateActivityBatch;
 use App\Mcp\Tools\CreateProject;
 use App\Mcp\Tools\CreateTask;
 use App\Mcp\Tools\GenerateReport;
+use App\Mcp\Tools\ListActivityTypes;
 use App\Mcp\Tools\ListProjects;
 use App\Mcp\Tools\ListTasks;
 use Laravel\Mcp\Server;
@@ -27,7 +30,7 @@ class QadranServer extends Server
      * The MCP server's instructions for the LLM.
      */
     protected string $instructions = <<<'MARKDOWN'
-        This MCP server provides tools for managing projects, tasks, and time tracking in the Qadran application.
+        This MCP server provides tools for managing projects, tasks, time tracking, and activity logging in the Qadran application.
         
         ## Available Tools:
         
@@ -44,6 +47,11 @@ class QadranServer extends Server
         - **clock_out**: Stop tracking time
         - **generate_report**: Generate a time tracking report for a specific date
         
+        ### Activity Logging
+        - **create_activity**: Create a single activity log entry for a clock entry
+        - **create_activity_batch**: Create multiple activity logs for the same clock entry in one operation
+        - **list_activity_types**: List all available activity types
+        
         ## Workflow Examples:
         
         1. **Starting work on a project**:
@@ -55,7 +63,12 @@ class QadranServer extends Server
            - Create tasks associated with projects using `create_task`
            - List tasks for a specific project using `list_tasks` with project_id filter
         
-        3. **Generating reports**:
+        3. **Logging daily activities**:
+           - After clocking in and out, use `create_activity_batch` to log multiple activities for that day
+           - Each activity can have its own activity type, task, time offsets, and notes
+           - Use `list_activity_types` to see available activity categories
+        
+        4. **Generating reports**:
            - Use `generate_report` to get time tracking summaries for specific dates
            - Reports include total hours, project breakdowns, and entry details
     MARKDOWN;
@@ -73,6 +86,9 @@ class QadranServer extends Server
         GenerateReport::class,
         ListTasks::class,
         ListProjects::class,
+        CreateActivity::class,
+        CreateActivityBatch::class,
+        ListActivityTypes::class,
     ];
 
     /**
