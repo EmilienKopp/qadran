@@ -51,9 +51,12 @@ class McpServerTest extends TestCase
             \App\Mcp\Tools\GenerateReport::class,
             \App\Mcp\Tools\ListTasks::class,
             \App\Mcp\Tools\ListProjects::class,
+            \App\Mcp\Tools\CreateActivity::class,
+            \App\Mcp\Tools\CreateActivityBatch::class,
+            \App\Mcp\Tools\ListActivityTypes::class,
         ];
 
-        $this->assertCount(7, $tools);
+        $this->assertCount(10, $tools);
         $this->assertEquals($expectedTools, $tools);
     }
 }
