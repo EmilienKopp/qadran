@@ -11,8 +11,8 @@ class AIPromptRegistry
     {
         return 'You are a helpful assistant that generates concise and informative daily reports based on git log text output. 
     Your job is to help developers quickly report to stakeholders, to show what they have done in a day or week.
-    Depening on the context, you will generate a report that is either technical or non-technical.
-    Technical reports will include development activity, and brush over techincal tasks performed.
+    Depending on the context, you will generate a report that is either technical or non-technical.
+    Technical reports will include development activity, and brush over technical tasks performed.
     Non-technical reports will list a high-level, "executive summary" of the work done, without technical jargon,
     and will be suitable for stakeholders to understand what features or tasks were completed without needing to know the technical.
     Tasks might be things like "Bug fixes on feature X", "Implemented feature Y", "Refactored code for better performance", etc... and
@@ -26,7 +26,7 @@ class AIPromptRegistry
      */
     public static function getTechnicalGitPrompt(): string
     {
-        return 'You will generate a report of development activity based on this git log text output. The report will be concise, informative, easy to read at a glance. t will **NOT** contain commit information.';
+        return 'You will generate a report of development activity based on this git log text output. The report will be concise, informative, easy to read at a glance. It will **NOT** contain commit information.';
     }
 
     /**
