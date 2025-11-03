@@ -23,13 +23,13 @@ return new class extends Migration
         });
 
         // Create main tenant
-        Tenant::create([
-            'id' => str()->uuid(),
-            'name' => 'Qadran.io Main Tenant',
-            'domain' => 'qadranio.com',
-            'host' => 'qadranio',
-            'database' => 'qadran_db',
-            'org_id' => env('DEFAULT_ORG_ID'),
-        ]);
+        // Tenant::create([
+        //     'id' => str()->uuid(),
+        //     'name' => 'Qadran.io Main Tenant',
+        //     'domain' => 'qadranio.com',
+        //     'host' => 'qadranio',
+        //     'database' => 'qadran_db',
+        //     'org_id' => env('DEFAULT_ORG_ID'),
+        // ]);
     }
 };
