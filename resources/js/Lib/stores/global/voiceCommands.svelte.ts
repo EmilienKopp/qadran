@@ -92,12 +92,36 @@ class VoiceCommandsService {
 
   private registerDefaultCommands() {
     // Navigation commands
-    this.registerCommand('dashboard', {
-      patterns: ['go to dashboard', 'open dashboard', 'show dashboard', 'dashboard'],
+    this.registerCommand('projects', {
+      patterns: ['go to projects', 'open projects', 'show projects', 'projects'],
       action: () => {
-        router.visit(route('dashboard'));
+        router.visit(route('project.index'));
       },
-      description: 'Navigate to dashboard'
+      description: 'Navigate to projects'
+    });
+
+    this.registerCommand('organizations', {
+      patterns: ['go to organizations', 'open organizations', 'show organizations', 'organizations'],
+      action: () => {
+        router.visit(route('organization.index'));
+      },
+      description: 'Navigate to organizations'
+    });
+
+    this.registerCommand('rates', {
+      patterns: ['go to rates', 'open rates', 'show rates', 'rates'],
+      action: () => {
+        router.visit(route('rate.index'));
+      },
+      description: 'Navigate to rates'
+    });
+
+    this.registerCommand('reports', {
+      patterns: ['go to reports', 'open reports', 'show reports', 'reports'],
+      action: () => {
+        router.visit(route('report.index'));
+      },
+      description: 'Navigate to reports'
     });
 
     this.registerCommand('settings', {

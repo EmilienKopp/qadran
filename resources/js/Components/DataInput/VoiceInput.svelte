@@ -119,6 +119,7 @@
   }
 
   async function handleKeydown(event: KeyboardEvent) {
+    // Ctrl/Cmd + Shift + V for voice assistant
     if (
       (event.ctrlKey || event.metaKey) &&
       event.shiftKey &&
@@ -133,6 +134,22 @@
         voiceAssistant.startRecording();
       } else if (voiceAssistant.isRecording) {
         voiceAssistant.stopRecording();
+      }
+    }
+    
+    // Ctrl/Cmd + Shift + C for voice commands
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.shiftKey &&
+      event.key.toLowerCase() === 'c'
+    ) {
+      event.preventDefault();
+      if (isMinimized) {
+        isMinimized = false;
+      }
+      await tick();
+      if (voiceCommands.isSupported && !voiceCommands.isListening) {
+        voiceCommands.startListening();
       }
     }
   }
@@ -602,7 +619,10 @@
           </div>
           
           <div class="text-xs text-center mt-2 opacity-60">
-            Try: "go to dashboard", "scroll down", "help"
+            <div>Try: "go to projects", "scroll down", "help"</div>
+            <div class="mt-1">
+              <kbd class="kbd kbd-xs">Ctrl</kbd>+<kbd class="kbd kbd-xs">Shift</kbd>+<kbd class="kbd kbd-xs">C</kbd> to activate
+            </div>
           </div>
         {:else}
           <div class="alert alert-info py-2 px-3 text-xs">
