@@ -12,6 +12,11 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Register GuzzleHttp\Client as a singleton for remote repositories
+        $this->app->singleton(\GuzzleHttp\Client::class, function () {
+            return new \GuzzleHttp\Client();
+        });
+
         $this->registerRepositories();
     }
 
@@ -82,7 +87,7 @@ class RepositoryServiceProvider extends ServiceProvider
                 function ($app) use ($isDesktop, $localImplementation, $remoteImplementation) {
                     if ($isDesktop) {
                         return new $remoteImplementation(
-                            new \GuzzleHttp\Client(),
+                            $app->make(\GuzzleHttp\Client::class),
                             config('app.api_url')
                         );
                     }

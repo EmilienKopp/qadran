@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Providers;
 
-use App\Providers\RepositoryServiceProvider;
 use App\Repositories\ClockEntryRepositoryInterface;
 use App\Repositories\Local\LocalClockEntryRepository;
 use App\Repositories\Local\LocalOrganizationRepository;
@@ -24,8 +23,6 @@ use App\Repositories\ReportRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
 use App\Repositories\TenantRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
-use App\Support\RequestContextResolver;
-use Illuminate\Foundation\Testing\TestCase;
 use Tests\TestCase as BaseTestCase;
 
 class RepositoryServiceProviderTest extends BaseTestCase
