@@ -11,10 +11,27 @@ class ActivityLog extends Model
     /** @use HasFactory<\Database\Factories\ActivityLogFactory> */
     use HasFactory, UsesTenantConnection;
 
-    protected $fillable = ['activity_type_id', 'user_id', 'description'];
+    protected $fillable = [
+        'clock_entry_id',
+        'activity_type_id',
+        'task_id',
+        'start_offset_seconds',
+        'end_offset_seconds',
+        'notes',
+    ];
+
+    public function clockEntry()
+    {
+        return $this->belongsTo(ClockEntry::class);
+    }
 
     public function activityType()
     {
         return $this->belongsTo(ActivityType::class);
+    }
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
     }
 }
