@@ -90,12 +90,32 @@ class VoiceCommandsService {
 
     this.#recognition = new SpeechRecognitionConstructor() as SpeechRecognition;
     this.#recognition.continuous = false; // Will be set dynamically
-    this.#recognition.interimResults = false;
+    this.#recognition.interimResults = true; // Enable interim results to handle pauses better
     this.#recognition.lang = 'en-US';
 
+    // These properties help with hesitation/pauses (browser-specific)
+    if ('maxAlternatives' in this.#recognition) {
+      (this.#recognition as any).maxAlternatives = 3; // Get multiple interpretation alternatives
+    }
+    if ('speechTimeout' in this.#recognition) {
+      (this.#recognition as any).speechTimeout = 3000; // Allow 3 seconds of silence before stopping
+    }
+    if ('speechEndTimeout' in this.#recognition) {
+      (this.#recognition as any).speechEndTimeout = 2000; // Wait 2 seconds after speech ends
+    }
+
     this.#recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript.toLowerCase().trim();
-      console.log('Voice command heard:', transcript);
+      // Only process final results, ignore interim ones
+      const result = event.results[event.resultIndex];
+      if (!result.isFinal) {
+        // Log interim results for debugging
+        const interimTranscript = result[0].transcript;
+        console.log('Interim result:', interimTranscript);
+        return;
+      }
+
+      const transcript = result[0].transcript.toLowerCase().trim();
+      console.log('Final voice command heard:', transcript);
       this.#lastCommand = transcript;
       this.processCommand(transcript);
 
@@ -322,7 +342,7 @@ class VoiceCommandsService {
   private sendToAI(transcript: string) {
     this.#error = 'Processing with AI...';
 
-    xPost(route('ai.text-to-command'), { text: transcript }, {
+    xPost(route('audio.command'), { text: transcript }, {
       onSuccess: (event: Page) => {
         this.#error = '';
         console.log('AI command executed successfully');

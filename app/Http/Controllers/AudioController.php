@@ -17,6 +17,71 @@ class AudioController extends Controller
     ) {
     }
 
+    public function command(Request $request)
+    {
+        // Receive text and call AI service to convert to command
+        try {
+            $request->validate([
+                'text' => 'required|string|max:1000',
+            ]);
+
+            $text = $request->input('text');
+            $userId = $request->user()->id;
+
+            $projects = $request->user()->projects()->select('name', 'projects.id')->pluck('id', 'name');
+
+            $voiceCommand = $this->aiService->textToCommand($text, compact('projects'));
+            \Log::info('Text to command result', [
+                'command' => $voiceCommand->command,
+                'params' => $voiceCommand->params,
+            ]);
+            // Extract data for database storage
+            $commandData = [
+                'command' => $voiceCommand->command,
+                'params' => array_map(fn($p) => $p->jsonSerialize(), $voiceCommand->params),
+            ];
+
+            $metadata = array_merge(
+                $voiceCommand->metadata ?? [],
+                [
+                    'confidence' => $voiceCommand->confidence,
+                    'processed_at' => now()->toIso8601String(),
+                ]
+            );
+
+            // Save the voice command to database asynchronously with tenant context
+            StoreVoiceCommandJob::dispatch(
+                userId: $userId,
+                transcript: $text,
+                command: $commandData,
+                metadata: $metadata,
+            );
+
+            // Execute the command
+            $result = CommandHandler::handleCommand($voiceCommand->command, $voiceCommand->params);
+
+            if (!$result) {
+                return back()->with('data', [
+                    'transcript' => $text,
+                    'command' => $voiceCommand->jsonSerialize(),
+                    'error' => 'Command execution failed or not implemented',
+                ]);
+            }
+            return back()->with('data', [
+                'transcript' => $text,
+                'command' => $voiceCommand->jsonSerialize(),
+                'success' => 'Command executed successfully',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e; // Let Inertia handle validation errors
+        } catch (\Exception $e) {
+            Log::error('Text to command processing failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
+    }
+
     public function transcribe(Request $request)
     {
         try {

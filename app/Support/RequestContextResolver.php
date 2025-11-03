@@ -16,7 +16,9 @@ class RequestContextResolver
       return ExecutionContext::DESKTOP;
     }
 
-    if (request()->isJson() || request()->wantsJson() || request()->header('Accept') === 'application/json') {
+    $hasInertiaHeader = request()->header('X-Inertia') !== null;
+
+    if (!$hasInertiaHeader && (request()->isJson() || request()->wantsJson() || request()->header('Accept') === 'application/json')) {
       return ExecutionContext::API;
     }
 

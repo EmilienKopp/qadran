@@ -21,6 +21,14 @@ $APP_HOST = Uri::of(env('APP_URL'))->host();
 // Set default guard for tenant routes
 config(['auth.defaults.guard' => 'tenant']);
 
+// Debug: Check tenant and database connection
+\Log::debug('Tenant routes loading', [
+    'current_tenant' => Tenant::current()?->id,
+    'tenant_database' => Tenant::current()?->database,
+    'tenant_connection_database' => config('database.connections.tenant.database'),
+    'auth_guard' => config('auth.defaults.guard'),
+]);
+
 
 
 Route::get('/', function () {
@@ -53,6 +61,7 @@ Route::middleware('auth')->group(function () {
 
   Route::group(['prefix' => 'audio'], function () {
     Route::post('/transcribe', [AudioController::class, 'transcribe'])->name('audio.transcribe');
+    Route::post('/command', [AudioController::class, 'command'])->name('audio.command');
   });
 
   Route::group(['prefix' => 'projects'], function () {

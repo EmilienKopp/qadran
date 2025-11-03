@@ -36,6 +36,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $isDesktop = RequestContextResolver::isDesktop();
 
+        \Log::debug('Repository registration', [
+            'isDesktop' => $isDesktop,
+            'context' => RequestContextResolver::getExecutionContext()->value ?? 'unknown',
+            'sapi' => php_sapi_name(),
+        ]);
+
         // User Repository
         $this->app->bind(
             \App\Repositories\UserRepositoryInterface::class,

@@ -59,7 +59,7 @@ class N8nAIAction implements AIActionInterface
             }
 
             [$data] = json_decode($response->getBody()->getContents(), true);
-
+            \Log::info('n8n webhook response:', $data);
             return $data['output'] ?? [];
 
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
