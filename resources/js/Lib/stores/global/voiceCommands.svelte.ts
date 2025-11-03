@@ -47,6 +47,7 @@ class VoiceCommandsService {
   #recognition: SpeechRecognition | null = null;
   #commands: Map<string, VoiceCommand> = new Map();
   #localStorageKey = 'voiceCommands_continuousMode';
+  #errorTimeout: number | null = null;
 
   constructor() {
     this.#isSupported = this.checkBrowserSupport();
@@ -75,6 +76,29 @@ class VoiceCommandsService {
       localStorage.setItem(this.#localStorageKey, String(this.#continuousMode));
     } catch (err) {
       console.error('Failed to save continuous mode state:', err);
+    }
+  }
+
+  private setError(message: string, duration: number = 2000) {
+    // Clear any existing timeout
+    if (this.#errorTimeout) {
+      clearTimeout(this.#errorTimeout);
+    }
+
+    // Set the error
+    this.#error = message;
+
+    // Auto-clear after duration
+    this.#errorTimeout = setTimeout(() => {
+      this.#error = '';
+      this.#errorTimeout = null;
+    }, duration) as unknown as number;
+  }
+
+  private clearErrorTimeout() {
+    if (this.#errorTimeout) {
+      clearTimeout(this.#errorTimeout);
+      this.#errorTimeout = null;
     }
   }
 
@@ -132,8 +156,15 @@ class VoiceCommandsService {
 
     this.#recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
-      this.#error = `Speech recognition error: ${event.error}`;
       this.#isListening = false;
+
+      // Filter out transient errors that shouldn't be shown to user
+      const transientErrors = ['no-speech', 'aborted', 'audio-capture'];
+
+      if (!transientErrors.includes(event.error)) {
+        // Only show persistent errors with debouncing
+        this.setError(`Speech recognition error: ${event.error}`, 3000);
+      }
 
       // Restart if in continuous mode and not a fatal error
       if (this.#continuousMode && event.error !== 'no-speech' && event.error !== 'aborted') {
@@ -160,12 +191,21 @@ class VoiceCommandsService {
 
     this.#recognition.onstart = () => {
       this.#isListening = true;
+      this.clearErrorTimeout();
       this.#error = '';
     };
   }
 
   private registerDefaultCommands() {
     // Navigation commands
+    this.registerCommand('dashboard', {
+      patterns: ['go to dashboard', 'open dashboard', 'show dashboard', 'home', 'go to home', 'dashboard'],
+      action: () => {
+        router.visit(route('dashboard'));
+      },
+      description: 'Navigate to dashboard'
+    });
+
     this.registerCommand('projects', {
       patterns: ['go to projects', 'open projects', 'show projects', 'projects'],
       action: () => {
@@ -445,6 +485,7 @@ class VoiceCommandsService {
   };
 
   clearError = () => {
+    this.clearErrorTimeout();
     this.#error = '';
   };
 
