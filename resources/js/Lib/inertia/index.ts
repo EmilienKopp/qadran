@@ -1,6 +1,6 @@
-import { useForm } from '@inertiajs/svelte';
+import { router, useForm } from '@inertiajs/svelte';
 import { get, Readable } from 'svelte/store';
-import type { InertiaForm } from './types';
+import type { InertiaForm, Page, RequestPayload, VisitHelperOptions } from './types';
 import { page } from '@inertiajs/svelte';
 
 export type * from './types';
@@ -16,6 +16,21 @@ export function hookSuccess<T extends object>(
   callback: () => void
 ): void {
   form.recentlySuccessful && callback();
+}
+
+/**
+ * Wrapper around inertia router post with preserved state and scroll
+ */
+export function xPost(route:string, data?: RequestPayload, options?: VisitHelperOptions) {
+  return router.post(route, data ?? {}, {
+    preserveScroll: true,
+    preserveState: true,
+    onStart: options?.onStart,
+    onProgress: options?.onProgress,
+    onFinish: options?.onFinish,
+    onSuccess: options?.onSuccess,
+    onError: options?.onError,
+  });
 }
 
 /**

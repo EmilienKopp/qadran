@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Features\VoiceAssistantMode;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Laravel\Pennant\Feature;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -29,19 +32,27 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $userId = $request->user()?->id;
+        $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user()?->load(['roles', 'organizations']),
+                'user' => $user,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
+                'data' => fn () => $request->session()->get('data'),
             ],
             'enums' => [
                 'roles' => \App\Enums\RoleEnum::toSelectOptions(),
                 'report_types' => \App\Enums\ReportTypes::toSelectOptions(),
+            ],
+            'features' => [
+                'voiceAssistantMode' => $request->user()
+                    ? Feature::value(VoiceAssistantMode::class, $request->user())
+                    : false,
             ],
         ];
     }

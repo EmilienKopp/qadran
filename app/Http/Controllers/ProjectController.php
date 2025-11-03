@@ -8,20 +8,24 @@ use App\Enums\ProjectStatus;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Repositories\ProjectRepository;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class ProjectController extends Controller
+class ProjectController extends HybridController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $projects = Auth::user()->projects->load('organization');
-        return inertia('Project/Index', [
-            'projects' => Inertia::always($projects)
-        ]);
+        $projects = ProjectRepository::getForUser();
+
+        return $this->respond($projects, function ($projects) {
+            return Inertia::render('Project/Index', [
+                'projects' => Inertia::always($projects)
+            ]);
+        });
     }
 
     /**

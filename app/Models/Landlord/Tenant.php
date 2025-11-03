@@ -5,11 +5,12 @@ namespace App\Models\Landlord;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant
 {
-    use HasFactory;
+    use HasFactory, UsesLandlordConnection;
 
     protected $fillable = [
         'id',

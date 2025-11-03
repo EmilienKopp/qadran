@@ -2,22 +2,32 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
-use Illuminate\Foundation\Application;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ClockEntryController;
-use App\Http\Controllers\GitReportController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\GitHubOAuthController;
-use App\Services\GitHubService;
 use App\Http\Controllers\RateController;
-use App\DTOs\GitLogRequest;
+use App\Http\Controllers\AudioController;
+use App\Support\RequestContextResolver;
 use App\Models\Landlord\Tenant;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
+
+// Set default guard for tenant routes
+config(['auth.defaults.guard' => 'tenant']);
+
+// Debug: Check tenant and database connection
+\Log::debug('Tenant routes loading', [
+    'current_tenant' => Tenant::current()?->id,
+    'tenant_database' => Tenant::current()?->database,
+    'tenant_connection_database' => config('database.connections.tenant.database'),
+    'auth_guard' => config('auth.defaults.guard'),
+]);
 
 
 
@@ -25,12 +35,13 @@ Route::get('/', function () {
   return Inertia::render('TenantWelcome', [
     'canLogin' => Route::has('login'),
     'canRegister' => Route::has('register'),
-    'domain' => Tenant::current()->domain,
+    'domain' => Tenant::current()?->domain,
   ]);
 })->name('tenant.welcome');
 
 Route::get('/dashboard', function () {
-  $user = User::find(Auth::id())->load(['projects', 'todaysEntries']);
+  $user = auth('tenant')->user();
+  $user = app(UserRepositoryInterface::class)->find($user->id, ['projects', 'todaysEntries']);
   return Inertia::render('Dashboard', compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -46,6 +57,11 @@ Route::middleware('auth')->group(function () {
 
   Route::group(['prefix' => 'clock-entry'], function () {
     Route::post('/store', [ClockEntryController::class, 'store'])->name('clock-entry.store');
+  });
+
+  Route::group(['prefix' => 'audio'], function () {
+    Route::post('/transcribe', [AudioController::class, 'transcribe'])->name('audio.transcribe');
+    Route::post('/command', [AudioController::class, 'command'])->name('audio.command');
   });
 
   Route::group(['prefix' => 'projects'], function () {

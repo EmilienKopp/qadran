@@ -16,6 +16,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
+        Tenant::create([
+            'id' => str()->uuid(),
+            'name' => 'Qadran.io Main Tenant',
+            'domain' => 'qadranio.com',
+            'host' => 'qadranio',
+            'database' => 'qadran_db',
+            'org_id' => env('DEFAULT_ORG_ID'),
+        ]);
+
         User::factory()->create([
             'first_name' => 'John',
             'last_name' => 'Doe',

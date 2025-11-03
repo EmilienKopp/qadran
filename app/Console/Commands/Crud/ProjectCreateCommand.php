@@ -75,19 +75,13 @@ class ProjectCreateCommand extends BaseTenantAwareCrudCommand
         }
 
         try {
-            $project = Project::create([
+            $project = auth('tenant')->user()->projects()->create([
                 'name' => $name,
                 'description' => $description,
                 'organization_id' => $organizationId,
                 'status' => $status,
                 'type' => $type,
             ]);
-
-            // Associate user with project if userId provided
-            if ($userId) {
-                $project->users()->attach($userId, ['roles' => ['owner']]);
-                $this->info("👥 User attached to project with 'owner' role");
-            }
 
             $this->showSuccess('Project created', $project);
             

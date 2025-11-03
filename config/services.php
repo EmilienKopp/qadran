@@ -47,4 +47,15 @@ return [
         'endpoint' => env('AI_ENDPOINT', 'messages'),
     ],
 
+    'api' => [
+        'base_url' => env('API_BASE_URL', 'http://localhost:8000'),
+    ],
+
+    'workos' => [
+        'client_id' => env('WORKOS_CLIENT_ID'),
+        'secret' => env('WORKOS_API_KEY'),
+        'redirect' => env('WORKOS_REDIRECT_URL'),
+        'default_user' => env('WORKOS_DEFAULT_USER'),
+    ],
+
 ];

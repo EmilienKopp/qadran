@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["command", "params"],
+  "additionalProperties": false,
+  "properties": {
+    "command": {
+      "type": "string",
+      "description": "The command name to execute",
+      "enum": [
+        "create_task",
+        "update_task",
+        "delete_task",
+        "create_project",
+        "log_time",
+        "clock_in",
+        "clock_out",
+        "create_note",
+        "search_tasks",
+        "generate_report"
+      ]
+    },
+    "params": {
+      "type": "array",
+      "description": "Array of typed parameters for the command",
+      "items": {
+        "type": "object",
+        "required": ["type", "value", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The parameter name/identifier (e.g., 'task', 'hours', 'from', 'to')"
+          },
+          "type": {
+            "type": "string",
+            "description": "The data type of the parameter value",
+            "enum": ["string", "number", "boolean", "date", "datetime", "time", "array", "object"]
+          },
+          "value": {
+            "description": "The actual parameter value, type depends on the 'type' field",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "array" },
+              { "type": "object" }
+            ]
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this parameter is optional",
+            "default": false
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description or context for this parameter"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence score (0-1) that the command interpretation is correct",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata about the command interpretation",
+      "properties": {
+        "ambiguities": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any ambiguities or assumptions made during interpretation"
+        },
+        "suggestions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Alternative interpretations or suggestions"
+        }
+      }
+    }
+  }
+}
