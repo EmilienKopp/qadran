@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick, onDestroy } from 'svelte';
   import { voiceAssistant } from '$lib/stores/global/voiceAssistant.svelte';
+  import { voiceCommands } from '$lib/stores/global/voiceCommands.svelte';
 
   // let isRecording = $state(false);
   // let isProcessing = $state(false);
@@ -33,6 +34,7 @@
 
   onDestroy(() => {
     voiceAssistant.stopListening();
+    voiceCommands.stopListening();
     window.removeEventListener('keydown', handleKeydown);
   });
 
@@ -245,6 +247,10 @@
 
   function toggleSettings() {
     showSettings = !showSettings;
+  }
+
+  function handleVoiceCommand() {
+    voiceCommands.startListening();
   }
 </script>
 
@@ -494,6 +500,128 @@
             </button>
           {/if}
         </div>
+
+        <!-- Voice Commands Section -->
+        <div class="divider my-2 text-xs">Quick Commands</div>
+        
+        {#if voiceCommands.isSupported}
+          <!-- Voice Command Status -->
+          {#if voiceCommands.lastCommand}
+            <div class="bg-base-100 p-2 rounded-lg text-xs mb-2">
+              <span class="opacity-60">Last command:</span>
+              <span class="font-medium ml-1">{voiceCommands.lastCommand}</span>
+              <button
+                onclick={voiceCommands.clearLastCommand}
+                class="btn btn-ghost btn-xs btn-circle float-right"
+                aria-label="Clear last command"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-3 w-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          {/if}
+
+          {#if voiceCommands.error}
+            <div class="alert alert-warning py-2 px-3 text-xs mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current shrink-0 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>{voiceCommands.error}</span>
+              <button
+                onclick={voiceCommands.clearError}
+                class="btn btn-ghost btn-xs btn-circle"
+                aria-label="Clear error"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-3 w-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          {/if}
+
+          <!-- Voice Command Button -->
+          <div class="flex gap-2 justify-center">
+            <button
+              onclick={handleVoiceCommand}
+              class="btn btn-secondary btn-sm gap-2"
+              disabled={voiceCommands.isListening}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+              {#if voiceCommands.isListening}
+                <span class="animate-pulse">Listening...</span>
+              {:else}
+                Voice Command
+              {/if}
+            </button>
+          </div>
+          
+          <div class="text-xs text-center mt-2 opacity-60">
+            Try: "go to dashboard", "scroll down", "help"
+          </div>
+        {:else}
+          <div class="alert alert-info py-2 px-3 text-xs">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="stroke-current shrink-0 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Voice commands not supported in your browser</span>
+          </div>
+        {/if}
       {/if}
     </div>
   </div>
