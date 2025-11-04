@@ -29,6 +29,7 @@ class VoiceAssistant {
   private onSuccess: (event: Page) => any = () => {};
   private onError: (errors: any) => any = () => {};
   private onFinish: (event: any) => any = () => {};
+  public onTranscriptReceived: (() => void) | null = null;
 
   constructor() {}
 
@@ -229,6 +230,11 @@ class VoiceAssistant {
             this.#error = data.audioError;
           }
           this.onSuccess(event);
+          
+          // Notify completion callback if set
+          if (this.onTranscriptReceived) {
+            this.onTranscriptReceived();
+          }
         },
         onError: (errors: any) => {
           this.#isProcessing = false;
