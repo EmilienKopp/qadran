@@ -40,7 +40,7 @@
         showVoiceAssistant = false;
         // Resume voice command listening if in continuous mode
         voiceCommands.resumeAfterVoiceAssistant();
-      }, 3000) as unknown as number;
+      }, 3000);
     };
 
     return () => {
@@ -148,7 +148,11 @@
             {/if}
           </div>
           <button
-            onclick={() => { showVoiceAssistant = false; }}
+            onclick={() => { 
+              showVoiceAssistant = false;
+              // Resume voice command listening if in continuous mode
+              voiceCommands.resumeAfterVoiceAssistant();
+            }}
             class="btn btn-ghost btn-xs btn-circle"
             aria-label="Close voice assistant"
           >
