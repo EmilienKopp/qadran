@@ -20,6 +20,12 @@
       showVoiceAssistant = true;
       // Reset the trigger
       voiceCommands.setTriggerVoiceAssistant(false);
+      // Automatically start recording when triggered from voice command
+      setTimeout(() => {
+        if (!voiceAssistant.isRecording && !voiceAssistant.isProcessing) {
+          voiceAssistant.startRecording();
+        }
+      }, 100); // Small delay to ensure UI is ready
     }
   });
 
