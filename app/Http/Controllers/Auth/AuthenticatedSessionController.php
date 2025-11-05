@@ -115,13 +115,14 @@ class AuthenticatedSessionController extends Controller
             'user_id' => $appUser->id,
             'session_id' => $request->session()->getId(),
             'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
+            'account' => $account,
         ]);
         
         if ($account) {
             return to_route('dashboard', ['account' => $account]);
         }
         
-        return to_route('dashboard');
+        return to_route('dashboard', ['account' => $account]);
     }
 
     /**
