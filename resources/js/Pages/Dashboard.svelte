@@ -11,6 +11,7 @@
   import { asSelectOptions } from '$lib/utils/formatting';
   import { getTimezone } from '$lib/utils/timezone';
   import type { Project } from '$models';
+  import MiniButton from '$components/Buttons/MiniButton.svelte';
 
   interface Props {
     user: User;
@@ -53,8 +54,14 @@
             </Button>
           </fieldset>
           <div class="w-full mt-4 flex flex-col items-center">
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8">
+            <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8 mb-2">
               Today's Entries
+              <MiniButton
+                color="accent"
+                href={route('activities.show', { date: new Date().toISOString().split('T')[0] })}
+              >
+                See All
+              </MiniButton>
             </h2>
             <EntriesList entries={user.todays_entries} />
           </div>

@@ -13,6 +13,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\GitHubOAuthController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\AudioController;
+use App\Http\Controllers\ActivityController;
 use App\Support\RequestContextResolver;
 use App\Models\Landlord\Tenant;
 
@@ -114,6 +115,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/{report}/edit', [ReportController::class, 'edit'])->name('report.edit');
     Route::patch('/{report}', [ReportController::class, 'update'])->name('report.update');
     Route::delete('/{report}', [ReportController::class, 'destroy'])->name('report.destroy');
+  });
+
+  Route::group(['prefix' => 'activities'], function () {
+    Route::get('/{date}', [ActivityController::class, 'show'])->name('activities.show');
   });
 
   Route::group(['prefix' => 'settings'], function () {

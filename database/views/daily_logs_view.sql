@@ -1,4 +1,4 @@
-CREATE VIEW daily_logs AS
+CREATE VIEW daily_logs_view AS
 select
     ce.user_id,
     CONCAT_WS(' ', u.first_name, u.middle_name, u.last_name) AS "name",

@@ -13,4 +13,5 @@ interface ProjectRepositoryInterface extends BaseRepositoryInterface
     public function create(array $data): Project;
     public function update(int $id, array $data): ?Project;
     public function delete(int $id): bool;
+    public function findForUser(\App\Models\User|string $user);
 }

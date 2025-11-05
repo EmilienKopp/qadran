@@ -46,4 +46,16 @@ class LocalProjectRepository implements ProjectRepositoryInterface
         }
         return $project->delete();
     }
+
+    public function findForUser(\App\Models\User|string $user)
+    {
+        if($user instanceof \App\Models\User) {
+            $userId = $user->id;
+        } else {
+            $userId = $user;
+        }
+        return Project::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->get();
+    }
 }

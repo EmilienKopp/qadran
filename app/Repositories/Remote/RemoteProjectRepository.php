@@ -51,4 +51,11 @@ class RemoteProjectRepository extends BaseRemoteRepository implements ProjectRep
     {
         return $this->deleteRequest("{$this->resourceEndpoint}/{$id}");
     }
+
+    public function findForUser(string|\App\Models\User $user)
+    {
+        $userId = $user instanceof \App\Models\User ? $user->id : $user;
+        $data = $this->get($this->resourceEndpoint, ['user_id' => $userId]);
+        return $this->hydrateCollection($data);
+    }
 }

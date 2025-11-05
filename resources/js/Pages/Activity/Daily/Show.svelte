@@ -10,13 +10,27 @@
   import dayjs from 'dayjs';
   import DailyLogInputForm from './DailyLogInputForm.svelte';
 
-  export let activities: Activity[];
-  export let dailyLogs: DailyLog[];
-  export let taskCategories: TaskCategory[];
-  export let date: string;
+  // export let activities: Activity[];
+  // export let dailyLogs: DailyLog[];
+  // export let taskCategories: TaskCategory[];
+  // export let date: string;
+  interface Props {
+    dailyLogs?: DailyLog[];
+    taskCategories?: TaskCategory[];
+    date?: string | Date;
+    activities?: Activity[];
+  }
 
-  let selectedDate = dayjs(date).format('YYYY-MM-DD');
-  let logModalOpen = false;
+  let {
+    dailyLogs = [],
+    taskCategories = [],
+    date = new Date(),
+    activities = [],
+  }: Props = $props();
+
+  let selectedDate = $state(dayjs(date).format('YYYY-MM-DD'));
+  let logModalOpen = $state(false);
+  let log: DailyLog;
 
   let form = useForm({
     date: selectedDate,
@@ -57,9 +71,12 @@
     logModalOpen = true;
   }
 
-  $: $form.activities = dailyLogs.flatMap((log) => {
-    return log.activities;
-  });
+  $effect(() => {
+    $form.date = selectedDate;
+    $form.activities = dailyLogs.flatMap((log) => {
+      return log.activities;
+    });
+  })
 </script>
 
 <AuthenticatedLayout>
@@ -67,7 +84,7 @@
   <input
     type="date"
     class="rounded bg-transparent w-44 text-sm"
-    on:change={handleDateSelection}
+    onchange={handleDateSelection}
     bind:value={selectedDate}
   />
 
@@ -75,14 +92,14 @@
     {#if dailyLogs.length == 0}
       <div class="col-span-2">
         <p>No logs found for this date.</p>
-        <MiniButton type="button" color="info" on:click={showLogModal}>
+        <MiniButton type="button" color="info" onclick={showLogModal}>
           Create a new log
         </MiniButton>
       </div>
     {:else}
-      {#each dailyLogs as log}
+      {#each dailyLogs as _,i }
         {#if log.activities}
-          <DailyLogInputForm bind:log {taskCategories} />
+          <DailyLogInputForm bind:log={dailyLogs[i]} {taskCategories} />
         {/if}
       {/each}
       <div class="2xl:col-span-2 col-span-1">
