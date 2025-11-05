@@ -53,12 +53,14 @@ class AuthenticatedSessionController extends Controller
         return Inertia::location($authURL);
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(Request $request): RedirectResponse
     {
         $code = $request->get('code');
         if (!$code) {
             return redirect()->route('login')->withErrors(['msg' => 'Authorization code not provided.']);
         }
+
+        $account = $request->route('account');
 
         $response = $this->userManager->authenticateWithCode(
             code: $code,
@@ -115,7 +117,7 @@ class AuthenticatedSessionController extends Controller
             'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
         ]);
 
-        return to_route('dashboard');
+        return to_route('dashboard', ['account' => $account]);
     }
 
     /**
@@ -123,11 +125,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        \Log::info("store");
         $request->authenticate();
-        \Log::info("auth");
         $request->session()->regenerate();
-        \Log::info("AWDASDASD");
         return redirect()->intended(route('dashboard', ['account' => 'account'], absolute: false));
     }
 
