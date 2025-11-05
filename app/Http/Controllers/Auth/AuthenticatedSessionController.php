@@ -116,8 +116,12 @@ class AuthenticatedSessionController extends Controller
             'session_id' => $request->session()->getId(),
             'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
         ]);
-
-        return to_route('dashboard', ['account' => $account]);
+        
+        if ($account) {
+            return to_route('dashboard', ['account' => $account]);
+        }
+        
+        return to_route('dashboard');
     }
 
     /**
@@ -127,7 +131,15 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
-        return redirect()->intended(route('dashboard', ['account' => 'account'], absolute: false));
+        
+        // Get the account parameter from the route if it exists
+        $account = $request->route('account');
+        
+        if ($account) {
+            return redirect()->intended(route('dashboard', ['account' => $account], absolute: false));
+        }
+        
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

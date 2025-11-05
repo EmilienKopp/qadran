@@ -46,6 +46,12 @@ class ClockEntryController extends Controller
             ]);
         }
 
+        $account = $request->route('account');
+        
+        if ($account) {
+            return to_route('dashboard', ['account' => $account]);
+        }
+        
         return to_route('dashboard');
     }
 
@@ -60,6 +66,12 @@ class ClockEntryController extends Controller
 
         ClockEntryRepository::clockIn($validated);
 
+        $account = $request->route('account');
+        
+        if ($account) {
+            return to_route('dashboard', ['account' => $account]);
+        }
+        
         return to_route('dashboard');
     }
 
