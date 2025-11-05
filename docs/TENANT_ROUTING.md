@@ -87,6 +87,39 @@ return redirect()->route('dashboard', $params);
 
 ## How It Works
 
+### Request Lifecycle Order
+
+It might seem **circular** that:
+- TenantFinder uses `getAccountParameter()` to find the tenant
+- SetTenantUrlDefaults uses `Tenant::current()` to set URL defaults
+
+**But it's NOT circular because of Laravel's request lifecycle order:**
+
+#### Step-by-Step Execution:
+
+1. **Route Matching** (BEFORE any middleware or tenant finding)
+   - Laravel receives: `https://myspace.qadran.io/login`
+   - Matches route: `Route::domain('{account}.qadran.io')`
+   - Extracts parameter: `{account} = "myspace"`
+   - ✅ At this point `request()->route('account')` already works!
+
+2. **TenantFinder Runs** (Spatie Multitenancy, runs very early)
+   - Calls custom resolver `RequestContextResolver::getAccountParameter()` which reads the already-extracted route parameter
+   - Finds the Tenant model based on `host = "myspace"`
+   - Sets `Tenant::current()` in context
+
+3. **SetTenantUrlDefaults Middleware** (PREPENDED to web stack) <- This is key
+   - Reads `Tenant::current()->host` 
+   - Sets `URL::defaults(['account' => 'myspace'])`
+
+4. **Route-Specific Middleware** (guest, auth, etc.)
+   - Generates URLs like `route('dashboard')`
+   - Uses `URL::defaults()` to fill in the `{account}` parameter
+
+5. **Controller/Route Execution**
+
+**Key Insight:** The `{account}` parameter is extracted during route matching, which happens BEFORE the TenantFinder or any middleware runs. So TenantFinder reads an already-available value, not something it needs to create.
+
 ### Production (Subdomain Routing)
 1. User visits `https://myspace.example.com/login`
 2. `Route::domain('{account}.')` captures `myspace` from subdomain
