@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClockEntry;
-use App\Repositories\ClockEntryRepository;
 use App\Http\Requests\StoreClockEntryRequest;
 use App\Http\Requests\UpdateClockEntryRequest;
+use App\Models\ClockEntry;
+use App\Repositories\ClockEntryRepository;
 use App\Utils\InertiaHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -46,12 +46,6 @@ class ClockEntryController extends Controller
             ]);
         }
 
-        $account = $request->route('account');
-        
-        if ($account) {
-            return to_route('dashboard', ['account' => $account]);
-        }
-        
         return to_route('dashboard');
     }
 
@@ -66,12 +60,6 @@ class ClockEntryController extends Controller
 
         ClockEntryRepository::clockIn($validated);
 
-        $account = $request->route('account');
-        
-        if ($account) {
-            return to_route('dashboard', ['account' => $account]);
-        }
-        
         return to_route('dashboard');
     }
 
@@ -106,7 +94,7 @@ class ClockEntryController extends Controller
     {
         try {
             $success = ClockEntryRepository::delete($clockEntry);
-            if(!$success) {
+            if (! $success) {
                 InertiaHelper::fail('Could not delete the clock entry.');
             }
         } catch (\Exception $e) {

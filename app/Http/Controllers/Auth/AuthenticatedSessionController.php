@@ -4,24 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\DataAccess\Facades\User as UserDataAccess;
+use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Inertia\Response;
 use Native\Desktop\Facades\Settings;
 use WorkOS\UserManagement;
-use App\Models\Landlord\Tenant;
 use WorkOS\WorkOS;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(public UserManagement $userManager, public UserRepositoryInterface $userRepository)
-    {
-    }
+    public function __construct(public UserManagement $userManager, public UserRepositoryInterface $userRepository) {}
 
     /**
      * Display the login view.
@@ -30,7 +26,7 @@ class AuthenticatedSessionController extends Controller
     {
         $tenant = Tenant::current();
 
-        if (!$tenant) {
+        if (! $tenant) {
             return redirect()->route('tenant.welcome')
                 ->withErrors(['msg' => 'No tenant found. Please select your space first.']);
         }
@@ -56,7 +52,7 @@ class AuthenticatedSessionController extends Controller
     public function authenticate(Request $request): RedirectResponse
     {
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('login')->withErrors(['msg' => 'Authorization code not provided.']);
         }
 
@@ -69,17 +65,14 @@ class AuthenticatedSessionController extends Controller
 
         $appUser = $this->userRepository->findByWorkosId($response->user->id);
 
-        
-
         \Log::debug('AuthenticatedSessionController authenticate', [
             'workos_user_id' => $response->user->id,
             'appUser' => $appUser,
             'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
             'repository_class' => get_class(app(UserRepositoryInterface::class)),
         ]);
-        
 
-        if (!$appUser) {
+        if (! $appUser) {
             \Log::debug('Creating new user for WorkOS ID', [
                 'workos_id' => $response->user->id,
                 'email' => $response->user->email,
@@ -88,11 +81,12 @@ class AuthenticatedSessionController extends Controller
             // For now, we'll fetch user data through the API or fail gracefully
             if (\App\Support\RequestContextResolver::isDesktop()) {
                 \Log::debug('User not found in desktop mode, redirecting to login');
+
                 return redirect()->route('login')
                     ->withErrors(['msg' => 'User not found. Please sign in through the web application first.']);
             }
 
-            //Create user if not exists (web mode only)
+            // Create user if not exists (web mode only)
             $appUser = \App\Models\User::create([
                 'first_name' => $response->user->firstName,
                 'last_name' => $response->user->lastName,
@@ -117,12 +111,8 @@ class AuthenticatedSessionController extends Controller
             'is_desktop' => \App\Support\RequestContextResolver::isDesktop(),
             'account' => $account,
         ]);
-        
-        if ($account) {
-            return to_route('dashboard', ['account' => $account]);
-        }
-        
-        return to_route('dashboard', ['account' => $account]);
+
+        return to_route('dashboard');
     }
 
     /**
@@ -132,14 +122,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
-        
-        // Get the account parameter from the route if it exists
-        $account = $request->route('account');
-        
-        if ($account) {
-            return redirect()->intended(route('dashboard', ['account' => $account], absolute: false));
-        }
-        
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
