@@ -90,33 +90,40 @@ return redirect()->route('dashboard', $params);
 ### Request Lifecycle Order
 
 It might seem **circular** that:
-- TenantFinder uses `getAccountParameter()` to find the tenant
+- TenantFinder uses the hostname to find the tenant
 - SetTenantUrlDefaults uses `Tenant::current()` to set URL defaults
 
-**But it's NOT circular because of Laravel's request lifecycle order:**
+**Important Discovery:** TenantFinder runs BEFORE route matching, so it CANNOT rely on route parameters. It must parse the hostname directly.
 
 #### Step-by-Step Execution:
 
-1. **Route Matching** (BEFORE any middleware or tenant finding)
-   - Laravel receives: `https://myspace.qadran.io/login`
-   - Matches route: `Route::domain('{account}.qadran.io')`
-   - Extracts parameter: `{account} = "myspace"`
-   - ✅ At this point `request()->route('account')` already works!
+1. **HTTP Request Received**
+   - Request: `https://myspace.qadran.io/login`
+   - Host: `myspace.qadran.io`
 
-2. **TenantFinder Runs** (Spatie Multitenancy, runs very early)
-   - Calls custom resolver `RequestContextResolver::getAccountParameter()` which reads the already-extracted route parameter
+2. **TenantFinder Runs** (Spatie Multitenancy, runs BEFORE route matching)
+   - Parses hostname: `myspace.qadran.io` → extracts subdomain `myspace`
    - Finds the Tenant model based on `host = "myspace"`
-   - Sets `Tenant::current()` in context
+   - Sets `Tenant::current()` globally
+   - ⚠️ **Route parameters are NOT available yet!**
 
-3. **SetTenantUrlDefaults Middleware** (PREPENDED to web stack) <- This is key
+3. **Route Matching**
+   - Laravel matches route: `Route::domain('{account}.qadran.io')`
+   - Extracts parameter: `{account} = "myspace"`
+   - ✅ Now `request()->route()->parameter('account')` works!
+
+4. **SetTenantUrlDefaults Middleware** (PREPENDED to web stack)
    - Reads `Tenant::current()->host` 
    - Sets `URL::defaults(['account' => 'myspace'])`
 
-4. **Route-Specific Middleware** (guest, auth, etc.)
+5. **Route-Specific Middleware** (guest, auth, etc.)
    - Generates URLs like `route('dashboard')`
    - Uses `URL::defaults()` to fill in the `{account}` parameter
 
-5. **Controller/Route Execution**
+6. **Controller/Route Execution**
+
+**Key Insight:** TenantFinder extracts the account from the **hostname directly** (by parsing the subdomain), not from route parameters, because it runs before route matching.
+
 
 **Key Insight:** The `{account}` parameter is extracted during route matching, which happens BEFORE the TenantFinder or any middleware runs. So TenantFinder reads an already-available value, not something it needs to create.
 
