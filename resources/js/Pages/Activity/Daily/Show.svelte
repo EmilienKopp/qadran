@@ -6,7 +6,6 @@
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { toast } from '$lib/stores';
   import type { Activity, DailyLog, TaskCategory } from '$models';
-  import route from '$vendor/tightenco/ziggy';
   import { router, useForm } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import DailyLogInputForm from './DailyLogInputForm.svelte';

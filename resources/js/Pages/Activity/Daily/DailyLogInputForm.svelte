@@ -3,14 +3,12 @@
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import OutlineButton from '$components/Buttons/OutlineButton.svelte';
   import PrimaryButton from '$components/Buttons/PrimaryButton.svelte';
-  import DurationInput from '$components/Inputs/DurationInput.svelte';
-  import Select from '$components/Inputs/Select.svelte';
+  import DurationInput from '$components/DataInput/DurationInput.svelte';
+  import Select from '$components/DataInput/Select.svelte';
   import Dialog from '$components/Modals/Dialog.svelte';
-  import TimeZoneInfo from '$components/Widgets/TimeZoneInfo.svelte';
   import { toast } from '$lib/stores';
   import { Duration } from '$lib/utils/duration';
   import type { TaskCategory } from '$models';
-  import route from '$vendor/tightenco/ziggy';
   import { useForm } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import timezone from 'dayjs/plugin/timezone';
@@ -377,7 +375,7 @@
         type="datetime-local"
       />
 
-      <TimeZoneInfo timezone={entry.timezone} titled />
+      <!-- <TimeZoneInfo timezone={entry.timezone} titled /> -->
     </div>
   {/each}
 

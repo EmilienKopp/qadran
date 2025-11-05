@@ -118,3 +118,12 @@ export type SelectOption = {
   name: string;
 };
 
+// Button types
+export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "outline" | "link" | "glass"
+| "success" | "warning" | "info" | "accent" | "error";
+
+export type Size = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "8xl" | "9xl";
+
+export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
+
+export type ButtonShape = "wide" | "circle" | "square" | "block" | undefined;
