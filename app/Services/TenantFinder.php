@@ -43,6 +43,6 @@ class TenantFinder extends BaseTenantFinder
   {
     return $isLocal
       ? TenantFacade::firstWhere('domain', 'qadranio.com')
-      : TenantFacade::firstWhere('host', explode('.', $host)[0]);
+      : TenantFacade::firstWhere('host', RequestContextResolver::getAccountParameter());
   }
 }

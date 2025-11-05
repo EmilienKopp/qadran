@@ -12,3 +12,13 @@ if(! function_exists('tenant')) {
         return Tenant::current();
     }
 }
+
+if(! function_exists('account')) {
+    /**
+     * Get the current tenant's ID.
+     */
+    function account()
+    {
+        return request()->route('account');
+    }
+}

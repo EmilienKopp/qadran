@@ -39,6 +39,16 @@ class RequestContextResolver
     return $host;
   }
 
+  /**
+   * Get the account parameter from the current route.
+   * Works with both subdomain and prefix routing.
+   */
+  public static function getAccountParameter(): ?string
+  {
+    // Try to get from route parameter (works for both subdomain and prefix routing)
+    return request()->route()?->parameter('account');
+  }
+
   public static function isDev(?string $host = null)
   {
     $host ??= RequestContextResolver::getHost();

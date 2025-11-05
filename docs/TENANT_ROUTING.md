@@ -6,109 +6,161 @@ This application needs to support different URL patterns for tenant routing acro
 - **Staging**: `https://example.com/tenant` (path prefix-based)
 - **Local**: `http://localhost:8000` (no tenant parameter)
 
+**Key Issue**: Auth routes (`login`, `register`, etc.) need to be within the tenant routing scope so they can redirect to tenant-specific routes like `dashboard`.
+
 ## Solution
 
-### 1. Middleware: `SetTenantUrlDefaults`
+### 1. Middleware: `SetTenantUrlDefaults` (runs early)
 Located at: `app/Http/Middleware/SetTenantUrlDefaults.php`
 
-This middleware automatically sets default URL parameters based on the current environment and tenant context. It runs on every web request and calls `TenantUrl::setDefaultParameters()`.
+This middleware automatically sets default URL parameters based on the current environment and tenant context. It's **prepended** to the web middleware stack to run early, before any route-specific middleware.
 
 **Key Behavior:**
 - In **staging** (prefix-based routing): Sets `account` as a default URL parameter
-- In **production subdomain** routing: Does nothing (subdomain is automatic)
+- In **production** (subdomain routing): Sets `account` as a default domain parameter
 - In **local** development: Does nothing (no account parameter needed)
 
-### 2. Helper Class: `TenantUrl`
-Located at: `app/Support/TenantUrl.php`
-
-Provides methods to generate tenant-aware URLs correctly for each environment.
-
-**Methods:**
-- `TenantUrl::route(string $name, array $parameters = [], bool $absolute = true)`: Generate a route URL with proper tenant context
-- `TenantUrl::setDefaultParameters()`: Set default route parameters (called by middleware)
-
-### 3. Route Configuration
+### 2. Auth Routes Scoping
 Located at: `routes/web.php`
+
+Auth routes are now **included inside** the tenant route groups so they inherit the proper routing context:
 
 ```php
 if (app()->isProduction()) {
     if(app()->environment('staging')) {
-        // Staging: Path prefix routing
         Route::prefix('{account}')->group(function () {
             require __DIR__ . '/tenant.php';
+            require __DIR__ . '/auth.php';  // ← Inside the group
         });
     } else {
-        // Production: Subdomain routing
         Route::domain('{account}.' . $APP_HOST)->group(function () {
             require __DIR__ . '/tenant.php';
+            require __DIR__ . '/auth.php';  // ← Inside the group
         });
     }
 } else {
-    // Local: No account parameter
     Route::prefix('')->group(function () {
         require __DIR__ . '/tenant.php';
+        require __DIR__ . '/auth.php';      // ← Inside the group
     });
 }
 ```
 
+### 3. RedirectIfAuthenticated Middleware
+Located at: `app/Http/Middleware/RedirectIfAuthenticated.php`
+
+This middleware explicitly passes the account parameter when redirecting to the dashboard:
+
+```php
+$tenant = Tenant::current();
+
+// Build parameters based on environment and tenant
+$params = [];
+if ($tenant && (app()->environment('staging') || app()->isProduction())) {
+    $params['account'] = $tenant->host;
+}
+
+return redirect()->route('dashboard', $params);
+```
+
+### 4. Helper Class: `TenantUrl`
+Located at: `app/Support/TenantUrl.php`
+
+Provides methods to generate tenant-aware URLs correctly for each environment (optional use).
+
 ## Usage in Controllers
 
-### ✅ Correct (Simple)
+### ✅ Correct (Simple - Recommended)
 ```php
 // The middleware handles adding account parameter automatically
 return to_route('dashboard');
 return redirect()->route('dashboard');
 ```
 
-### ❌ Incorrect (Don't do this)
+### ✅ Also Correct (Explicit - for guest middleware)
 ```php
-// Don't manually pass account parameter
-$account = $request->route('account');
-return to_route('dashboard', ['account' => $account]); // ❌ Wrong!
+// Manually pass account parameter when needed
+$tenant = Tenant::current();
+$params = $tenant ? ['account' => $tenant->host] : [];
+return redirect()->route('dashboard', $params);
 ```
 
 ## How It Works
 
 ### Production (Subdomain Routing)
-1. User visits `https://myspace.example.com/dashboard`
+1. User visits `https://myspace.example.com/login`
 2. `Route::domain('{account}.')` captures `myspace` from subdomain
 3. Tenant finder identifies tenant by `myspace`
-4. Middleware does nothing (subdomain is already in URL)
+4. Middleware sets `URL::defaults(['account' => 'myspace'])`
 5. `route('dashboard')` generates `https://myspace.example.com/dashboard`
+6. Auth routes redirect to `https://myspace.example.com/dashboard`
 
 ### Staging (Path Prefix Routing)
-1. User visits `https://example.com/myspace/dashboard`
+1. User visits `https://example.com/myspace/login`
 2. `Route::prefix('{account}')` captures `myspace` from path
 3. Tenant finder identifies tenant by `myspace`
 4. Middleware sets `URL::defaults(['account' => 'myspace'])`
 5. `route('dashboard')` generates `https://example.com/myspace/dashboard`
+6. Auth routes redirect to `https://example.com/myspace/dashboard`
 
 ### Local Development
-1. User visits `http://localhost:8000/dashboard`
+1. User visits `http://localhost:8000/login`
 2. No account parameter needed
-3. Tenant finder uses default tenant or settings
+3. Tenant finder uses default tenant
 4. Middleware does nothing
 5. `route('dashboard')` generates `http://localhost:8000/dashboard`
+6. Auth routes redirect to `http://localhost:8000/dashboard`
 
-## Advanced: Custom TenantUrl Helper
+## Key Changes Made
 
-If you need more control in specific cases, you can use:
-
-```php
-use App\Support\TenantUrl;
-
-// Generate tenant-aware route URL
-$url = TenantUrl::route('dashboard');
-$url = TenantUrl::route('projects.show', ['project' => $project->id]);
-```
+1. ✅ **Moved `SetTenantUrlDefaults` to prepend** instead of append (runs first)
+2. ✅ **Moved `auth.php` inside tenant route groups** (critical fix)
+3. ✅ **Updated `RedirectIfAuthenticated`** to explicitly pass account parameter
+4. ✅ **Updated `TenantUrl::setDefaultParameters()`** to handle both staging and production
 
 ## Testing
 
-The middleware ensures URLs are generated correctly across all environments without requiring manual parameter passing in controllers.
+After these changes:
+- ✅ Auth routes work in all environments
+- ✅ Redirects to dashboard work correctly
+- ✅ No "Missing required parameter for [Route: dashboard]" errors
+
+## Accessing the Account Parameter
+
+You can access the `{account}` route parameter (from subdomain or path prefix) from anywhere in your application:
+
+### Method 1: RequestContextResolver (Recommended)
+```php
+use App\Support\RequestContextResolver;
+
+$account = RequestContextResolver::getAccountParameter();
+```
+
+### Method 2: Request Helper
+```php
+$account = request()->route()?->parameter('account');
+```
+
+### Method 3: Via Current Tenant
+```php
+use App\Models\Landlord\Tenant;
+
+$tenant = Tenant::current();
+$account = $tenant?->host;
+```
+
+### Method 4: Global Helper
+```php
+$account = account();
+```
 
 ## Related Files
-- `app/Http/Middleware/SetTenantUrlDefaults.php` - Middleware
+- `app/Http/Middleware/SetTenantUrlDefaults.php` - Early middleware
+- `app/Http/Middleware/RedirectIfAuthenticated.php` - Guest middleware
 - `app/Support/TenantUrl.php` - Helper class
-- `bootstrap/app.php` - Middleware registration
-- `routes/web.php` - Route configuration
+- `app/Support/RequestContextResolver.php` - Context resolver with `getAccountParameter()`
+- `bootstrap/app.php` - Middleware registration (prepend)
+- `routes/web.php` - Route configuration (**auth routes inside tenant groups**)
+- `routes/auth.php` - Auth routes
 - `app/Services/TenantFinder.php` - Tenant resolution logic
+
