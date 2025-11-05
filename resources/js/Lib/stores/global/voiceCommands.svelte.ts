@@ -1,5 +1,6 @@
 import { Page, xPost } from '$lib/inertia';
 
+import { getTimezone } from '$lib/utils/timezone';
 import { router } from '@inertiajs/svelte';
 import { voiceAssistant } from './voiceAssistant.svelte';
 
@@ -376,6 +377,17 @@ class VoiceCommandsService {
     // No command match - send to backend AI for interpretation
     if (!commandFound) {
       console.log('No matching command found, sending to AI:', transcript);
+
+      // Restrict "key words" that trigger AI processing to avoid unnecessary calls
+      const aiTriggerWords = ['create', 'add', 'set', 'clock', 'punch', 'update', 'delete', 'remove', 'generate', 'make', 'build', 'launch', 'start', 'stop', 'calculate', 'compute', 'analyze', 'show me', 'what is', 'how to', 'help me with'];
+      const containsTriggerWord = aiTriggerWords.some(word => transcript.includes(word));
+
+      if (!containsTriggerWord) {
+        console.log('Transcript does not contain AI trigger words, ignoring:', transcript);
+        this.#error = 'Command not recognized. Say "help" to hear available commands.';
+        return;
+      }
+
       this.sendToAI(transcript);
     }
   }
@@ -383,7 +395,7 @@ class VoiceCommandsService {
   private sendToAI(transcript: string) {
     this.#error = 'Processing with AI...';
 
-    xPost(route('audio.command'), { text: transcript }, {
+    xPost(route('audio.command'), { text: transcript, timezone: getTimezone()}, {
       onSuccess: (event: Page) => {
         this.#error = '';
         console.log('AI command executed successfully');

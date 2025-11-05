@@ -73,6 +73,7 @@ Clock in/out specific guidelines:
 - clock_out: Optional 'timestamp' for backdated clock-outs. No project/task needed (assumes current active session)
 - Match project names from the provided projects list (case-insensitive). Use project_id if exact match found
 - Examples: 'clock in to project X', 'start working on task Y', 'clock out', 'stop timer'
+- Pass a 'timezone' parameter to the clock in/out commands as much as possible
 
 Example output structures:
 {

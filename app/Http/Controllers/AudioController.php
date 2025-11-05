@@ -29,13 +29,10 @@ class AudioController extends Controller
             $userId = $request->user()->id;
 
             $projects = $request->user()->projects()->select('name', 'projects.id')->pluck('id', 'name');
+            $timezone = $request->input('timezone') ?? $request->user()->timezone;
 
-            $voiceCommand = $this->aiService->textToCommand($text, compact('projects'));
-            \Log::info('Text to command result', [
-                'command' => $voiceCommand->command,
-                'params' => $voiceCommand->params,
-            ]);
-            // Extract data for database storage
+            $voiceCommand = $this->aiService->textToCommand($text, compact('projects', 'timezone'));
+
             $commandData = [
                 'command' => $voiceCommand->command,
                 'params' => array_map(fn($p) => $p->jsonSerialize(), $voiceCommand->params),
@@ -49,7 +46,6 @@ class AudioController extends Controller
                 ]
             );
 
-            // Save the voice command to database asynchronously with tenant context
             StoreVoiceCommandJob::dispatch(
                 userId: $userId,
                 transcript: $text,
