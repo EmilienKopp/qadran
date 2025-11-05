@@ -41,6 +41,7 @@ class TenantFinder extends BaseTenantFinder
 
   private function findWebTenant(string $host, bool $isLocal): ?Tenant
   {
+    \Log::debug('Finding web tenant', ['host' => $host, 'isLocal' => $isLocal, 'accountParam' => RequestContextResolver::getAccountParameter()]);
     return $isLocal
       ? TenantFacade::firstWhere('domain', 'qadranio.com')
       : TenantFacade::firstWhere('host', RequestContextResolver::getAccountParameter());
