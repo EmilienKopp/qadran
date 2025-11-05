@@ -2,7 +2,7 @@ import { Organization, Project } from '$models';
 
 export class ProjectBase implements Project {
     id: number;
-    organization_id: number;
+    organization_id?: number;
     organization?: Organization;
     name: string;
     description?: string;

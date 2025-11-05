@@ -1,4 +1,4 @@
-import { ClockEntry, User } from '$models';
+import { User } from '$models';
 
 export class UserBase implements User {
     id: number;
@@ -26,9 +26,7 @@ export class UserBase implements User {
     website?: string;
     github?: string;
     dashboard_preferences?: any;
-    todays_entries?: ClockEntry[] | undefined;
-    projects?: any[] | undefined;
-    roles?: any[] | undefined;
+    workos_id?: string;
 
 
     constructor(data: User) {
@@ -57,8 +55,6 @@ export class UserBase implements User {
         this.website = data.website;
         this.github = data.github;
         this.dashboard_preferences = data.dashboard_preferences;
-        this.todays_entries = data.todays_entries;
-        this.projects = data.projects;
-        this.roles = data.roles;
+        this.workos_id = data.workos_id;
     }
 }

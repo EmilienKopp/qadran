@@ -7,3 +7,8 @@ export function caseInsensitiveIncludes(haystack?: string, needle?: string) {
     if(!haystack?.length) return false;
     return haystack.toLowerCase().includes(needle.toLowerCase());
 }
+
+export function leftPad(str: string | number, padChar: string, length: number): string {
+    const stringValue = String(str);
+    return stringValue.padStart(length, padChar);
+}
