@@ -27,6 +27,7 @@ config(['auth.defaults.guard' => 'tenant']);
     'tenant_database' => Tenant::current()?->database,
     'tenant_connection_database' => config('database.connections.tenant.database'),
     'auth_guard' => config('auth.defaults.guard'),
+    'is_desktop' => RequestContextResolver::isDesktop(),
 ]);
 
 

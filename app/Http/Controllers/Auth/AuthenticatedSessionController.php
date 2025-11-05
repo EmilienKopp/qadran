@@ -19,7 +19,7 @@ use WorkOS\WorkOS;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(public UserManagement $userManager)
+    public function __construct(public UserManagement $userManager, public UserRepositoryInterface $userRepository)
     {
     }
 
@@ -65,7 +65,7 @@ class AuthenticatedSessionController extends Controller
             clientId: config('workos.client_id'),
         );
 
-        $appUser = app(UserRepositoryInterface::class)->findByWorkosId($response->user->id);
+        $appUser = $this->userRepository->findByWorkosId($response->user->id);
 
         
 

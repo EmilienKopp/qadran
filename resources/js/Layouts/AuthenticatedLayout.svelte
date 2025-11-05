@@ -14,7 +14,9 @@
   import ThemeToggle from '$components/UI/ThemeToggle.svelte';
   import TerminalDialog from '$components/TerminalDialog.svelte';
   import VoiceInput from '$components/DataInput/VoiceInput.svelte';
+  import Timezone from '$components/UI/Timezone.svelte';
   import Button from '$components/Actions/Button.svelte';
+  import { features } from '$lib/stores/global/features.svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -49,9 +51,9 @@
           <div class="flex">
             <!-- Logo -->
             <div class="flex shrink-0 items-center w-36">
-              <!-- <Link href={route('dashboard',{ account: appUser('id')})}>
+              <Link href={route('dashboard',{ account: appUser('id')})}>
                 <Clock />
-              </Link> -->
+              </Link>
             </div>
             <ThemeToggle />
 
@@ -68,9 +70,13 @@
           </div>
 
           <RoleSwitcher />
-          <TerminalDialog />
+
+          {#if features.terminalAccess}
+            <TerminalDialog />
+          {/if}
 
           <div class="hidden sm:ms-6 sm:flex sm:items-center">
+            <Timezone />
             <!-- Settings Dropdown -->
             <div class="ms-3">
               <Dropdown actions={settingsDropdownActions}>
@@ -189,9 +195,7 @@
   <!-- Voice Input Component (always visible) -->
   <svelte:boundary>
     {#snippet failed(error, reset)}
-    <Button on:click={reset} class="btn btn-error">
-      Reload Voice Input
-    </Button>
+      <Button on:click={reset} class="btn btn-error">Reload Voice Input</Button>
     {/snippet}
     <VoiceInput />
   </svelte:boundary>

@@ -18,6 +18,10 @@ export function hookSuccess<T extends object>(
   form.recentlySuccessful && callback();
 }
 
+export function getPage(): Page {
+  return get(page);
+}
+
 /**
  * Wrapper around inertia router post with preserved state and scroll
  */

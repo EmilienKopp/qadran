@@ -3,12 +3,13 @@
   import { voiceAssistant } from '$lib/stores/global/voiceAssistant.svelte';
   import { voiceCommands } from '$lib/stores/global/voiceCommands.svelte';
   import VoiceAssistantPanel from './VoiceAssistantPanel.svelte';
-  import { page } from '@inertiajs/svelte';
+  import { getPage } from '$lib/inertia';
+  import { features } from '$lib/stores/global/features.svelte';
 
   let isMinimized = $state(true);
 
   // Get feature flag from Inertia props - true = voice assistant mode, false = voice commands mode
-  let voiceAssistantMode = $derived($page.props.features?.voiceAssistantMode ?? false);
+  let voiceAssistantMode = features.voiceAssistantMode;
 
   onMount(() => {
     // Check if browser supports MediaRecorder

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
 
-  let output = $state('');
+  let { output = '' }: { output?: string } = $props();
   let command = $state('project:list');
   let isRunning = $state(false);
   let eventSource: EventSource | null = $state(null);

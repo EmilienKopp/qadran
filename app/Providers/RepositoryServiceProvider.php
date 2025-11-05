@@ -59,11 +59,11 @@ class RepositoryServiceProvider extends ServiceProvider
             $repositoryName = str_replace('RepositoryInterface', '', $filename);
             
             // Build the interface class name
-            $interface = "\\App\\Repositories\\{$filename}";
+            $interface = "App\\Repositories\\{$filename}";
             
             // Build the implementation class names
-            $localImplementation = "\\App\\Repositories\\Local\\Local{$repositoryName}Repository";
-            $remoteImplementation = "\\App\\Repositories\\Remote\\Remote{$repositoryName}Repository";
+            $localImplementation = "App\\Repositories\\Local\\Local{$repositoryName}Repository";
+            $remoteImplementation = "App\\Repositories\\Remote\\Remote{$repositoryName}Repository";
             
             // Verify classes exist before binding
             if (!interface_exists($interface)) {
@@ -88,7 +88,7 @@ class RepositoryServiceProvider extends ServiceProvider
                     if ($isDesktop) {
                         return new $remoteImplementation(
                             $app->make(\GuzzleHttp\Client::class),
-                            config('app.api_url')
+                            config('services.api.base_url')
                         );
                     }
                     return new $localImplementation();

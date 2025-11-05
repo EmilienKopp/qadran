@@ -37,7 +37,7 @@ class ClockEntryRepository extends Repository
         $userId = $data['user_id'];
         $projectId = $data['project_id'];
         $clockInTime = $data['in'] ?? now();
-        $timezone = $data['timezone'] ?? config('app.timezone');
+        $timezone = $data['timezone'] ?? auth('tenant')->user()->timezone ?? config('app.timezone');
 
         // Parse the clock in time
         $clockInTime = $clockInTime instanceof Carbon

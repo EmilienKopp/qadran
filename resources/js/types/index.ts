@@ -11,7 +11,9 @@ export type PageProps<
     enums: {
       roles: SelectOption[];
       
-    }
+    },
+    flash: FlashMessages;
+    features: Record<string, boolean>;
 };
 
 export type UTCDate = Date;

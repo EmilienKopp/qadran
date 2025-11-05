@@ -9,7 +9,7 @@ class ArtisanController extends Controller
 {
     public function run(Request $request)
     {
-
+        
         $command = $request->query('command');
         $arguments = $request->query('arguments', []);
         $options = $request->query('options', []);

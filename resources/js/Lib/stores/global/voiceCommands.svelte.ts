@@ -1,6 +1,7 @@
+import { Page, xPost } from '$lib/inertia';
+
 import { router } from '@inertiajs/svelte';
 import { voiceAssistant } from './voiceAssistant.svelte';
-import { xPost, Page } from '$lib/inertia';
 
 // Type for Web Speech Recognition API
 interface SpeechRecognitionEvent extends Event {

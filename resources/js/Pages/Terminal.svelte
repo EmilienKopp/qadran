@@ -3,10 +3,10 @@
   import Terminal from '$components/Terminal.svelte';
 
   interface Props {
-    output: string[];
+    output: string;
   }
 
-  let { output = [] }: Props = $props();
+  let { output }: Props = $props();
   $inspect(output);
 </script>
 
