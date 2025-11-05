@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Landlord\Tenant;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,15 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect()->route('dashboard');
+                $tenant = Tenant::current();
+
+                // Build parameters based on environment and tenant
+                $params = [];
+                if ($tenant && (app()->environment('staging') || app()->isProduction())) {
+                    $params['account'] = $tenant->host;
+                }
+
+                return redirect()->route('dashboard', $params);
             }
         }
 

@@ -1,8 +1,7 @@
 <?php
 
 use App\DataAccess\Facades\Tenant;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\KnownIssuesController;
 use App\Support\InstanceUrl;
 use App\Support\RequestContextResolver;
 use Illuminate\Foundation\Application;
@@ -10,7 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Uri;
 use Inertia\Inertia;
-use App\Http\Controllers\KnownIssuesController;
 use Native\Desktop\Facades\Settings;
 
 $APP_HOST = Uri::of(env('APP_URL'))->host();
@@ -31,22 +29,23 @@ Route::get('/', function () {
 Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     $spaceName = $request->input('space');
 
-    if (!$spaceName) {
+    if (! $spaceName) {
         return back()->withErrors(['space' => 'Space name is required']);
     }
 
     $tenant = Tenant::getByDomainOrHost($spaceName);
 
-    if (!$tenant) {
+    if (! $tenant) {
         return back()->withErrors(['space' => 'Space not found. Please check the name and try again.']);
     }
     $instanceUrl = InstanceUrl::fetch($tenant['host']);
-    if(RequestContextResolver::isDesktop()) {
-        Settings::set('instance_url', $instanceUrl );
-        Settings::set('tenant', $tenant );
+    if (RequestContextResolver::isDesktop()) {
+        Settings::set('instance_url', $instanceUrl);
+        Settings::set('tenant', $tenant);
     }
     Config::set('services.api.base_url', $instanceUrl);
     $tenant->makeCurrent();
+
     return Inertia::render('TenantWelcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -55,22 +54,20 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
 })->name('find-tenant');
 
 if (app()->isProduction()) {
-    if(app()->environment('staging')) {
+    if (app()->environment('staging')) {
         Route::prefix('{account}')->group(function () {
-            require __DIR__ . '/tenant.php';
+            require __DIR__.'/tenant.php';
+            require __DIR__.'/auth.php';
         });
     } else {
-        Route::domain('{account}.' . $APP_HOST)->group(function () {
-            require __DIR__ . '/tenant.php';
+        Route::domain('{account}.'.$APP_HOST)->group(function () {
+            require __DIR__.'/tenant.php';
+            require __DIR__.'/auth.php';
         });
     }
 } else {
     Route::prefix('')->group(function () {
-        require __DIR__ . '/tenant.php';
+        require __DIR__.'/tenant.php';
+        require __DIR__.'/auth.php';
     });
 }
-
-
-
-
-require __DIR__ . '/auth.php';

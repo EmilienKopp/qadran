@@ -45,8 +45,12 @@ class TenantUrl
             return;
         }
 
-        // Only set default account parameter for staging (prefix-based routing)
+        // Set defaults for both staging (prefix) and production (domain) routing
         if (app()->environment('staging')) {
+            // Staging uses path prefix
+            URL::defaults(['account' => $tenant->host]);
+        } elseif (app()->isProduction()) {
+            // Production uses subdomain - set domain defaults
             URL::defaults(['account' => $tenant->host]);
         }
     }
