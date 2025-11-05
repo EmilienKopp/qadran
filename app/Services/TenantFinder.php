@@ -51,7 +51,6 @@ class TenantFinder extends BaseTenantFinder
             return TenantFacade::firstWhere('domain', 'qadranio.com');
         }
 
-        // In production, extract account from subdomain or route
         // Route parameter might not be available yet, so parse from host
         $account = $this->extractAccountFromHost($host);
 
@@ -70,19 +69,16 @@ class TenantFinder extends BaseTenantFinder
      */
     private function extractAccountFromHost(string $host): ?string
     {
-        // First try route parameter (if route matching already happened)
         $routeAccount = RequestContextResolver::getAccountParameter();
         if ($routeAccount) {
             return $routeAccount;
         }
 
-        // Fallback: Extract from subdomain
-        // For "tenant.qadran.io", extract "tenant"
         $parts = explode('.', $host);
 
-        // If we have subdomain (e.g., tenant.qadran.io has 3 parts)
+
         if (count($parts) >= 3) {
-            return $parts[0]; // Return the subdomain
+            return $parts[0];
         }
 
         return null;
