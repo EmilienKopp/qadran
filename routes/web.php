@@ -55,9 +55,15 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
 })->name('find-tenant');
 
 if (app()->isProduction()) {
-    Route::domain('{account}.' . $APP_HOST)->group(function () {
-        require __DIR__ . '/tenant.php';
-    });
+    if(app()->environment('staging'))) {
+        Route::prefix('{account}')->group(function () {
+            require __DIR__ . '/tenant.php';
+        });
+    } else {
+        Route::domain('{account}.' . $APP_HOST)->group(function () {
+            require __DIR__ . '/tenant.php';
+        });
+    }
 } else {
     Route::prefix('')->group(function () {
         require __DIR__ . '/tenant.php';
