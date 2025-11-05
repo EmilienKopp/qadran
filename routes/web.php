@@ -55,7 +55,7 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
 })->name('find-tenant');
 
 if (app()->isProduction()) {
-    if(app()->environment('staging'))) {
+    if(app()->environment('staging')) {
         Route::prefix('{account}')->group(function () {
             require __DIR__ . '/tenant.php';
         });
