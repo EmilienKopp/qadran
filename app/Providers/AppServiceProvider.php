@@ -9,6 +9,8 @@ use Illuminate\Contracts\Foundation\Application;
 use Native\Desktop\App;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;
+use Laravel\Sanctum\Sanctum;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         WorkOS::setApiKey(config('workos.api_key'));
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         // Use file-based sessions for desktop mode (Redis not available)
         if (config('nativephp-internal.running', false)) {

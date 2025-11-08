@@ -10,7 +10,7 @@
 
   let dialog: HTMLDialogElement | undefined = $state();
 
-  let { id, title, children }: Props = $props();
+  let { id, title, children, onclose }: Props = $props();
 
   export function close() {
     onclose?.();

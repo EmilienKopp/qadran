@@ -46,9 +46,9 @@ class TenantFinder extends BaseTenantFinder
     private function findWebTenant(string $host, bool $isLocal): ?Tenant
     {
         if ($isLocal) {
-            \Log::debug('Finding local web tenant', ['host' => $host]);
-
-            return TenantFacade::firstWhere('domain', 'qadranio.com');
+            $tenant = TenantFacade::firstWhere('domain', 'qadranio.com');
+            \Log::debug('Finding local web tenant', compact('host', 'tenant'));
+            return $tenant;
         }
 
         // Route parameter might not be available yet, so parse from host

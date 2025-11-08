@@ -47,6 +47,16 @@ Route::middleware('auth')->group(function () {
   Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
   Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+  // MCP Token Management Routes
+  Route::prefix('mcp-tokens')->name('mcp-tokens.')->middleware('throttle:10,1')->group(function () {
+    Route::get('/', [\App\Http\Controllers\McpTokenController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\McpTokenController::class, 'store'])
+      ->middleware('throttle:5,1') // More restrictive for token creation
+      ->name('store');
+    Route::delete('/{tokenId}', [\App\Http\Controllers\McpTokenController::class, 'destroy'])->name('destroy');
+    Route::get('/connection-info', [\App\Http\Controllers\McpTokenController::class, 'connectionInfo'])->name('connection-info');
+  });
+
   Route::group(['prefix' => 'clock-entry'], function () {
     Route::post('/store', [ClockEntryController::class, 'store'])->name('clock-entry.store');
   });

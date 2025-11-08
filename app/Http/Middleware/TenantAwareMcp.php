@@ -9,7 +9,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Laravel\Sanctum\PersonalAccessToken;
+use App\Models\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class TenantAwareMcp
@@ -49,12 +49,19 @@ class TenantAwareMcp
         
         // Attempt to authenticate the user using the token
         $user = $this->authenticateUser($request);
+
+        \Log::debug('👤 User authentication attempt result', [
+            'user_found' => $user ? true : false,
+            'tenant' => $tenant->host
+        ]);
         
         if (!$user) {
             return response()->json([
                 'error' => 'Authentication failed. Please provide a valid access token for the tenant.',
                 'code' => 'AUTH_FAILED',
-                'tenant' => $tenant->host
+                'tenant' => $tenant->host,
+                'requested_token' => $request->header('Authorization'),
+                'req' => $request->all()
             ], 401);
         }
 
@@ -128,8 +135,24 @@ class TenantAwareMcp
             return null;
         }
 
+        Log::debug('🔑 Attempting to authenticate with token', [
+            'token_length' => strlen($token),
+            'token_preview' => substr($token, 0, 10) . '...',
+            'has_pipe' => str_contains($token, '|'),
+            'token_format' => str_contains($token, '|') ? 'id|token format' : 'plain token',
+        ]);
+
         // Try Sanctum authentication first
         $accessToken = PersonalAccessToken::findToken($token);
+        
+        Log::debug('🔍 Token lookup result', [
+            'found' => $accessToken !== null,
+            'token_id' => $accessToken?->id,
+            'tokenable_type' => $accessToken?->tokenable_type,
+            'tokenable_id' => $accessToken?->tokenable_id,
+            'all_tokens_count' => PersonalAccessToken::count(),
+            'all_token_ids' => PersonalAccessToken::pluck('id')->toArray(),
+        ]);
         
         if ($accessToken && !$accessToken->tokenable instanceof \App\Models\Landlord\User) {
             // This is a tenant user token

@@ -3,6 +3,7 @@
   import DeleteUserForm from './Partials/DeleteUserForm.svelte';
   import UpdatePasswordForm from './Partials/UpdatePasswordForm.svelte';
   import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.svelte';
+  import McpTokenForm from './Partials/McpTokenForm.svelte';
 
   interface Props {
     mustVerifyEmail?: boolean;
@@ -39,6 +40,10 @@
 
       <div class=" p-4 shadow-sm sm:rounded-lg sm:p-8">
         <UpdatePasswordForm class="max-w-xl" />
+      </div>
+
+      <div class=" p-4 shadow-sm sm:rounded-lg sm:p-8">
+        <McpTokenForm class="max-w-4xl" />
       </div>
 
       <div class=" p-4 shadow-sm sm:rounded-lg sm:p-8">

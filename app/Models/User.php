@@ -7,13 +7,15 @@ use App\Traits\HasGitHubConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasGitHubConnection, UsesTenantConnection;
+    use HasFactory, Notifiable, HasRoles, HasGitHubConnection, UsesTenantConnection,
+        HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
