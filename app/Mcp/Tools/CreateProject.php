@@ -26,25 +26,26 @@ class CreateProject extends TenantAwareTool
     protected function handleTenantRequest(Request $request): Response
     {
         // Check if user has permission to create projects
-        if (!$this->userCan('create-projects') && !$this->userHasRole(['admin', 'project-manager'])) {
-            return $this->errorResponse('You do not have permission to create projects.');
-        }
+        // if (!$this->userCan('create-projects') && !$this->userHasRole(['admin', 'project-manager'])) {
+        //     return $this->errorResponse('You do not have permission to create projects.');
+        // }
 
         try {
             $project = Project::create([
-                'name' => $request->input('name'),
-                'description' => $request->input('description'),
-                'type' => $request->input('type', ProjectType::Other->value),
-                'status' => $request->input('status', ProjectStatus::Active->value),
-                'start_date' => $request->input('start_date'),
-                'end_date' => $request->input('end_date'),
-                'location' => $request->input('location'),
-                'icon' => $request->input('icon'),
-                // Automatically associate with user's organization if they have one
-                'organization_id' => $this->getUserOrganizations()->first()?->id,
+                'name' => $request->get('name'),
+                'description' => $request->get('description'),
+                'type' => $request->get('type', ProjectType::Other->value),
+                'status' => $request->get('status', ProjectStatus::Active->value),
+                'start_date' => $request->get('start_date'),
+                'end_date' => $request->get('end_date'),
+                'location' => $request->get('location'),
+                'icon' => $request->get('icon'),
             ]);
 
-            $resource = $this->formatModelResource('Project', $project, 'project');
+            // Attach the project to the user
+            $this->user->projects()->attach($project->id, [
+                // 'role' => 'owner',
+            ]);
 
             return $this->successResponse(
                 "Project '{$project->name}' created successfully with ID {$project->id} in tenant '{$this->tenant->host}'."

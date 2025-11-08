@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\StoreVoiceCommandJob;
 use App\Models\Landlord\Tenant;
+use App\Models\PersonalAccessToken;
 use App\Models\Project;
 use App\Services\AIService;
 use App\Services\CommandHandler;
@@ -154,10 +155,14 @@ class AudioController extends Controller
         }
     }
 
+    public function assistant(Request $request)
+    {
+        return $this->transcribeToAssistant($request);
+    }
+
     public function transcribeToCommand(Request $request)
     {
         try {
-            throw new \Exception('Debug');
             $request->validate([
                 'audio' => 'required|file|mimes:webm,wav,mp3,ogg,m4a|max:10240', // 10MB max
             ]);
@@ -210,6 +215,57 @@ class AudioController extends Controller
 
             return back()->with('data', [
                 'audioError' => 'Failed to transcribe audio to command: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function transcribeToAssistant(Request $request)
+    {
+        try {
+            $request->validate([
+                'audio' => 'required|file|mimes:webm,wav,mp3,ogg,m4a|max:10240', // 10MB max
+            ]);
+
+            $audioFile = $request->file('audio');
+
+            if (!$audioFile) {
+                return back()->with('data', [
+                    'audioError' => 'No audio file provided',
+                ]);
+            }
+
+            // Get the transcript and command from the AI service
+            $transcript = $this->aiService->transcribeAudio($audioFile);
+         
+            $userId = $request->user()->id;
+
+            // Save the voice command to database asynchronously with tenant context
+            StoreVoiceCommandJob::dispatch(
+                userId: $userId,
+                transcript: $transcript,
+            );
+            
+            $response = $this->aiService->textToAssistant($transcript);
+            \Log::debug('Assistant response', [
+                'response' => $response,
+            ]);
+            return back()->with('data', [
+                'error' => null,
+                'transcript' => $transcript,
+                'assistantResponse' => $response,
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e; // Let Inertia handle validation errors
+
+        } catch (\Exception $e) {
+            Log::error('Audio instructions failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('data', [
+                'audioError' => 'Failed to transcribe audio: ' . $e->getMessage(),
             ]);
         }
     }

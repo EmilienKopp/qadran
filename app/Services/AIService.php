@@ -101,4 +101,12 @@ class AIService
 
         return \App\DTOs\VoiceCommand::fromArray($commandData);
     }
+
+    public function textToAssistant(string $text)
+    {
+        $systemPrompt = AIPromptRegistry::getVoiceAssistantSystemPrompt($text);
+        $response = $this->commandAction->textToAssistant($systemPrompt, $text);
+        \Log::debug('AIService textToAssistant response', ['response' => $response]);
+        return $response;
+    }
 }

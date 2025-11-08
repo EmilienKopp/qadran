@@ -58,4 +58,8 @@ return [
         'default_user' => env('WORKOS_DEFAULT_USER'),
     ],
 
+    'n8n' => [
+        'secret' => env('N8N_SECRET'),
+    ]
+
 ];

@@ -42,17 +42,30 @@ class ListProjects extends Tool
         $limit = $validated['limit'] ?? 50;
         $projects = $query->limit($limit)->get();
 
-        $text = "Found {$projects->count()} project(s)";
+        $summary = "Found {$projects->count()} project(s)";
         if (! empty($validated['status'])) {
-            $text .= " with status '{$validated['status']}'";
+            $summary .= " with status '{$validated['status']}'";
         }
         if (! empty($validated['type'])) {
-            $text .= " of type '{$validated['type']}'";
+            $summary .= " of type '{$validated['type']}'";
+        }
+
+        $table = "\n\n## Projects\n\n";
+        $table .= "| ID | Name | Type | Status | Description |\n";
+        $table .= "|---|---|---|---|---|\n";
+
+        foreach ($projects as $project) {
+            $name = $project->name ?? 'N/A';
+            $type = $project->type ?? 'N/A';
+            $status = $project->status ?? 'N/A';
+            $description = $project->description ? substr($project->description, 0, 50).'...' : '-';
+
+            $table .= "| {$project->id} | {$name} | {$type} | {$status} | {$description} |\n";
         }
 
         // Return array of Response objects
         return [
-            Response::text($text),
+            Response::text($summary.$table),
         ];
     }
 

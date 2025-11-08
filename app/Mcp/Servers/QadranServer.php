@@ -9,6 +9,7 @@ use App\Mcp\Tools\CreateActivityBatch;
 use App\Mcp\Tools\CreateProject;
 use App\Mcp\Tools\CreateTask;
 use App\Mcp\Tools\GenerateReport;
+use App\Mcp\Tools\GetClockEntries;
 use App\Mcp\Tools\ListActivityTypes;
 use App\Mcp\Tools\ListProjects;
 use App\Mcp\Tools\ListTasks;
@@ -45,6 +46,7 @@ class QadranServer extends Server
         ### Time Tracking
         - **clock_in**: Start tracking time for a project or task
         - **clock_out**: Stop tracking time
+        - **get_clock_entries**: Retrieve clock entries with optional filtering by date, user, and project
         - **generate_report**: Generate a time tracking report for a specific date
         
         ### Activity Logging
@@ -83,6 +85,7 @@ class QadranServer extends Server
         CreateTask::class,
         ClockIn::class,
         ClockOut::class,
+        GetClockEntries::class,
         GenerateReport::class,
         ListTasks::class,
         ListProjects::class,

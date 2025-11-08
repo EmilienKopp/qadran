@@ -31,21 +31,45 @@ class N8nAIAction implements AIActionInterface
     /**
      * Process text to command using n8n webhook
      */
-    public function textToCommand(string $systemPrompt, string $text): array
+    public function textToCommand(string $system_prompt, string $user_input): array
     {
         $webhookUrl = config('ai.n8n.webhook_url');
 
         if (empty($webhookUrl)) {
-            throw new \Exception('N8n webhook URL is not configured. Please set AI_N8N_WEBHOOK_URL in your .env file.');
+            throw new \Exception('N8n webhook URL is not configured. Please set AI_N8N_WEBHOOK_URL');
         }
 
+        return $this->executeWebhook($webhookUrl, $system_prompt, $user_input);
+    }
+
+    public function textToAssistant(string $system_prompt, string $user_input)
+    {
+        $webhookUrl = config('ai.n8n.assistant_webhook_url');
+
+        if (empty($webhookUrl)) {
+            throw new \Exception('N8n assistant webhook URL is not configured. Please set AI_N8N_ASSISTANT_WEBHOOK_URL');
+        }
+
+        return $this->executeWebhook($webhookUrl, $system_prompt, $user_input);
+    }
+
+    private function executeWebhook(string $url, string $system_prompt, string $user_input)
+    {
+        \Log::debug('Executing n8n webhook', [
+            'url' => $url,
+            'system_prompt' => $system_prompt,
+            'user_input' => $user_input,
+        ]);
         try {
             $client = new \GuzzleHttp\Client;
-            $response = $client->post($webhookUrl, [
+            $tenantId = hash('sha256', \App\Models\Landlord\Tenant::current()?->id . env('APP_KEY'));
+            $response = $client->post($url, [
                 'json' => [
-                    'system_prompt' => $systemPrompt,
-                    'user_input' => $text,
                     'timestamp' => now()->toIso8601String(),
+                    'token' => request()->user()->tokens()->first()?->token,
+                    'system_prompt' => $system_prompt,
+                    'user_input' => $user_input,
+                    'tenant_id' => $tenantId,
                 ],
                 'timeout' => 30,
             ]);
@@ -55,20 +79,20 @@ class N8nAIAction implements AIActionInterface
                     'status' => $response->getStatusCode(),
                     'body' => $response->getBody()->getContents(),
                 ]);
-                throw new \Exception('Command generation failed: '.$response->getBody()->getContents());
+                throw new \Exception('Webhook execution failed: '.$response->getBody()->getContents());
             }
 
             [$data] = json_decode($response->getBody()->getContents(), true);
-            \Log::info('n8n webhook response:', $data);
+            \Log::info('n8n webhook response:', $data ?? []);
             return $data['output'] ?? [];
 
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             Log::error('n8n webhook request failed:', [
                 'error' => $e->getMessage(),
             ]);
-            throw new \Exception('Failed to connect to command processing service: '.$e->getMessage());
+            throw new \Exception('Failed to connect to webhook service: '.$e->getMessage());
         } catch (\Exception $e) {
-            Log::error('Command generation failed:', [
+            Log::error('Webhook execution failed:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);

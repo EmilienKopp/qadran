@@ -34,11 +34,22 @@ interface AIActionInterface
     /**
      * Process text to extract structured command data
      *
-     * @param  string  $systemPrompt  The system prompt defining command structure
-     * @param  string  $text  The user's natural language input
+     * @param  string  $system_prompt  The system prompt defining command structure
+     * @param  string  $user_input  The user's natural language input
      * @return array The structured command data
      *
      * @throws \Exception If command extraction fails
      */
-    public function textToCommand(string $systemPrompt, string $text): array;
+    public function textToCommand(string $system_prompt, string $user_input): array;
+
+    /**
+     * Process text for AI assistant interactions
+     *
+     * @param  string  $system_prompt  The system prompt defining assistant behavior
+     * @param  string  $user_input  The user's input to the assistant
+     * @return mixed The assistant's response data
+     *
+     * @throws \Exception If processing fails
+     */
+    public function textToAssistant(string $system_prompt, string $user_input);
 }

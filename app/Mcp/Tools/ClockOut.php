@@ -64,8 +64,8 @@ class ClockOut extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'user_id' => $schema->integer()->description('The ID of the user clocking out (required if clock_entry_id not provided)'),
-            'clock_entry_id' => $schema->integer()->description('The ID of the specific clock entry to clock out (optional)'),
+            'user_id' => $schema->integer()->description('The ID of the user clocking out (required if clock_entry_id not provided)')->required(),
+            'clock_entry_id' => $schema->integer()->description('The ID of the specific clock entry to clock out')->required(),
             'notes' => $schema->string()->description('Additional notes for the clock entry'),
         ];
     }

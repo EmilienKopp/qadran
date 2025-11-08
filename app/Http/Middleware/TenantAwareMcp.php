@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TenantAwareMcp
 {
+    private $parsedHeader = null;
+
+
     /**
      * Handle an incoming request.
      *
@@ -90,9 +93,14 @@ class TenantAwareMcp
         }
 
         // Fallback to header-based tenant identification
-        $tenantHost = $request->header('X-Tenant-Host') ?: $request->header('X-MCP-Tenant');
+        $tenantHost = $request->header('X-Tenant-Host');
 
         if ($tenantHost) {
+            return Tenant::where('host', $tenantHost)->first();
+        } else if ($request->header('X-MCP-Tenant')) {
+            $value = $request->header('X-MCP-Tenant');
+            $parsed = $this->parseMCPTenantHeader($value);
+            $tenantHost = $parsed->host;
             return Tenant::where('host', $tenantHost)->first();
         }
 
@@ -114,6 +122,8 @@ class TenantAwareMcp
             $authHeader = $request->header('Authorization');
             if ($authHeader && str_starts_with($authHeader, 'Bearer ')) {
                 $token = substr($authHeader, 7);
+            } else if ($this->parsedHeader && $this->parsedHeader->token) {
+                $token = $this->parsedHeader->token;
             }
         }
 
@@ -139,5 +149,18 @@ class TenantAwareMcp
         }
 
         return null;
+    }
+
+    private function parseMCPTenantHeader(string $headerValue): object
+    {
+        // FORMAT host:tenantId:userId:token
+        $parts = explode(':', $headerValue);
+        $this->parsedHeader = (object)[
+            'host' => $parts[0] ?? null,
+            'tenantId' => $parts[1] ?? null,
+            'userId' => $parts[2] ?? null,
+            'token' => $parts[3] ?? null,
+        ];
+        return $this->parsedHeader;
     }
 }

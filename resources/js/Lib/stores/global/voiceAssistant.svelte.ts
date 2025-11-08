@@ -217,7 +217,7 @@ class VoiceAssistant {
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
 
-      xPost(route('audio.transcribe'), formData, {
+      xPost(route('audio.assistant'), formData, {
         forceFormData: true,
         onSuccess: (event: Page) => {
           this.#isProcessing = false;

@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
   Route::group(['prefix' => 'audio'], function () {
     Route::post('/transcribe', [AudioController::class, 'transcribe'])->name('audio.transcribe');
     Route::post('/command', [AudioController::class, 'command'])->name('audio.command');
+    Route::post('/assistant', [AudioController::class, 'assistant'])->name('audio.assistant');
   });
 
   Route::group(['prefix' => 'projects'], function () {

@@ -30,7 +30,7 @@
 </script>
 
 
-{#if voiceAssistantMode}
+{#if true}
   <!-- Voice Assistant Mode (Audio Recording & Transcription) -->
   <!-- Voice Activation Toggle -->
   <div class="flex items-center justify-between mb-3">
@@ -211,7 +211,7 @@
 
   <!-- Voice Commands Section -->
   <div class="divider my-2 text-xs">Quick Commands</div>
-{:else if voiceCommands.isSupported}
+<!-- {:else if voiceCommands.isSupported} -->
   <!-- Continuous Mode Toggle -->
   <div class="flex items-center justify-between mb-2">
     <div class="flex items-center gap-2">

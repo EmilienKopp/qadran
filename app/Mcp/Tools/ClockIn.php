@@ -34,16 +34,17 @@ class ClockIn extends Tool
             return Response::text("You are already clocked in since {$activeEntry->in}. Please clock out before clocking in again.");
         }
 
+        $timezone = $request->get('timezone', request()->user()->timezone ?? config('app.timezone'));
+
         $entry = ClockEntry::create([
             'user_id' => $userId,
             'project_id' => $request->get('project_id'),
             'in' => now(),
-            'timezone' => $request->get('timezone', config('app.timezone')),
+            'timezone' => $timezone,
             'notes' => $request->get('notes'),
         ]);
 
         $entry->load('project');
-        $resource = new ClockEntryResource($entry);
 
         return Response::text("Clocked in successfully at {$entry->in}. Entry ID: {$entry->id}");
     }

@@ -24,6 +24,7 @@ return [
     */
     'n8n' => [
         'webhook_url' => env('AI_N8N_WEBHOOK_URL', 'http://host.docker.internal:5678/webhook/4ffc04bd-d7c9-46b7-be49-1245185ae742'),
+        'assistant_webhook_url' => env('AI_N8N_ASSISTANT_WEBHOOK_URL'),
     ],
 
     /*

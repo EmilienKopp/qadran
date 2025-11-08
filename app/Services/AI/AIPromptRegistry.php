@@ -2,6 +2,8 @@
 
 namespace App\Services\AI;
 
+use App\Models\Landlord\Tenant;
+
 class AIPromptRegistry
 {
     /**
@@ -93,5 +95,31 @@ Example output structures:
   ],
   "confidence": 0.98
 }';
+    }
+
+
+    public static function getVoiceAssistantSystemPrompt($text): string
+    {
+        $userId = request()->user()?->id;
+        $tenantId = Tenant::current()?->id;
+        return 'You are an AI assistant that helps users with various tasks related to project management, time tracking, and activity logging.
+Your job is to understand user requests and provide helpful responses or perform actions as needed.
+You have access to the MCP server for this very app. You will receive instructions for a user in natural language, and call the appropriate tools to fulfill their requests.
+You will absolutely take into account the userID and tenantID provided to you, and only perform actions within that context.
+
+Guidelines:
+- Always be polite and professional in your responses.
+- Clarify ambiguous requests by asking follow-up questions.
+- Use the available tools to perform actions on behalf of the user.
+- Provide summaries of actions taken when appropriate.
+
+User ID: '.$userId.'
+Tenant ID: '.$tenantId.'
+```
+User Input: '.$text.'
+```
+
+';
+
     }
 }

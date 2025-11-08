@@ -395,24 +395,28 @@ class VoiceCommandsService {
   private sendToAI(transcript: string) {
     this.#error = 'Processing with AI...';
 
-    xPost(route('audio.command'), { text: transcript, timezone: getTimezone()}, {
-      onSuccess: (event: Page) => {
-        this.#error = '';
-        console.log('AI command executed successfully');
-      },
-      onError: (errors: any) => {
-        this.#error = `AI processing failed: ${errors.text || Object.values(errors)[0] || 'Unknown error'}`;
-        console.error('AI processing error:', errors);
-      },
-      onFinish: () => {
-        // Clear processing message after a delay
-        setTimeout(() => {
-          if (this.#error === 'Processing with AI...') {
-            this.#error = '';
-          }
-        }, 2000);
-      },
-    });
+    xPost(
+      route('audio.assistant'),
+      { text: transcript, timezone: getTimezone() },
+      {
+        onSuccess: (event: Page) => {
+          this.#error = '';
+          console.log('AI assistant executed successfully');
+        },
+        onError: (errors: any) => {
+          this.#error = `AI processing failed: ${errors.text || Object.values(errors)[0] || 'Unknown error'}`;
+          console.error('AI processing error:', errors);
+        },
+        onFinish: () => {
+          // Clear processing message after a delay
+          setTimeout(() => {
+            if (this.#error === 'Processing with AI...') {
+              this.#error = '';
+            }
+          }, 2000);
+        },
+      }
+    );
   }
 
   private showAvailableCommands() {

@@ -1,6 +1,8 @@
 <?php
 
 // use App\Http\Controllers\API\GitReportController;
+use App\Models\PersonalAccessToken;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -126,5 +128,29 @@ Route::middleware('api')->group(function () {
             return $result;
         }
         return response()->json(['error' => 'Invalid data access or method'], 404);
+    });
+});
+
+
+// 
+Route::prefix('n8n')->group(function () {
+    Route::post('/decrypt-tenant', function (Request $request) {
+        $request->validate(['tenant_id' => 'required']);
+
+        if ($request->header('X-N8N-Secret') !== config('services.n8n.secret')) {
+            abort(403);
+        }
+
+        try {
+            $tenant = \App\Models\Landlord\Tenant::where('hash', $request->input('tenant_id'))->firstOrFail();
+            $tenant->makeCurrent();
+            $tenantId = $tenant->id;
+            $tokenValue = $request->input('token');
+            \Log::debug('Fetching user ID for token', ['token' => $tokenValue]);
+            $userId = PersonalAccessToken::where('token', $tokenValue)->first()?->tokenable_id;
+            return response()->json(['tenant_id' => $tenantId, 'user_id' => $userId]);
+        } catch (DecryptException $e) {
+            abort(400, 'Invalid encrypted value');
+        }
     });
 });
