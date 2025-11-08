@@ -63,13 +63,13 @@ class CreateProject extends Tool
     {
         return [
             'name' => $schema->string()->description('The name of the project'),
-            'description' => $schema->string()->description('A description of the project')->optional(),
-            'type' => $schema->enum(...ProjectType::values())->description('The type of project')->optional(),
-            'status' => $schema->enum(...ProjectStatus::values())->description('The status of the project')->optional(),
-            'start_date' => $schema->string()->description('The start date of the project (ISO 8601 format)')->optional(),
-            'end_date' => $schema->string()->description('The end date of the project (ISO 8601 format)')->optional(),
-            'location' => $schema->string()->description('The location of the project')->optional(),
-            'icon' => $schema->string()->description('An icon for the project')->optional(),
+            'description' => $schema->string()->description('A description of the project'),
+            'type' => $schema->string()->enum(ProjectType::values())->description('The type of project'),
+            'status' => $schema->string()->enum(ProjectStatus::values())->description('The status of the project'),
+            'start_date' => $schema->string()->description('The start date of the project (ISO 8601 format)'),
+            'end_date' => $schema->string()->description('The end date of the project (ISO 8601 format)'),
+            'location' => $schema->string()->description('The location of the project'),
+            'icon' => $schema->string()->description('An icon for the project'),
         ];
     }
 }

@@ -85,8 +85,8 @@ class GenerateReport extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'date' => $schema->string()->description('The date for the report (YYYY-MM-DD format)')->optional(),
-            'user_id' => $schema->integer()->description('Filter report by user ID')->optional(),
+            'date' => $schema->string()->description('The date for the report (YYYY-MM-DD format)'),
+            'user_id' => $schema->integer()->description('Filter report by user ID'),
         ];
     }
 }

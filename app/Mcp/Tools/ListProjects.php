@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -21,45 +20,40 @@ class ListProjects extends Tool
     /**
      * Handle the tool request.
      */
-    public function handle(Request $request): Response
+    public function handle(Request $request): array
     {
         $query = Project::query();
 
-        if ($request->has('status')) {
-            $query->where('status', $request->input('status'));
+        // Get validated parameters from the request
+        $validated = $request->validate([
+            'status' => 'nullable|string',
+            'type' => 'nullable|string',
+            'limit' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        if (! empty($validated['status'])) {
+            $query->where('status', $validated['status']);
         }
 
-        if ($request->has('type')) {
-            $query->where('type', $request->input('type'));
+        if (! empty($validated['type'])) {
+            $query->where('type', $validated['type']);
         }
 
-        $limit = min($request->input('limit', 50), 100);
+        $limit = $validated['limit'] ?? 50;
         $projects = $query->limit($limit)->get();
 
-        $resources = ProjectResource::collection($projects);
-
         $text = "Found {$projects->count()} project(s)";
-        if ($request->has('status')) {
-            $text .= " with status '{$request->input('status')}'";
+        if (! empty($validated['status'])) {
+            $text .= " with status '{$validated['status']}'";
         }
-        if ($request->has('type')) {
-            $text .= " of type '{$request->input('type')}'";
+        if (! empty($validated['type'])) {
+            $text .= " of type '{$validated['type']}'";
         }
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => $text,
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => 'projects://list',
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resources->resolve()),
-                ],
-            ],
-        ]);
+        // Return array of Response objects
+        return [
+            Response::text($text),
+        ];
     }
 
     /**
@@ -70,9 +64,9 @@ class ListProjects extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'status' => $schema->string()->description('Filter projects by status (active, inactive, archived, deleted, pending)')->optional(),
-            'type' => $schema->string()->description('Filter projects by type (open_source, commercial, internal, etc.)')->optional(),
-            'limit' => $schema->integer()->description('Maximum number of projects to return (default 50, max 100)')->optional(),
+            'status' => $schema->string()->description('Filter projects by status (active, inactive, archived, deleted, pending)'),
+            'type' => $schema->string()->description('Filter projects by type (open_source, commercial, internal, etc.)'),
+            'limit' => $schema->integer()->description('Maximum number of projects to return (default 50, max 100)'),
         ];
     }
 }

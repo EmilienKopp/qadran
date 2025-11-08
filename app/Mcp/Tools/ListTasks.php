@@ -75,10 +75,10 @@ class ListTasks extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'project_id' => $schema->integer()->description('Filter tasks by project ID')->optional(),
-            'completed' => $schema->boolean()->description('Filter by completion status')->optional(),
-            'priority' => $schema->integer()->description('Filter by priority level')->optional(),
-            'limit' => $schema->integer()->description('Maximum number of tasks to return (default 50, max 100)')->optional(),
+            'project_id' => $schema->integer()->description('Filter tasks by project ID'),
+            'completed' => $schema->boolean()->description('Filter by completion status'),
+            'priority' => $schema->integer()->description('Filter by priority level'),
+            'limit' => $schema->integer()->description('Maximum number of tasks to return (default 50, max 100)'),
         ];
     }
 }

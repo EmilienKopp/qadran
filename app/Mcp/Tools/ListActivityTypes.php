@@ -27,7 +27,7 @@ class ListActivityTypes extends Tool
 
         // Optional name filter
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+            $query->where('name', 'like', '%'.$request->input('name').'%');
         }
 
         $limit = min($request->input('limit', 50), 100);
@@ -60,8 +60,8 @@ class ListActivityTypes extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'name' => $schema->string()->description('Filter activity types by name (partial match)')->optional(),
-            'limit' => $schema->integer()->description('Maximum number of activity types to return (default 50, max 100)')->optional(),
+            'name' => $schema->string()->description('Filter activity types by name (partial match)'),
+            'limit' => $schema->integer()->description('Maximum number of activity types to return (default 50, max 100)'),
         ];
     }
 }

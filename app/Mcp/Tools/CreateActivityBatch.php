@@ -27,8 +27,8 @@ class CreateActivityBatch extends Tool
     {
         // Verify the clock entry exists
         $clockEntry = ClockEntry::find($request->input('clock_entry_id'));
-        
-        if (!$clockEntry) {
+
+        if (! $clockEntry) {
             return Response::content([
                 [
                     'type' => 'text',
@@ -38,7 +38,7 @@ class CreateActivityBatch extends Tool
         }
 
         $activities = $request->input('activities', []);
-        
+
         if (empty($activities)) {
             return Response::content([
                 [
@@ -48,8 +48,8 @@ class CreateActivityBatch extends Tool
             ]);
         }
 
-        $createdActivities = new Collection();
-        
+        $createdActivities = new Collection;
+
         foreach ($activities as $activityData) {
             $activityLog = ActivityLog::create([
                 'clock_entry_id' => $request->input('clock_entry_id'),
@@ -59,7 +59,7 @@ class CreateActivityBatch extends Tool
                 'end_offset_seconds' => $activityData['end_offset_seconds'] ?? null,
                 'notes' => $activityData['notes'] ?? null,
             ]);
-            
+
             $activityLog->load(['clockEntry', 'activityType', 'task']);
             $createdActivities->push($activityLog);
         }
@@ -93,14 +93,13 @@ class CreateActivityBatch extends Tool
         return [
             'clock_entry_id' => $schema->integer()->description('The ID of the clock entry these activities belong to'),
             'activities' => $schema->array()->description('Array of activity objects to create')->items(
-                $schema->object()
-                    ->properties([
-                        'activity_type_id' => $schema->integer()->description('The ID of the activity type')->optional(),
-                        'task_id' => $schema->integer()->description('The ID of the task associated with this activity')->optional(),
-                        'start_offset_seconds' => $schema->integer()->description('Start time offset in seconds from clock entry start')->optional(),
-                        'end_offset_seconds' => $schema->integer()->description('End time offset in seconds from clock entry start')->optional(),
-                        'notes' => $schema->string()->description('Notes about this activity')->optional(),
-                    ])
+                $schema->object([
+                    'activity_type_id' => $schema->integer()->description('The ID of the activity type'),
+                    'task_id' => $schema->integer()->description('The ID of the task associated with this activity'),
+                    'start_offset_seconds' => $schema->integer()->description('Start time offset in seconds from clock entry start'),
+                    'end_offset_seconds' => $schema->integer()->description('End time offset in seconds from clock entry start'),
+                    'notes' => $schema->string()->description('Notes about this activity'),
+                ])
             ),
         ];
     }

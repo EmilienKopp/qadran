@@ -26,8 +26,8 @@ class CreateActivity extends Tool
     {
         // Verify the clock entry exists
         $clockEntry = ClockEntry::find($request->input('clock_entry_id'));
-        
-        if (!$clockEntry) {
+
+        if (! $clockEntry) {
             return Response::content([
                 [
                     'type' => 'text',
@@ -73,11 +73,11 @@ class CreateActivity extends Tool
     {
         return [
             'clock_entry_id' => $schema->integer()->description('The ID of the clock entry this activity belongs to'),
-            'activity_type_id' => $schema->integer()->description('The ID of the activity type')->optional(),
-            'task_id' => $schema->integer()->description('The ID of the task associated with this activity')->optional(),
-            'start_offset_seconds' => $schema->integer()->description('Start time offset in seconds from clock entry start')->optional(),
-            'end_offset_seconds' => $schema->integer()->description('End time offset in seconds from clock entry start')->optional(),
-            'notes' => $schema->string()->description('Notes about this activity')->optional(),
+            'activity_type_id' => $schema->integer()->description('The ID of the activity type'),
+            'task_id' => $schema->integer()->description('The ID of the task associated with this activity'),
+            'start_offset_seconds' => $schema->integer()->description('Start time offset in seconds from clock entry start'),
+            'end_offset_seconds' => $schema->integer()->description('End time offset in seconds from clock entry start'),
+            'notes' => $schema->string()->description('Notes about this activity'),
         ];
     }
 }

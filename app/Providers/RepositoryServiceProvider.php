@@ -14,7 +14,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         // Register GuzzleHttp\Client as a singleton for remote repositories
         $this->app->singleton(\GuzzleHttp\Client::class, function () {
-            return new \GuzzleHttp\Client();
+            return new \GuzzleHttp\Client;
         });
 
         $this->registerRepositories();
@@ -43,44 +43,47 @@ class RepositoryServiceProvider extends ServiceProvider
     private function autoDiscoverRepositories(bool $isDesktop): void
     {
         $repositoriesPath = app_path('Repositories');
-        
+
         // Find all *RepositoryInterface.php files
-        $interfaceFiles = glob($repositoriesPath . '/*RepositoryInterface.php');
-        
+        $interfaceFiles = glob($repositoriesPath.'/*RepositoryInterface.php');
+
         foreach ($interfaceFiles as $file) {
             $filename = basename($file, '.php');
-            
+
             // Skip BaseRepositoryInterface as it's not meant to be bound
             if ($filename === 'BaseRepositoryInterface') {
                 continue;
             }
-            
+
             // Extract the repository name (e.g., "User" from "UserRepositoryInterface")
             $repositoryName = str_replace('RepositoryInterface', '', $filename);
-            
+
             // Build the interface class name
             $interface = "App\\Repositories\\{$filename}";
-            
+
             // Build the implementation class names
             $localImplementation = "App\\Repositories\\Local\\Local{$repositoryName}Repository";
             $remoteImplementation = "App\\Repositories\\Remote\\Remote{$repositoryName}Repository";
-            
+
             // Verify classes exist before binding
-            if (!interface_exists($interface)) {
+            if (! interface_exists($interface)) {
                 \Log::warning("Interface not found: {$interface}");
+
                 continue;
             }
-            
-            if (!class_exists($localImplementation)) {
+
+            if (! class_exists($localImplementation)) {
                 \Log::warning("Local implementation not found: {$localImplementation}");
+
                 continue;
             }
-            
-            if (!class_exists($remoteImplementation)) {
+
+            if (! class_exists($remoteImplementation)) {
                 \Log::warning("Remote implementation not found: {$remoteImplementation}");
+
                 continue;
             }
-            
+
             // Bind the interface to the appropriate implementation
             $this->app->bind(
                 $interface,
@@ -91,11 +94,11 @@ class RepositoryServiceProvider extends ServiceProvider
                             config('services.api.base_url')
                         );
                     }
-                    return new $localImplementation();
+
+                    return new $localImplementation;
                 }
             );
-            
-            \Log::debug("Registered repository: {$interface} -> " . ($isDesktop ? $remoteImplementation : $localImplementation));
+
         }
     }
 
@@ -104,6 +107,6 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Bootstrap repository services
     }
 }

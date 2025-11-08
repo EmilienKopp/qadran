@@ -73,9 +73,9 @@ class ClockIn extends Tool
     {
         return [
             'user_id' => $schema->integer()->description('The ID of the user clocking in'),
-            'project_id' => $schema->integer()->description('The ID of the project to clock in to')->optional(),
-            'timezone' => $schema->string()->description('The timezone for the clock entry')->optional(),
-            'notes' => $schema->string()->description('Notes for the clock entry')->optional(),
+            'project_id' => $schema->integer()->description('The ID of the project to clock in to'),
+            'timezone' => $schema->string()->description('The timezone for the clock entry'),
+            'notes' => $schema->string()->description('Notes for the clock entry'),
         ];
     }
 }

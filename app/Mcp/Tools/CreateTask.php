@@ -60,10 +60,10 @@ class CreateTask extends Tool
     {
         return [
             'name' => $schema->string()->description('The name of the task'),
-            'description' => $schema->string()->description('A description of the task')->optional(),
-            'project_id' => $schema->integer()->description('The ID of the project this task belongs to')->optional(),
-            'priority' => $schema->integer()->description('The priority of the task (0-6, -1 for blocker)')->optional(),
-            'completed' => $schema->boolean()->description('Whether the task is completed')->optional(),
+            'description' => $schema->string()->description('A description of the task'),
+            'project_id' => $schema->integer()->description('The ID of the project this task belongs to'),
+            'priority' => $schema->integer()->description('The priority of the task (0-6, -1 for blocker)'),
+            'completed' => $schema->boolean()->description('Whether the task is completed'),
         ];
     }
 }
