@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ForceWebContext;
 use Laravel\Mcp\Facades\Mcp;
 
 
@@ -11,7 +12,7 @@ Route::prefix('mcp')->name('mcp.')->group(function () {
     // Tenant-aware web MCP server with authentication
     Mcp::web('qadran', \App\Mcp\Servers\QadranServer::class)
         ->middleware([
+            ForceWebContext::class,
             \App\Http\Middleware\TenantAwareMcp::class,
-            'throttle:mcp', // Optional: rate limiting for MCP requests
         ]);
 });
