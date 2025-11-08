@@ -9,49 +9,50 @@ use App\Models\Project;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
-use Laravel\Mcp\Server\Tool;
 
-class CreateProject extends Tool
+class CreateProject extends TenantAwareTool
 {
     /**
      * The tool's description.
      */
     protected string $description = <<<'MARKDOWN'
         Create a new project in the Qadran system. A project is a container for tasks and time tracking.
+        This tool operates within the authenticated user's tenant context.
     MARKDOWN;
 
     /**
-     * Handle the tool request.
+     * Handle the tool request with tenant and user context.
      */
-    public function handle(Request $request): Response
+    protected function handleTenantRequest(Request $request): Response
     {
-        $project = Project::create([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'type' => $request->input('type', ProjectType::Other->value),
-            'status' => $request->input('status', ProjectStatus::Active->value),
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
-            'location' => $request->input('location'),
-            'icon' => $request->input('icon'),
-        ]);
+        // Check if user has permission to create projects
+        if (!$this->userCan('create-projects') && !$this->userHasRole(['admin', 'project-manager'])) {
+            return $this->errorResponse('You do not have permission to create projects.');
+        }
 
-        $resource = new ProjectResource($project);
+        try {
+            $project = Project::create([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'type' => $request->input('type', ProjectType::Other->value),
+                'status' => $request->input('status', ProjectStatus::Active->value),
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'location' => $request->input('location'),
+                'icon' => $request->input('icon'),
+                // Automatically associate with user's organization if they have one
+                'organization_id' => $this->getUserOrganizations()->first()?->id,
+            ]);
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Project '{$project->name}' created successfully with ID {$project->id}.",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "project://{$project->id}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resource->toArray(request())),
-                ],
-            ],
-        ]);
+            $resource = $this->formatModelResource('Project', $project, 'project');
+
+            return $this->successResponse(
+                "Project '{$project->name}' created successfully with ID {$project->id} in tenant '{$this->tenant->host}'."
+            );
+
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to create project: ' . $e->getMessage());
+        }
     }
 
     /**
