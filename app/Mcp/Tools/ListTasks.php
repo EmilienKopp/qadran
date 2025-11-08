@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -26,45 +25,30 @@ class ListTasks extends Tool
         $query = Task::query()->with('project');
 
         if ($request->has('project_id')) {
-            $query->where('project_id', $request->input('project_id'));
+            $query->where('project_id', $request->get('project_id'));
         }
 
         if ($request->has('completed')) {
-            $query->where('completed', $request->input('completed'));
+            $query->where('completed', $request->get('completed'));
         }
 
         if ($request->has('priority')) {
-            $query->where('priority', $request->input('priority'));
+            $query->where('priority', $request->get('priority'));
         }
 
-        $limit = min($request->input('limit', 50), 100);
+        $limit = min($request->get('limit', 50), 100);
         $tasks = $query->limit($limit)->get();
-
-        $resources = TaskResource::collection($tasks);
 
         $text = "Found {$tasks->count()} task(s)";
         if ($request->has('project_id')) {
-            $text .= " for project ID {$request->input('project_id')}";
+            $text .= " for project ID {$request->get('project_id')}";
         }
         if ($request->has('completed')) {
-            $completedStatus = $request->input('completed') ? 'completed' : 'incomplete';
+            $completedStatus = $request->get('completed') ? 'completed' : 'incomplete';
             $text .= " ({$completedStatus})";
         }
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => $text,
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => 'tasks://list',
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resources->resolve()),
-                ],
-            ],
-        ]);
+        return Response::text($text);
     }
 
     /**

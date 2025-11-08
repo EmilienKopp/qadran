@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\ActivityTypeResource;
 use App\Models\ActivityType;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -27,29 +26,15 @@ class ListActivityTypes extends Tool
 
         // Optional name filter
         if ($request->has('name')) {
-            $query->where('name', 'like', '%'.$request->input('name').'%');
+            $query->where('name', 'like', '%'.$request->get('name').'%');
         }
 
-        $limit = min($request->input('limit', 50), 100);
+        $limit = min($request->get('limit', 50), 100);
         $activityTypes = $query->limit($limit)->get();
 
-        $resources = ActivityTypeResource::collection($activityTypes);
         $count = $activityTypes->count();
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Found {$count} activity type(s).",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => 'activity-types://list',
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resources->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Found {$count} activity type(s).");
     }
 
     /**

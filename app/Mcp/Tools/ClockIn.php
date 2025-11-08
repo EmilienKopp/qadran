@@ -23,45 +23,29 @@ class ClockIn extends Tool
      */
     public function handle(Request $request): Response
     {
+        $userId = $request->get('user_id') ?? request()->user()->id;
+
         // Check if user already has an active clock entry (no 'out' time)
-        $activeEntry = ClockEntry::where('user_id', $request->input('user_id'))
+        $activeEntry = ClockEntry::where('user_id', $userId)
             ->whereNull('out')
             ->first();
 
         if ($activeEntry) {
-            return Response::content([
-                [
-                    'type' => 'text',
-                    'text' => "You already have an active clock entry (ID {$activeEntry->id}). Please clock out first.",
-                ],
-            ]);
+            return Response::text("You are already clocked in since {$activeEntry->in}. Please clock out before clocking in again.");
         }
 
         $entry = ClockEntry::create([
-            'user_id' => $request->input('user_id'),
-            'project_id' => $request->input('project_id'),
+            'user_id' => $userId,
+            'project_id' => $request->get('project_id'),
             'in' => now(),
-            'timezone' => $request->input('timezone', config('app.timezone')),
-            'notes' => $request->input('notes'),
+            'timezone' => $request->get('timezone', config('app.timezone')),
+            'notes' => $request->get('notes'),
         ]);
 
         $entry->load('project');
         $resource = new ClockEntryResource($entry);
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Clocked in successfully at {$entry->in}. Entry ID: {$entry->id}",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "clock-entry://{$entry->id}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resource->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Clocked in successfully at {$entry->in}. Entry ID: {$entry->id}");
     }
 
     /**

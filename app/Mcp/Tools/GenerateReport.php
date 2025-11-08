@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\ReportResource;
 use App\Models\ClockEntry;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -23,8 +22,8 @@ class GenerateReport extends Tool
      */
     public function handle(Request $request): Response
     {
-        $date = $request->input('date', now()->format('Y-m-d'));
-        $userId = $request->input('user_id');
+        $date = $request->get('date', now()->format('Y-m-d'));
+        $userId = $request->get('user_id');
 
         $query = ClockEntry::query()
             ->whereDate('in', $date)
@@ -51,30 +50,7 @@ class GenerateReport extends Tool
             ];
         })->values();
 
-        $reportData = [
-            'date' => $date,
-            'entries' => $entries,
-            'total_hours' => $totalHours,
-            'total_seconds' => $totalSeconds,
-            'projects' => $projectBreakdown,
-        ];
-
-        $resource = new ReportResource($reportData);
-
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Report for {$date}: Total {$totalHours} hours ({$totalSeconds} seconds) across {$entries->count()} entries.",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "report://{$date}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resource->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Report for {$date}: Total {$totalHours} hours ({$totalSeconds} seconds) across {$entries->count()} entries.");
     }
 
     /**

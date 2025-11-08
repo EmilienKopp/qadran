@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\ClockEntryResource;
 use App\Models\ClockEntry;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -23,67 +22,38 @@ class ClockOut extends Tool
      */
     public function handle(Request $request): Response
     {
-        $entryId = $request->input('clock_entry_id');
+        $entryId = $request->get('clock_entry_id');
 
         if ($entryId) {
             // Clock out from a specific entry
             $entry = ClockEntry::find($entryId);
 
             if (! $entry) {
-                return Response::content([
-                    [
-                        'type' => 'text',
-                        'text' => "Clock entry with ID {$entryId} not found.",
-                    ],
-                ]);
+                return Response::text("Clock entry with ID {$entryId} not found.");
             }
 
             if ($entry->out) {
-                return Response::content([
-                    [
-                        'type' => 'text',
-                        'text' => "Clock entry {$entryId} is already clocked out.",
-                    ],
-                ]);
+                return Response::text("Clock entry {$entryId} is already clocked out.");
             }
         } else {
             // Find the active clock entry for the user
-            $entry = ClockEntry::where('user_id', $request->input('user_id'))
+            $entry = ClockEntry::where('user_id', $request->get('user_id'))
                 ->whereNull('out')
                 ->first();
 
             if (! $entry) {
-                return Response::content([
-                    [
-                        'type' => 'text',
-                        'text' => 'No active clock entry found. Please clock in first.',
-                    ],
-                ]);
+                return Response::text('No active clock entry found. Please clock in first.');
             }
         }
 
         $entry->update([
             'out' => now(),
-            'notes' => $request->input('notes', $entry->notes),
+            'notes' => $request->get('notes', $entry->notes),
         ]);
 
         $entry->load('project');
-        $resource = new ClockEntryResource($entry);
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Clocked out successfully at {$entry->out}. Duration: {$entry->duration_seconds} seconds",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "clock-entry://{$entry->id}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resource->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Clocked out successfully at {$entry->out}. Duration: {$entry->duration_seconds} seconds");
     }
 
     /**

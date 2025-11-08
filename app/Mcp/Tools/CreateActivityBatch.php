@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Tools;
 
-use App\Http\Resources\ActivityLogResource;
 use App\Models\ActivityLog;
 use App\Models\ClockEntry;
 use Illuminate\JsonSchema\JsonSchema;
@@ -26,33 +25,23 @@ class CreateActivityBatch extends Tool
     public function handle(Request $request): Response
     {
         // Verify the clock entry exists
-        $clockEntry = ClockEntry::find($request->input('clock_entry_id'));
+        $clockEntry = ClockEntry::find($request->get('clock_entry_id'));
 
         if (! $clockEntry) {
-            return Response::content([
-                [
-                    'type' => 'text',
-                    'text' => "Clock entry with ID {$request->input('clock_entry_id')} not found.",
-                ],
-            ]);
+            return Response::text("Clock entry with ID {$request->get('clock_entry_id')} not found.");
         }
 
-        $activities = $request->input('activities', []);
+        $activities = $request->get('activities', []);
 
         if (empty($activities)) {
-            return Response::content([
-                [
-                    'type' => 'text',
-                    'text' => "No activities provided. Please provide at least one activity in the 'activities' array.",
-                ],
-            ]);
+            return Response::text("No activities provided. Please provide at least one activity in the 'activities' array.");
         }
 
         $createdActivities = new Collection;
 
         foreach ($activities as $activityData) {
             $activityLog = ActivityLog::create([
-                'clock_entry_id' => $request->input('clock_entry_id'),
+                'clock_entry_id' => $request->get('clock_entry_id'),
                 'activity_type_id' => $activityData['activity_type_id'] ?? null,
                 'task_id' => $activityData['task_id'] ?? null,
                 'start_offset_seconds' => $activityData['start_offset_seconds'] ?? null,
@@ -64,23 +53,9 @@ class CreateActivityBatch extends Tool
             $createdActivities->push($activityLog);
         }
 
-        $resources = ActivityLogResource::collection($createdActivities);
         $count = $createdActivities->count();
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Successfully created {$count} activity log(s) for clock entry {$clockEntry->id}.",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "activity-logs://batch/{$clockEntry->id}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resources->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Successfully created {$count} activity log(s) for clock entry {$clockEntry->id}.");
     }
 
     /**

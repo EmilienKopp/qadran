@@ -3,7 +3,6 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\TaskPriority;
-use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -25,30 +24,16 @@ class CreateTask extends Tool
     public function handle(Request $request): Response
     {
         $task = Task::create([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'project_id' => $request->input('project_id'),
-            'priority' => $request->input('priority', TaskPriority::None->value),
-            'completed' => $request->input('completed', false),
+            'name' => $request->get('name'),
+            'description' => $request->get('description'),
+            'project_id' => $request->get('project_id'),
+            'priority' => $request->get('priority', TaskPriority::None->value),
+            'completed' => $request->get('completed', false),
         ]);
 
         $task->load('project');
-        $resource = new TaskResource($task);
 
-        return Response::content([
-            [
-                'type' => 'text',
-                'text' => "Task '{$task->name}' created successfully with ID {$task->id}.",
-            ],
-            [
-                'type' => 'resource',
-                'resource' => [
-                    'uri' => "task://{$task->id}",
-                    'mimeType' => 'application/json',
-                    'text' => json_encode($resource->toArray(request())),
-                ],
-            ],
-        ]);
+        return Response::text("Task '{$task->name}' created successfully with ID {$task->id}.");
     }
 
     /**
