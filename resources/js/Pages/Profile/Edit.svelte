@@ -8,14 +8,18 @@
   interface Props {
     mustVerifyEmail?: boolean;
     status?: string;
+    mcpTokens?: any[];
+    mcpConnectionInfo?: any;
+    newMcpToken?: any;
   }
 
-  interface Props {
-    mustVerifyEmail?: Props['mustVerifyEmail'];
-    status?: Props['status'];
-  }
-
-  let { mustVerifyEmail = false, status = undefined }: Props = $props();
+  let { 
+    mustVerifyEmail = false, 
+    status = undefined,
+    mcpTokens = [],
+    mcpConnectionInfo = null,
+    newMcpToken = null
+  }: Props = $props();
 </script>
 <svelte:head>
   <title>Profile</title>
@@ -43,7 +47,12 @@
       </div>
 
       <div class=" p-4 shadow-sm sm:rounded-lg sm:p-8">
-        <McpTokenForm class="max-w-4xl" />
+        <McpTokenForm 
+          class="max-w-4xl" 
+          {mcpTokens}
+          {mcpConnectionInfo}
+          {newMcpToken}
+        />
       </div>
 
       <div class=" p-4 shadow-sm sm:rounded-lg sm:p-8">
