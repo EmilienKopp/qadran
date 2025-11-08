@@ -59,7 +59,12 @@ return [
     ],
 
     'n8n' => [
+        'base_url' => env('N8N_BASE_URL'),
         'secret' => env('N8N_SECRET'),
+        'api_url' => env('N8N_API_URL'),
+        'api_key' => env('N8N_API_KEY'),
+        'ai_credential_id' => env('N8N_AI_CREDENTIAL_ID'),
+        'ai_credential_name' => env('N8N_AI_CREDENTIAL_NAME'),
     ]
 
 ];

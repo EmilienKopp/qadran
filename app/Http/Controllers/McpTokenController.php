@@ -49,19 +49,8 @@ class McpTokenController extends Controller
             'mcp:prompts'
         ], $request->validated('expires_at') ? now()->parse($request->validated('expires_at')) : null);
 
-        // Get tenant information for the response
         $tenant = \App\Models\Landlord\Tenant::current();
-        
-        // Log token creation for security audit
-        \Log::info('MCP token created', [
-            'user_id' => $request->user()->id,
-            'token_name' => $tokenName,
-            'tenant_id' => $tenant?->id,
-            'expires_at' => $token->accessToken->expires_at?->format('Y-m-d H:i:s'),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
-        
+    
         return Inertia::render('Profile/Edit', [
             'newMcpToken' => [
                 'token' => $token->plainTextToken,

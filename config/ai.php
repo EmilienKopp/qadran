@@ -27,6 +27,7 @@ return [
         'assistant_webhook_url' => env('AI_N8N_ASSISTANT_WEBHOOK_URL'),
     ],
 
+
     /*
     |--------------------------------------------------------------------------
     | AI Action Driver

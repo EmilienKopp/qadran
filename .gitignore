@@ -29,3 +29,5 @@ pitch.md
 jira.example.json
 
 /legacy
+
+agent_tmpl.json

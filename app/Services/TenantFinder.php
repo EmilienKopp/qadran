@@ -14,12 +14,6 @@ class TenantFinder extends BaseTenantFinder
 {
     public function findForRequest(Request $request): ?Tenant
     {
-        \Log::debug('🔍 TenantFinder::findForRequest called', [
-            'has_route' => $request->route() !== null,
-            'route_params' => $request->route()?->parameters() ?? 'no route yet',
-            'host' => $request->getHost(),
-        ]);
-
         $host = RequestContextResolver::getHost();
         $context = RequestContextResolver::getExecutionContext();
 
@@ -47,18 +41,11 @@ class TenantFinder extends BaseTenantFinder
     {
         if ($isLocal) {
             $tenant = TenantFacade::firstWhere('domain', 'qadranio.com');
-            \Log::debug('Finding local web tenant', compact('host', 'tenant'));
             return $tenant;
         }
 
         // Route parameter might not be available yet, so parse from host
         $account = $this->extractAccountFromHost($host);
-
-        \Log::debug('Finding production web tenant', [
-            'host' => $host,
-            'extracted_account' => $account,
-            'route_param' => RequestContextResolver::getAccountParameter(),
-        ]);
 
         return TenantFacade::firstWhere('host', $account);
     }

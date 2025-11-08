@@ -22,3 +22,15 @@ if(! function_exists('account')) {
         return request()->route('account');
     }
 }
+
+if(! function_exists('timezone')) {
+    /**
+     * Get the current user OR tenant timezone.
+     */
+    function timezone()
+    {
+        return auth('tenant')->user()?->timezone
+            ?? Tenant::current()?->timezone
+            ?? config('app.timezone', 'UTC');
+    }
+}

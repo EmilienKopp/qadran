@@ -6,8 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/git-report', [GitReportController::class, 'generate']);
 });
@@ -20,8 +18,9 @@ Route::post('/webhooks/jira/known-issues', [\App\Http\Controllers\KnownIssueWebh
 
 Route::get('/instance-url/{host}', function ($host) {
     \Log::debug("Fetching instance URL for host: {$host}");
+
     return [
-       'instance_url' => \App\Support\InstanceUrl::build($host)
+        'instance_url' => \App\Support\InstanceUrl::build($host),
     ];
 })->name('api.instanceUrl');
 
@@ -93,7 +92,7 @@ Route::middleware('api')->group(function () {
 Route::middleware('api')->group(function () {
     // Special route for find method with ID parameter
     Route::get('/{model}/find/{id}', function (Request $request, $model, $id) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
 
         \Log::debug('API GET Request (find)', [
             'dataAccessClass' => $dataAccessClass,
@@ -104,13 +103,15 @@ Route::middleware('api')->group(function () {
         if (class_exists($dataAccessClass) && method_exists($dataAccessClass, 'find')) {
             $result = (new $dataAccessClass)->find($id);
             \Log::debug('API GET Response', ['result' => $result]);
+
             return $result;
         }
+
         return response()->json(['error' => 'Invalid data access or method'], 404);
     });
 
     Route::get('/{model}/{method}', function (Request $request, $model, $method) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
         $args = $request->query(); // Use query() instead of all() to exclude route params
 
         \Log::debug('API GET Request', [
@@ -125,15 +126,18 @@ Route::middleware('api')->group(function () {
             // Convert associative array to positional arguments using array_values
             $result = call_user_func([new $dataAccessClass, $method], ...array_values($args));
             \Log::debug('API GET Response', ['result' => $result]);
+
             return $result;
         }
+
         return response()->json(['error' => 'Invalid data access or method'], 404);
     });
 });
 
-
-// 
+//
 Route::prefix('n8n')->group(function () {
+    // Decrypt tenant ID and lookup user from hashed token (used by n8n Server Auth node)
+    // Note: This expects the HASHED token from the database, not the plain text Bearer token
     Route::post('/decrypt-tenant', function (Request $request) {
         $request->validate(['tenant_id' => 'required']);
 
@@ -145,9 +149,12 @@ Route::prefix('n8n')->group(function () {
             $tenant = \App\Models\Landlord\Tenant::where('hash', $request->input('tenant_id'))->firstOrFail();
             $tenant->makeCurrent();
             $tenantId = $tenant->id;
+
+            // Token value here is the HASHED token from personal_access_tokens.token column
             $tokenValue = $request->input('token');
-            \Log::debug('Fetching user ID for token', ['token' => $tokenValue]);
+            \Log::debug('Fetching user ID for token', ['token' => substr($tokenValue, 0, 20).'...']);
             $userId = PersonalAccessToken::where('token', $tokenValue)->first()?->tokenable_id;
+
             return response()->json(['tenant_id' => $tenantId, 'user_id' => $userId]);
         } catch (DecryptException $e) {
             abort(400, 'Invalid encrypted value');

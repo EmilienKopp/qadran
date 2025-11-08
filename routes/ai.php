@@ -14,5 +14,6 @@ Route::prefix('mcp')->name('mcp.')->group(function () {
         ->middleware([
             ForceWebContext::class,
             \App\Http\Middleware\TenantAwareMcp::class,
-        ]);
+        ])
+        ->name('qadran');
 });

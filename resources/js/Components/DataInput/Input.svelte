@@ -6,7 +6,7 @@
   
   interface Props {
     label?: string;
-    name: string;
+    name?: string;
     required?: boolean;
     value?: string | number | File | null | Date;
     error?: string | null;
@@ -47,6 +47,10 @@
     oninput,
     ...rest
   }: Props = $props();
+
+  if(!name && rest.id) {
+    name = rest.id;
+  }
 
   // Normalize error handling - support both 'error' and 'errors' props
   const normalizedError = $derived(

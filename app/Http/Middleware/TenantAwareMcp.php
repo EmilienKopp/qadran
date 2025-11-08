@@ -15,7 +15,6 @@ class TenantAwareMcp
 {
     private $parsedHeader = null;
 
-
     /**
      * Handle an incoming request.
      *
@@ -26,12 +25,6 @@ class TenantAwareMcp
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::debug('🔧 TenantAwareMcp middleware processing request', [
-            'host' => $request->getHost(),
-            'authorization' => $request->hasHeader('Authorization') ? 'present' : 'missing',
-            'user_agent' => $request->userAgent(),
-        ]);
-
         $tenant = $this->resolveTenant($request);
 
         if (! $tenant) {
@@ -42,17 +35,11 @@ class TenantAwareMcp
         }
 
         $tenant->makeCurrent();
-        Log::debug('🏢 Tenant set as current', ['tenant' => $tenant->name, 'host' => $tenant->host]);
 
         // Set the tenant auth guard as default for this request
         config(['auth.defaults.guard' => 'tenant']);
 
         $user = $this->authenticateUser($request);
-
-        \Log::debug('👤 User authentication attempt result', [
-            'user_found' => $user ? true : false,
-            'tenant' => $tenant->host,
-        ]);
 
         if (! $user) {
             return response()->json([
@@ -74,6 +61,17 @@ class TenantAwareMcp
      */
     protected function resolveTenant(Request $request): ?Tenant
     {
+        // First, check for tenant in query parameter (used by n8n MCP Client)
+        $tenantParam = $request->query('tenant');
+        if ($tenantParam) {
+            $tenant = Tenant::where('host', $tenantParam)->first();
+            if ($tenant) {
+                Log::debug('Tenant resolved from query parameter', ['host' => $tenantParam]);
+
+                return $tenant;
+            }
+        }
+
         $authHeader = $request->header('Authorization');
 
         if ($authHeader && str_starts_with($authHeader, 'Bearer ')) {
@@ -97,10 +95,11 @@ class TenantAwareMcp
 
         if ($tenantHost) {
             return Tenant::where('host', $tenantHost)->first();
-        } else if ($request->header('X-MCP-Tenant')) {
+        } elseif ($request->header('X-MCP-Tenant')) {
             $value = $request->header('X-MCP-Tenant');
             $parsed = $this->parseMCPTenantHeader($value);
             $tenantHost = $parsed->host;
+
             return Tenant::where('host', $tenantHost)->first();
         }
 
@@ -122,7 +121,7 @@ class TenantAwareMcp
             $authHeader = $request->header('Authorization');
             if ($authHeader && str_starts_with($authHeader, 'Bearer ')) {
                 $token = substr($authHeader, 7);
-            } else if ($this->parsedHeader && $this->parsedHeader->token) {
+            } elseif ($this->parsedHeader && $this->parsedHeader->token) {
                 $token = $this->parsedHeader->token;
             }
         }
@@ -155,12 +154,13 @@ class TenantAwareMcp
     {
         // FORMAT host:tenantId:userId:token
         $parts = explode(':', $headerValue);
-        $this->parsedHeader = (object)[
+        $this->parsedHeader = (object) [
             'host' => $parts[0] ?? null,
             'tenantId' => $parts[1] ?? null,
             'userId' => $parts[2] ?? null,
             'token' => $parts[3] ?? null,
         ];
+
         return $this->parsedHeader;
     }
 }

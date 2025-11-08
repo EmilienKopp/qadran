@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Casts\N8nConfigCast;
 use App\Traits\HasGitHubConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,8 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasGitHubConnection, UsesTenantConnection,
-        HasApiTokens;
+    use HasApiTokens, HasFactory, HasGitHubConnection, HasRoles, Notifiable, UsesTenantConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +34,7 @@ class User extends Authenticatable
         'email',
         'password',
         'workos_id',
+        'n8n_config',
     ];
 
     /**
@@ -56,13 +57,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'n8n_config' => N8nConfigCast::class,
         ];
     }
 
     public static function booted()
     {
         static::creating(function ($user) {
-            if(!$user->handle) {
+            if (! $user->handle) {
                 $user->handle = $user->email;
             }
             $user->assignRole('user');

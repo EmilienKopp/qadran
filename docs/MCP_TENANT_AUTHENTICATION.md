@@ -200,22 +200,6 @@ Users can generate MCP access tokens through the Qadran web interface:
 - Check user roles and permissions in tenant
 - Verify organization membership if required
 
-### Debug Information
-
-Enable debug logging to see detailed authentication flow:
-
-```php
-// Add to .env
-LOG_LEVEL=debug
-```
-
-Look for log entries prefixed with:
-- `🔍 TenantFinder::findForRequest`
-- `🔧 TenantAwareMcp middleware`
-- `🏢 Tenant set as current`
-- `👤 User authenticated`
-- `🔧 MCP Tool executing`
-
 ## Example Tool Implementation
 
 ```php

@@ -1,11 +1,14 @@
 <script lang="ts">
+  import clsx from "clsx";
+
   interface Props {
-    message: string;
+    message?: string;
+    class?: string;
 }
 
-  let { message }: Props = $props();
+  let { message, class: className }: Props = $props();
 </script>
 
 {#if message}
-    <p class="text-error text-xs mt-2">{message}</p>
+    <p class={clsx("text-error text-xs mt-2",className)}>{message}</p>
 {/if}
