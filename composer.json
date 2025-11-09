@@ -14,6 +14,7 @@
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/mcp": "*",
+        "laravel/nightwatch": "^1.18",
         "laravel/pennant": "*",
         "laravel/prompts": "^0.3.2",
         "laravel/sanctum": "^4.0",
