@@ -58,13 +58,16 @@ return [
         'default_user' => env('WORKOS_DEFAULT_USER'),
     ],
 
+    
     'n8n' => [
+        'webhook_url' => env('AI_N8N_WEBHOOK_URL', 'http://host.docker.internal:5678/webhook/4ffc04bd-d7c9-46b7-be49-1245185ae742'),
+        'assistant_webhook_url' => env('AI_N8N_ASSISTANT_WEBHOOK_URL'),
         'base_url' => env('N8N_BASE_URL'),
         'secret' => env('N8N_SECRET'),
         'api_url' => env('N8N_API_URL'),
         'api_key' => env('N8N_API_KEY'),
         'ai_credential_id' => env('N8N_AI_CREDENTIAL_ID'),
         'ai_credential_name' => env('N8N_AI_CREDENTIAL_NAME'),
-    ]
+    ],
 
 ];

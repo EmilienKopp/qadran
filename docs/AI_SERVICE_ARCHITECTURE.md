@@ -1,14 +1,8 @@
 # AI Service Architecture
 
-This document describes the refactored AI service architecture with better separation of concerns.
+The AI service is used for Git Reports, Audio Transcription and voice command processing.
 
-## Overview
 
-The AI service has been refactored to follow clean architecture principles:
-- **Separation of Concerns**: Prompts, configuration, and AI implementations are separated
-- **Dependency Injection**: Services receive their dependencies through constructor injection
-- **Interchangeable Implementations**: AI actions can switch between Prism and N8n easily
-- **Centralized Prompts**: All prompts are managed in a registry class
 
 ## Components
 
@@ -20,11 +14,8 @@ Central registry for all AI prompts. Provides static methods to retrieve prompts
 - `getTechnicalGitPrompt()`: User prompt for technical reports
 - `getNonTechnicalGitPrompt()`: User prompt for non-technical reports
 - `getVoiceCommandSystemPrompt()`: System prompt for voice command processing
+- `getVoiceAssistantSystemPrompt()`: System prompt for voice assistant transcription
 
-**Benefits:**
-- Single source of truth for all prompts
-- Easy to update and maintain prompts
-- Prompts are no longer instance properties
 
 ### 2. AIActionInterface (`app/Services/AI/Contracts/AIActionInterface.php`)
 
@@ -36,6 +27,7 @@ interface AIActionInterface
     public function generateText(string $systemPrompt, string $userPrompt): string;
     public function transcribeAudio(UploadedFile $audioFile): string;
     public function textToCommand(string $systemPrompt, string $text): array;
+    public function textToAssistant(string $system_prompt, string $user_input);
 }
 ```
 
@@ -45,18 +37,19 @@ Direct implementation using Prism library:
 - `generateText()`: Uses Prism with Gemini for text generation
 - `transcribeAudio()`: Uses OpenAI Whisper API for audio transcription
 - `textToCommand()`: Not implemented (delegates to N8n)
+- `textToAssistant()`: Not implemented (delegates to N8n)
 
 ### 4. N8nAIAction (`app/Services/AI/Actions/N8nAIAction.php`)
 
 Implementation that offloads processing to N8n workflows:
 - `generateText()`: Not implemented (uses Prism)
 - `transcribeAudio()`: Not implemented (uses Prism)
-- `textToCommand()`: Sends requests to N8n webhook
+- `textToCommand()`: Sends short voice requests to N8n webhook
+- `textToAssistant()`: Sends requests to N8n webhook, passing system prompt and user input
+for complect voice assistant tasks
 
 ### 5. AIService (`app/Services/AIService.php`)
 
-Refactored main service class:
-- No longer has instance properties for prompts
 - Receives AI action implementations via dependency injection
 - Uses AIPromptRegistry for all prompts
 - Delegates actual AI work to injected implementations
