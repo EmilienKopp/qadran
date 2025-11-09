@@ -5,12 +5,13 @@ namespace App\Models\Landlord;
 use App\Casts\N8nConfigCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Concerns\HasFeatures;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant
 {
-    use HasFactory, UsesLandlordConnection;
+    use HasFactory, UsesLandlordConnection, HasFeatures;
 
     protected $fillable = [
         'id',

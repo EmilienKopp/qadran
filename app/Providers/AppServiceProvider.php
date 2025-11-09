@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Landlord\Tenant;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Laravel\Pennant\Feature;
 use Native\Desktop\App;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;

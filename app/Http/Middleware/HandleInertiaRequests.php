@@ -2,7 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Features\VoiceAssistantMode;
+use App\Features\{VoiceAssistantMode, VoiceAssistant};
+use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                 'report_types' => \App\Enums\ReportTypes::toSelectOptions(),
             ],
             'features' => [
+                'voiceAssistant' => Tenant::current()?->features()->value(VoiceAssistant::class) ?? false,
                 'voiceAssistantMode' => $request->user()
                     ? Feature::value(VoiceAssistantMode::class, $request->user())
                     : false,
