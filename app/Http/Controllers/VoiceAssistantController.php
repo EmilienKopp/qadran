@@ -435,7 +435,7 @@ class VoiceAssistantController extends Controller
                 'json' => [
                     'timestamp' => now()->toIso8601String(),
                     'token' => $aiToken?->token ?? '', // Hashed token for user lookup in decrypt-tenant
-                    'system_prompt' => ,
+                    'system_prompt' => AIPromptRegistry::getVoiceAssistantSystemPrompt($transcript),
                     'user_input' => $transcript,
                     'tenant_id' => $tenantId,
                 ],
