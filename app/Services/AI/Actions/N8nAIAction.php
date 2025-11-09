@@ -42,9 +42,9 @@ class N8nAIAction implements AIActionInterface
         return $this->executeWebhook($webhookUrl, $system_prompt, $user_input);
     }
 
-    public function textToAssistant(string $system_prompt, string $user_input)
+    public function textToAssistant(string $system_prompt, string $user_input, ?string $webhookUrl = null)
     {
-        $webhookUrl = config('services.n8n.assistant_webhook_url');
+        $webhookUrl ??= config('services.n8n.assistant_webhook_url');
 
         if (empty($webhookUrl)) {
             throw new \Exception('N8n assistant webhook URL is not configured. Please set AI_N8N_ASSISTANT_WEBHOOK_URL');

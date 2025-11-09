@@ -6,6 +6,7 @@ use App\DTOs\N8nConfig;
 use App\DTOs\N8nCredentials;
 use App\Jobs\StoreVoiceCommandJob;
 use App\Models\Landlord\Tenant;
+use App\Services\AI\AIPromptRegistry;
 use App\Services\AIService;
 use App\Services\N8NService;
 use Illuminate\Http\Request;
@@ -386,7 +387,11 @@ class VoiceAssistantController extends Controller
             );
 
             // Send to n8n workflow using the user's webhook URL
-            $response = $this->sendToAssistantWorkflow($effectiveConfig->webhookUrl, $transcript, $user);
+            $response = $this->aiService->textToAssistant(
+                system_prompt: AIPromptRegistry::getVoiceAssistantSystemPrompt($transcript),
+                user_input: $transcript,
+                webhookUrl: $effectiveConfig->webhookUrl,
+            );
 
             Log::debug('Assistant response', [
                 'response' => $response,
@@ -430,7 +435,7 @@ class VoiceAssistantController extends Controller
                 'json' => [
                     'timestamp' => now()->toIso8601String(),
                     'token' => $aiToken?->token ?? '', // Hashed token for user lookup in decrypt-tenant
-                    'system_prompt' => 'You are a helpful voice assistant.',
+                    'system_prompt' => ,
                     'user_input' => $transcript,
                     'tenant_id' => $tenantId,
                 ],

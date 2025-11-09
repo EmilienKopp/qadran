@@ -8,6 +8,7 @@ class VoiceAssistant {
   #error = $state('');
   #isListening = $state(false);
   #currentVolume = $state(0);
+  #assistantResponse = $state('');
 
   // Public reactive state (can be read and written directly)
   voiceActivationEnabled = $state(false);
@@ -222,6 +223,9 @@ class VoiceAssistant {
         onSuccess: (event: Page) => {
           this.#isProcessing = false;
           const data = event.props.flash?.data;
+          if (data?.assistantResponse) {
+            this.#assistantResponse = data.assistantResponse;
+          }
           if (data && data.transcript) {
             this.#transcript = data.transcript;
           }
@@ -256,6 +260,10 @@ class VoiceAssistant {
 
   get transcript() {
     return this.#transcript;
+  }
+
+  get assistantResponse() {
+    return this.#assistantResponse;
   }
 
   get error() {
