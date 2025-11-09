@@ -219,7 +219,7 @@ class N8NService
                             'parameters' => [
                                 [
                                     'name' => 'X-N8N-Secret',
-                                    'value' => 'supersecret',
+                                    'value' => config('services.n8n.secret'),
                                 ],
                                 [
                                     'name' => 'Authorization',
