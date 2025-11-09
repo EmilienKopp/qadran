@@ -73,7 +73,7 @@ class SetUpTenantLevelN8nConfig extends Command
 
         $this->n8nConfig = $this->prepareConfig($configJson);
         
-        return $this->commit();
+        return $this->commit(interactive: true);
     }
 
     protected function prepareConfig(?string $configJson): N8nConfig
@@ -86,7 +86,7 @@ class SetUpTenantLevelN8nConfig extends Command
         return $base->mergeWith($commandConfig);
     }
 
-    protected function commit()
+    protected function commit(bool $interactive = false): int
     {
         $tenant = Tenant::where('host', $this->tenantHost)->firstOrFail();
         $tenantConfig = $tenant->n8n_config ?? new N8nConfig;
@@ -104,7 +104,12 @@ class SetUpTenantLevelN8nConfig extends Command
             rows: $tabulated,
         );
 
-        if(confirm('Apply the prepared n8n config to tenant '.$this->tenantHost.'?')) {
+        $OK = true;
+        if($interactive) {
+            $OK = confirm('Apply the prepared n8n config to tenant '.$this->tenantHost.'?');
+        }
+
+        if($OK) {
             $tenantConfig = $tenantConfig->mergeWith($this->n8nConfig);
             $tenant->n8n_config = $tenantConfig;
             $tenant->save();
