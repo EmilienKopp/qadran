@@ -387,11 +387,7 @@ class VoiceAssistantController extends Controller
             );
 
             // Send to n8n workflow using the user's webhook URL
-            $response = $this->aiService->textToAssistant(
-                system_prompt: AIPromptRegistry::getVoiceAssistantSystemPrompt($transcript),
-                user_input: $transcript,
-                webhookUrl: $effectiveConfig->webhookUrl,
-            );
+            $response = $this->aiService->textToAssistant($transcript);
 
             Log::debug('Assistant response', [
                 'response' => $response,
