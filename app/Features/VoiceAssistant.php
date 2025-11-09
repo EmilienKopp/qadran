@@ -13,7 +13,7 @@ class VoiceAssistant
     public function resolve(mixed $scope): mixed
     {
         $specialTenants = array_keys(config('plans.associations'));
-        if (in_array($scope->tenant->subdomain, $specialTenants)) {
+        if (in_array($scope->tenant?->host, $specialTenants)) {
             return VoiceAssistanPlan::SECRET;
         }
 
