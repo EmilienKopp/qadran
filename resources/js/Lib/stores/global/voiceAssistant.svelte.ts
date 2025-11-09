@@ -12,7 +12,7 @@ class VoiceAssistant {
 
   // Public reactive state (can be read and written directly)
   voiceActivationEnabled = $state(false);
-  volumeThreshold = $state(30); // 0-100 scale
+  volumeThreshold = $state(15); // 0-100 scale
 
   // Private non-reactive state
   #mediaRecorder: MediaRecorder | null = null;
@@ -22,7 +22,7 @@ class VoiceAssistant {
   #microphone: MediaStreamAudioSourceNode | null = null;
   #monitorIntervalId: number | null = null;
   #listeningStream: MediaStream | null = null;
-  #secondsBelowThresholdToStop = 3;
+  #secondsBelowThresholdToStop = 2;
   #belowThresholdCounter = 0;
   #belowThresholdIntervalId: number | null = null;
 
