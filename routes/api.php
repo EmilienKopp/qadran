@@ -12,20 +12,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/artisan', [\App\Http\Controllers\Api\ArtisanController::class, 'run'])
     ->name('api.artisan');
-// Webhook endpoint for n8n to post Jira known issues (public, no auth)
-Route::post('/webhooks/jira/known-issues', [\App\Http\Controllers\KnownIssueWebhookController::class, 'store'])
-    ->name('api.webhooks.jira.known-issues');
 
 Route::get('/instance-url/{host}', function ($host) {
-    \Log::debug("Fetching instance URL for host: {$host}");
-
     return [
         'instance_url' => \App\Support\InstanceUrl::build($host),
     ];
 })->name('api.instanceUrl');
-
-// Repository Proxy - Single endpoint for all repository calls
-Route::middleware('api')->post('/repository/call', [\App\Http\Controllers\Api\RepositoryProxyController::class, 'call']);
 
 // Repository API Routes (for direct REST access)
 Route::middleware('api')->group(function () {
@@ -89,10 +81,11 @@ Route::middleware('api')->group(function () {
 });
 
 // Route all GET routes to just return the result of the DataAccess/Local class method called
+//TODO: Depcrecate
 Route::middleware('api')->group(function () {
     // Special route for find method with ID parameter
     Route::get('/{model}/find/{id}', function (Request $request, $model, $id) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
 
         \Log::debug('API GET Request (find)', [
             'dataAccessClass' => $dataAccessClass,
@@ -111,16 +104,8 @@ Route::middleware('api')->group(function () {
     });
 
     Route::get('/{model}/{method}', function (Request $request, $model, $method) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
         $args = $request->query(); // Use query() instead of all() to exclude route params
-
-        \Log::debug('API GET Request', [
-            'dataAccessClass' => $dataAccessClass,
-            'method' => $method,
-            'args' => $args,
-            'class_exists' => class_exists($dataAccessClass),
-            'method_exists' => class_exists($dataAccessClass) ? method_exists($dataAccessClass, $method) : null,
-        ]);
 
         if (class_exists($dataAccessClass) && method_exists($dataAccessClass, $method)) {
             // Convert associative array to positional arguments using array_values
@@ -136,28 +121,5 @@ Route::middleware('api')->group(function () {
 
 //
 Route::prefix('n8n')->group(function () {
-    // Decrypt tenant ID and lookup user from hashed token (used by n8n Server Auth node)
-    // Note: This expects the HASHED token from the database, not the plain text Bearer token
-    Route::post('/decrypt-tenant', function (Request $request) {
-        $request->validate(['tenant_id' => 'required']);
-
-        if ($request->header('X-N8N-Secret') !== config('services.n8n.secret')) {
-            abort(403);
-        }
-
-        try {
-            $tenant = \App\Models\Landlord\Tenant::where('hash', $request->input('tenant_id'))->firstOrFail();
-            $tenant->makeCurrent();
-            $tenantId = $tenant->id;
-
-            // Token value here is the HASHED token from personal_access_tokens.token column
-            $tokenValue = $request->input('token');
-            \Log::debug('Fetching user ID for token', ['token' => substr($tokenValue, 0, 20).'...']);
-            $userId = PersonalAccessToken::where('token', $tokenValue)->first()?->tokenable_id;
-
-            return response()->json(['tenant_id' => $tenantId, 'user_id' => $userId]);
-        } catch (DecryptException $e) {
-            abort(400, 'Invalid encrypted value');
-        }
-    });
+    Route::post('/decrypt-tenant', [\App\Http\Controllers\Api\N8NController::class, 'decryptTenant'])->name('api.n8n.decrypt-tenant');
 });

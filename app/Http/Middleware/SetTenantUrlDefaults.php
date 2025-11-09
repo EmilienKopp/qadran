@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Landlord\Tenant;
 use App\Support\TenantUrl;
+use App\Utils\UrlTools;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetTenantUrlDefaults
@@ -17,6 +18,10 @@ class SetTenantUrlDefaults
     {
         // Set default URL parameters based on tenant and environment
         TenantUrl::setDefaultParameters();
+
+        $subdomain = UrlTools::getSubdomain($request->getHost());
+
+        Context::add('tenant_subdomain', $subdomain);
 
         return $next($request);
     }

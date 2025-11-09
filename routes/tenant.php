@@ -28,25 +28,43 @@ Route::get('/', function () {
     ]);
 })->name('tenant.welcome');
 
-Route::get('/dashboard', function () {
-    $user = auth('tenant')->user();
-    $user = app(UserRepositoryInterface::class)->find($user->id, ['projects', 'todaysEntries']);
 
-    return Inertia::render('Dashboard', compact('user'));
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // GitHub OAuth routes
+    Route::get('/settings/github/connect', [GitHubOAuthController::class, 'redirect'])
+        ->name('github.connect');
+    Route::get('/auth/github/callback', [GitHubOAuthController::class, 'callback'])
+        ->name('github.callback');
+    Route::post('/settings/github/confirm-replace', [GitHubOAuthController::class, 'confirmReplace'])
+        ->name('github.confirm-replace');
+    Route::delete('/settings/github/disconnect', [GitHubOAuthController::class, 'disconnect'])
+        ->name('github.disconnect');
+
+    // API endpoint for status
+    Route::get('/api/github/status', [GitHubOAuthController::class, 'status'])
+        ->name('github.status');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        $user = auth('tenant')->user();
+        $user = app(UserRepositoryInterface::class)->find($user->id, ['projects', 'todaysEntries']);
+
+        return Inertia::render('Dashboard', compact('user'));
+    })->name('dashboard');
 
     Route::get('/terminal', function () {
         return Inertia::render('Terminal');
     })->name('terminal');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     // MCP Token Management Routes
-    Route::prefix('mcp-tokens')->name('mcp-tokens.')->middleware('throttle:10,1')->group(function () {
+    Route::prefix('mcp-tokens')->name('mcp-tokens.')->middleware(['throttle:10,1'])->group(function () {
         Route::get('/', [\App\Http\Controllers\McpTokenController::class, 'index'])->name('index');
         Route::post('/', [\App\Http\Controllers\McpTokenController::class, 'store'])
             ->middleware('throttle:5,1') // More restrictive for token creation
@@ -56,10 +74,10 @@ Route::middleware('auth')->group(function () {
     });
 
     // Voice Assistant Routes
-    Route::prefix('voice-assistant')->name('voice-assistant.')->middleware('throttle:20,1')->group(function () {
+    Route::prefix('voice-assistant')->name('voice-assistant.')->middleware(['throttle:20,1'])->group(function () {
         Route::get('/', [\App\Http\Controllers\VoiceAssistantController::class, 'show'])->name('show');
         Route::post('/activate', [\App\Http\Controllers\VoiceAssistantController::class, 'activate'])
-          // ->middleware('throttle:3,1')
+            // ->middleware('throttle:3,1')
             ->name('activate');
         Route::post('/deactivate', [\App\Http\Controllers\VoiceAssistantController::class, 'deactivate'])
             ->name('deactivate');
@@ -148,21 +166,4 @@ Route::middleware('auth')->group(function () {
             return Inertia::render('Settings/Integrations', compact('githubStatus'));
         })->name('settings.integrations');
     });
-
-    Route::middleware('auth')->group(function () {
-        // GitHub OAuth routes
-        Route::get('/settings/github/connect', [GitHubOAuthController::class, 'redirect'])
-            ->name('github.connect');
-        Route::get('/auth/github/callback', [GitHubOAuthController::class, 'callback'])
-            ->name('github.callback');
-        Route::post('/settings/github/confirm-replace', [GitHubOAuthController::class, 'confirmReplace'])
-            ->name('github.confirm-replace');
-        Route::delete('/settings/github/disconnect', [GitHubOAuthController::class, 'disconnect'])
-            ->name('github.disconnect');
-
-        // API endpoint for status
-        Route::get('/api/github/status', [GitHubOAuthController::class, 'status'])
-            ->name('github.status');
-    });
-
 });

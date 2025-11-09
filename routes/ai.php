@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\ForceWebContext;
+use App\Http\Middleware\{ForceWebContext, TenantAwareMcp};
 use Laravel\Mcp\Facades\Mcp;
 
 
@@ -13,7 +13,7 @@ Route::prefix('mcp')->name('mcp.')->group(function () {
     Mcp::web('qadran', \App\Mcp\Servers\QadranServer::class)
         ->middleware([
             ForceWebContext::class,
-            \App\Http\Middleware\TenantAwareMcp::class,
+            TenantAwareMcp::class,
         ])
         ->name('qadran');
 });

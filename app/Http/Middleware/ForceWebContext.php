@@ -28,6 +28,7 @@ class ForceWebContext
 }
 
 /**
+ * -> STINKING MONKEY PATCH <-
  * Wrapper class for StreamedResponse that adds the 'original' property
  * to prevent NativePhp LivewireDispatcher errors
  */
