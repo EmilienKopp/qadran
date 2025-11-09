@@ -103,10 +103,10 @@ class AIService
         return \App\DTOs\VoiceCommand::fromArray($commandData);
     }
 
-    public function textToAssistant(string $text)
+    public function textToAssistant(string $text, ?string $webhookUrl = null)
     {
         $systemPrompt = AIPromptRegistry::getVoiceAssistantSystemPrompt($text);
-        $response = $this->commandAction->textToAssistant($systemPrompt, $text);
+        $response = $this->commandAction->textToAssistant($systemPrompt, $text, $webhookUrl);
         \Log::debug('AIService textToAssistant response', ['response' => $response]);
         return $response;
     }

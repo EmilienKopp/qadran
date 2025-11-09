@@ -47,9 +47,10 @@ interface AIActionInterface
      *
      * @param  string  $system_prompt  The system prompt defining assistant behavior
      * @param  string  $user_input  The user's input to the assistant
+     * @param  string|null  $webhookUrl  Optional webhook URL for processing
      * @return mixed The assistant's response data
      *
      * @throws \Exception If processing fails
      */
-    public function textToAssistant(string $system_prompt, string $user_input);
+    public function textToAssistant(string $system_prompt, string $user_input, ?string $webhookUrl = null);
 }

@@ -94,7 +94,7 @@ class PrismAIAction implements AIActionInterface
         throw new \Exception('Text to command is not implemented in PrismAIAction. Use N8nAIAction instead.');
     }
 
-    public function textToAssistant(string $system_prompt, string $user_input)
+    public function textToAssistant(string $system_prompt, string $user_input, ?string $webhookUrl = null)
     {
         // This could be implemented with Prism, but currently n8n is preferred
         throw new \Exception('Text to assistant is not implemented in PrismAIAction. Use N8nAIAction instead.');
