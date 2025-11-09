@@ -65,13 +65,7 @@ class VoiceAssistantController extends Controller
             // 1. Get or create tenant-level base configuration
             $tenantConfig = $tenant->n8n_config ?? new N8nConfig;
             if (! $tenantConfig->mcpEndpointUrl) {
-                $route = route('mcp.qadran');
-                if (Str::contains($route, 'localhost')) {
-                    $route = 'http://host.docker.internal:'.parse_url($route, PHP_URL_PORT).'/mcp/qadran';
-                }
-                // Append tenant host as query parameter for tenant resolution
-                $route .= '?tenant='.$tenant->host;
-                $tenantConfig->mcpEndpointUrl = $route;
+                $tenantConfig->mcpEndpointUrl = $this->aiService->getMcpEndpointUrl();
                 $tenant->n8n_config = $tenantConfig;
                 $tenant->save();
             }

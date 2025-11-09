@@ -10,6 +10,7 @@ Route::prefix('mcp')->name('mcp.')->group(function () {
     Mcp::local('qadran_local', \App\Mcp\Servers\QadranServer::class);
     
     // Tenant-aware web MCP server with authentication
+    \Log::debug('Route ACCOUNT parameter', ['account' => request()->route('account')]);
     Mcp::web('qadran', \App\Mcp\Servers\QadranServer::class)
         ->middleware([
             ForceWebContext::class,

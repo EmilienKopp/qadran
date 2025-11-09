@@ -6,6 +6,7 @@ use App\Enums\ReportTypes;
 use App\Services\AI\AIPromptRegistry;
 use App\Services\AI\Contracts\AIActionInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 /**
  * Refactored AI Service with better separation of concerns
@@ -108,5 +109,20 @@ class AIService
         $response = $this->commandAction->textToAssistant($systemPrompt, $text);
         \Log::debug('AIService textToAssistant response', ['response' => $response]);
         return $response;
+    }
+
+    public function getMcpEndpointUrl(?string $tenantHost = null): string
+    {
+        $tenant = \App\Models\Landlord\Tenant::current() 
+            ?? \App\Models\Landlord\Tenant::where('host', $tenantHost)->first();
+        if(!$tenant) {
+             throw new \Exception('No tenant found for MCP endpoint URL generation');
+        }
+        $route = route('mcp.qadran');
+        if (Str::contains($route, 'localhost')) {
+            $route = 'http://host.docker.internal:' . parse_url($route, PHP_URL_PORT) . '/mcp/qadran';
+        }
+        $route .= '?tenant=' . $tenant->host;
+        return $route;
     }
 }
