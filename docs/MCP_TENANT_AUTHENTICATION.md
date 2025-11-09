@@ -4,7 +4,8 @@ This document describes the tenant-aware authentication system for the Qadran MC
 
 ## Overview
 
-The Qadran MCP server operates in a multi-tenant environment where each tenant has its own isolated data and users. The authentication flow ensures that MCP clients can only access data within their authenticated tenant context.
+The Qadran MCP server operates in a multi-tenant environment where each tenant has its own isolated data and users. 
+The authentication flow ensures that MCP clients can only access data within their authenticated tenant context.
 
 ## Architecture Components
 

@@ -6,6 +6,7 @@ use App\DataAccess\Facades\Tenant as TenantFacade;
 use App\Enums\ExecutionContext;
 use App\Models\Landlord\Tenant;
 use App\Support\RequestContextResolver;
+use App\Utils\UrlTools;
 use Illuminate\Http\Request;
 use Native\Desktop\Facades\Settings;
 use Spatie\Multitenancy\TenantFinder\TenantFinder as BaseTenantFinder;
@@ -18,7 +19,7 @@ class TenantFinder extends BaseTenantFinder
         $context = RequestContextResolver::getExecutionContext();
 
         $isLocal = ! app()->isProduction() && ($host === 'localhost' || str($host)->contains('127.0.0.1'));
-
+        
         return match ($context) {
             ExecutionContext::DESKTOP => $this->findDesktopTenant(),
             ExecutionContext::WEB, => $this->findWebTenant($host, $isLocal),
@@ -61,13 +62,6 @@ class TenantFinder extends BaseTenantFinder
             return $routeAccount;
         }
 
-        $parts = explode('.', $host);
-
-
-        if (count($parts) >= 3) {
-            return $parts[0];
-        }
-
-        return null;
+        return UrlTools::getSubdomain($host);
     }
 }

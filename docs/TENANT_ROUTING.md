@@ -3,7 +3,7 @@
 ## Problem Statement
 This application needs to support different URL patterns for tenant routing across three environments:
 - **Production (non-staging)**: `https://tenant.qadran.io` (subdomain-based)
-- **Staging**: `https://qadran.io/tenant` (path prefix-based)
+- **Staging**: `https://qadran-stg-12345.cloud/tenant` (path prefix-based)
 - **Local**: `http://localhost:8000` (no tenant parameter)
 
 **Key Issue**: Auth routes (`login`, `register`, etc.) need to be within the tenant routing scope so they can redirect to tenant-specific routes like `dashboard`.
@@ -26,7 +26,7 @@ The routing works in two phases:
    - Finds: Tenant where host = "tenant"
    - Sets: Tenant::current()
                         ↓
-3. Route Matching (NOW happens)
+3. Route Matching
    - Matches: Route::domain('{account}.qadran.io')
    - Extracts: {account} = "tenant"
    - ✅ request()->route()->parameter('account') NOW works
@@ -36,12 +36,15 @@ The routing works in two phases:
    - Sets: URL::defaults(['account' => 'tenant'])
                         ↓
 5. Route-Specific Middleware (guest, auth, etc.)
-   - route('dashboard') → uses URL::defaults()
+   - route('dashboard') → uses URL::defaults(), to avoid annoying "Missing required parameter" errors
                         ↓
 6. Controller Execution
 ```
 
-**Critical Discovery**: `Route::domain('{account}.')` parameter is NOT available during tenant finding. TenantFinder must parse the subdomain directly from the hostname.
+**Critical Discovery**: 
+
+`Route::domain('{account}.')` parameter is NOT available during tenant finding. 
+TenantFinder must parse the subdomain directly from the hostname.
 
 ## Implementation Details
 
@@ -52,13 +55,7 @@ Located at: `app/Services/TenantFinder.php`
 private function extractAccountFromHost(string $host): ?string
 {
     // Route params NOT available yet - must parse manually!
-    $parts = explode('.', $host);
-    
-    if (count($parts) >= 3) {
-        return $parts[0]; // "tenant" from "tenant.qadran.io"
-    }
-    
-    return null;
+    return UrlTools::getSubdomain($host);
 }
 ```
 
