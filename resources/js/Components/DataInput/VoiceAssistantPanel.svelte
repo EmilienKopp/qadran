@@ -129,10 +129,10 @@
   {/if}
 
   <!-- Transcript Display -->
-  {#if voiceAssistant.transcript}
+  {#if voiceAssistant.transcript || voiceAssistant.assistantResponse}
     <div class="bg-base-100 p-3 rounded-lg text-sm">
       <div class="flex items-start justify-between gap-2">
-        <p class="flex-1">{voiceAssistant.transcript}</p>
+        <p class="flex-1">{voiceAssistant.assistantResponse ?? voiceAssistant.transcript}</p>
         <button
           onclick={voiceAssistant.clearTranscript}
           class="btn btn-ghost btn-xs btn-circle"
