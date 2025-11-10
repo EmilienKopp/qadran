@@ -12,6 +12,7 @@
   import { getTimezone } from '$lib/utils/timezone';
   import type { Project } from '$models';
   import MiniButton from '$components/Buttons/MiniButton.svelte';
+  import InterferenceModal from '$components/Modals/InterferenceModal.svelte';
 
   interface Props {
     user: User;
@@ -27,6 +28,8 @@
   });
 
   let nextAction = $derived.by(() => ClockEntry.determineNextAction($form,latestEntry));
+
+  let interferenceModalOpen = $state(false);
 
 </script>
 
@@ -52,6 +55,13 @@
             <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)}>
               {nextAction}
             </Button>
+            <MiniButton
+              color="accent"
+              onclick={() => (interferenceModalOpen = true)}
+              title="Register a brief interruption"
+            >
+              + Interference
+            </MiniButton>
           </fieldset>
           <div class="w-full mt-4 flex flex-col items-center">
             <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8 mb-2">
@@ -69,4 +79,10 @@
       </div>
     </div>
   </div>
+  
+  <InterferenceModal
+    bind:open={interferenceModalOpen}
+    projects={user.projects}
+    clockEntryId={latestEntry?.id}
+  />
 </AuthenticatedLayout>

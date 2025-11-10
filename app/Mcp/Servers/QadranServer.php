@@ -13,6 +13,7 @@ use App\Mcp\Tools\GetClockEntries;
 use App\Mcp\Tools\ListActivityTypes;
 use App\Mcp\Tools\ListProjects;
 use App\Mcp\Tools\ListTasks;
+use App\Mcp\Tools\RegisterInterference;
 use Laravel\Mcp\Server;
 
 class QadranServer extends Server
@@ -48,6 +49,7 @@ class QadranServer extends Server
         - **clock_out**: Stop tracking time
         - **get_clock_entries**: Retrieve clock entries with optional filtering by date, user, and project
         - **generate_report**: Generate a time tracking report for a specific date
+        - **register_interference**: Register a brief interruption during a clock entry (e.g., a few minutes on another project)
         
         ### Activity Logging
         - **create_activity**: Create a single activity log entry for a clock entry
@@ -65,12 +67,16 @@ class QadranServer extends Server
            - Create tasks associated with projects using `create_task`
            - List tasks for a specific project using `list_tasks` with project_id filter
         
-        3. **Logging daily activities**:
+        3. **Recording interferences**:
+           - While clocked in on one project, if you briefly work on another, use `register_interference`
+           - Specify the start/end times, the project of the interference, and optionally link to the interrupted clock entry
+        
+        4. **Logging daily activities**:
            - After clocking in and out, use `create_activity_batch` to log multiple activities for that day
            - Each activity can have its own activity type, task, time offsets, and notes
            - Use `list_activity_types` to see available activity categories
         
-        4. **Generating reports**:
+        5. **Generating reports**:
            - Use `generate_report` to get time tracking summaries for specific dates
            - Reports include total hours, project breakdowns, and entry details
     MARKDOWN;
@@ -92,6 +98,7 @@ class QadranServer extends Server
         CreateActivity::class,
         CreateActivityBatch::class,
         ListActivityTypes::class,
+        RegisterInterference::class,
     ];
 
     /**
