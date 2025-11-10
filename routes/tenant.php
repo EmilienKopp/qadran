@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AudioController;
 use App\Http\Controllers\ClockEntryController;
 use App\Http\Controllers\GitHubOAuthController;
+use App\Http\Controllers\InterferenceController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -123,6 +124,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{clockEntry}/edit', [ClockEntryController::class, 'edit'])->name('clock-entry.edit');
         Route::patch('/{clockEntry}', [ClockEntryController::class, 'update'])->name('clock-entry.update');
         Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
+    });
+
+    Route::group(['prefix' => 'interferences'], function () {
+        Route::post('/store', [InterferenceController::class, 'store'])->name('interferences.store');
+        Route::delete('/{interference}', [InterferenceController::class, 'destroy'])->name('interferences.destroy');
     });
 
     Route::group(['prefix' => 'rates'], function () {
