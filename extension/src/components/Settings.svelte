@@ -2,13 +2,13 @@
   import { onMount } from 'svelte';
   import { settingsStore } from '../stores/settings.js';
 
+  let { onConfigured } = $props();
+
   let apiUrl = $state('http://localhost:8000');
   let apiToken = $state('');
   let userId = $state('');
   let isSaving = $state(false);
   let message = $state('');
-
-  export let onConfigured;
 
   onMount(async () => {
     const settings = await settingsStore.load();
