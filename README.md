@@ -6,6 +6,7 @@ A modern web application built for small teams, freelancers and start-ups to eff
 
 - [Overview](#overview)
 - [Features](#features)
+- [Chrome Extension](#chrome-extension)
 - [Technical Architecture](#technical-architecture)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
@@ -56,6 +57,61 @@ The system separates time logs from activity breakdowns, allowing users to recor
 - Commands for page navigation, scrolling, and voice assistant control
 - Keyboard shortcut: Ctrl/Cmd + Shift + C
 - Support for natural language patterns
+
+## Chrome Extension
+
+Qadran includes a Chrome extension that allows you to track time and dispatch voice commands without opening the web application.
+
+### Extension Features
+- **Quick Clock In/Out**: Clock in to projects and track time directly from your browser toolbar
+- **Live Timer**: See elapsed time for active sessions in real-time
+- **Voice Commands**: Record and send voice commands to the Qadran AI assistant
+- **Secure Authentication**: Uses Laravel Sanctum personal access tokens for API authentication
+- **Offline-Ready Settings**: Extension settings stored securely in Chrome storage
+
+### Installing the Extension
+
+1. **Build the Extension**:
+   ```bash
+   cd extension
+   npm install
+   npm run build
+   ```
+
+2. **Load in Chrome**:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" in the top right corner
+   - Click "Load unpacked"
+   - Select the `extension/dist` folder
+
+3. **Configure the Extension**:
+   - Click the Qadran extension icon in your toolbar
+   - Enter your Qadran API details:
+     - **API URL**: Your Qadran instance URL (e.g., `http://localhost:8000`)
+     - **User ID**: Your user ID (found in your profile settings)
+     - **API Token**: Generate this from Settings → API Tokens in Qadran
+   - Click "Test Connection" to verify your settings
+   - Click "Save Settings" to complete setup
+
+### Using the Extension
+
+**Clock In/Out**:
+1. Click the extension icon
+2. Select a project from the dropdown
+3. Click "Clock In" to start tracking
+4. Click "Clock Out" when finished
+
+The extension displays a live timer showing elapsed time for your active session.
+
+**Voice Commands**:
+1. Click the extension icon
+2. Navigate to the "Voice" tab
+3. Click "Start Voice Recording"
+4. Speak your command (e.g., "Clock in to Project Alpha")
+5. Click "Stop Recording"
+6. View the transcript and AI assistant response
+
+For more details, see the [Extension README](extension/README.md).
 
 ## Technical Architecture
 
