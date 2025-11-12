@@ -97,7 +97,7 @@
         </MiniButton>
       </div>
     {:else}
-      {#each dailyLogs as _,i }
+      {#each dailyLogs as log, i }
         {#if log.activities}
           <DailyLogInputForm bind:log={dailyLogs[i]} {taskCategories} />
         {/if}

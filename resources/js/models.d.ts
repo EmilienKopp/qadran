@@ -15,6 +15,35 @@ export interface ActivityLog {
   expense_id?: number;
 }
 
+export interface Activity {
+  id?: number;
+  user_id: number;
+  project_id: number;
+  task_category_id: number | null;
+  date: Date | string;
+  duration: number;
+  notes?: string;
+  task_category?: TaskCategory;
+  created_at?: Date | string;
+  updated_at?: Date | string;
+}
+
+export interface DailyLog {
+  id: string;
+  user_id: number;
+  name: string;
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  project_id: number;
+  project_name: string;
+  date: Date | string;
+  total_seconds: number;
+  total_minutes: number;
+  activities: Activity[];
+  timeLogs: ClockEntry[];
+}
+
 export interface ActivityType {
   id: number;
   name: string;
@@ -33,6 +62,8 @@ export interface ClockEntry {
   project?: Project;
   in?: any;
   out?: any;
+  in_time?: any;
+  out_time?: any;
   timezone?: string;
   notes?: string;
   created_at?: Date | string;
@@ -306,10 +337,12 @@ export interface VoiceCommand {
 }
 
 export type ModelTypes =
+  | Activity
   | ActivityLog
   | ActivityType
   | ClockEntry
   | Currency
+  | DailyLog
   | GitHubConnection
   | Industry
   | ModelHasRoles

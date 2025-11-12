@@ -84,7 +84,35 @@ class ClockEntryController extends Controller
      */
     public function update(UpdateClockEntryRequest $request, ClockEntry $clockEntry)
     {
-        //
+        $validated = $request->validated();
+        $clockEntry->update($validated);
+        
+        return back()->with('success', 'Clock entry updated successfully.');
+    }
+
+    /**
+     * Batch update clock entries
+     */
+    public function batchUpdate(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'entries' => 'required|array',
+            'entries.*.id' => 'required|exists:clock_entries,id',
+            'entries.*.in_time' => 'required|date',
+            'entries.*.out_time' => 'nullable|date',
+        ]);
+
+        foreach ($validated['entries'] as $entryData) {
+            $entry = ClockEntry::find($entryData['id']);
+            if ($entry && $entry->user_id === auth()->user()->id) {
+                $entry->update([
+                    'in' => $entryData['in_time'],
+                    'out' => $entryData['out_time'] ?? null,
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Clock entries updated successfully.');
     }
 
     /**
