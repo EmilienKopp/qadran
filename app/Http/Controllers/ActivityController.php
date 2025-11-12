@@ -6,6 +6,8 @@ use App\Http\Requests\BatchStoreActivityRequest;
 use App\Models\Activity;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
+use App\Http\Resources\ActivityResource;
+use App\Http\Resources\DailyLogResource;
 use App\Models\ActivityLog;
 use App\Models\Views\DailyLog;
 use App\Repositories\ProjectRepositoryInterface;
@@ -54,12 +56,38 @@ class ActivityController extends Controller
     {
         $validated = $request->validated();
         $activities = $validated['activities'];
+        
+        // Filter out activities with no duration
+        $activities = array_filter($activities, function($activity) {
+            return isset($activity['duration']) && $activity['duration'] > 0;
+        });
+
+        if (empty($activities)) {
+            return back()->with('error', 'No activities with duration to save.');
+        }
+
+        // Get the first activity to determine project and date
+        $firstActivity = reset($activities);
+        
+        // Delete existing activities for this user, project, and date
         Activity::where('user_id', auth()->user()->id)
-            ->where('project_id', $activities[0]['project_id'])
-            ->where('date', Carbon::today())
+            ->where('project_id', $firstActivity['project_id'])
+            ->where('date', $validated['date'])
             ->delete();
-        Activity::upsert($activities, ['project_id', 'user_id', 'task_category_id', 'date']);
-        return to_route('activities.show', ['date' => $validated['date']]);
+        
+        // Insert new activities
+        foreach ($activities as $activity) {
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'project_id' => $activity['project_id'],
+                'task_category_id' => $activity['task_category_id'],
+                'date' => $validated['date'],
+                'duration' => $activity['duration'],
+                'notes' => $activity['notes'] ?? null,
+            ]);
+        }
+        
+        return back()->with('success', 'Activities saved successfully.');
     }
 
     /**
@@ -70,7 +98,6 @@ class ActivityController extends Controller
         $date ??= $request->query('date') ?? Carbon::today()->format('Y-m-d');
 
         $user = User::find(auth('tenant')->user()->id);
-        // $projects = $user->getInvolvedProjects();
         $projects = $this->projectRepository->findForUser($user);
 
         $taskCategories = TaskCategory::all()->transform(function ($taskCategory) {

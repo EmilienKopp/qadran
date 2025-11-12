@@ -67,7 +67,7 @@
     aboveMax = false;
   }
 
-  function opentTaskModal(activity: any, index: number) {
+  function openTaskModal(activity: any, index: number) {
     console.log(activity, index);
   }
 

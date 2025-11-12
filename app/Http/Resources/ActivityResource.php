@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ClockEntryResource extends JsonResource
+class ActivityResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,16 +18,13 @@ class ClockEntryResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'project_id' => $this->project_id,
-            'in' => $this->in,
-            'out' => $this->out,
-            'in_time' => $this->in_time ?? $this->in,
-            'out_time' => $this->out_time ?? $this->out,
-            'timezone' => $this->timezone,
+            'task_category_id' => $this->task_category_id,
+            'date' => $this->date,
+            'duration' => $this->duration,
             'notes' => $this->notes,
-            'duration_seconds' => $this->duration_seconds,
+            'task_category' => $this->whenLoaded('taskCategory'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'project' => new ProjectResource($this->whenLoaded('project')),
         ];
     }
 }

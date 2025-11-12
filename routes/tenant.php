@@ -125,6 +125,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('clock-entry.destroy');
     });
 
+    // Timelog routes (alias for clock entries, used by frontend)
+    Route::group(['prefix' => 'timelog'], function () {
+        Route::put('/batch-update', [ClockEntryController::class, 'batchUpdate'])->name('timelog.batch-update');
+        Route::delete('/{clockEntry}', [ClockEntryController::class, 'destroy'])->name('timelog.destroy');
+    });
+
     Route::group(['prefix' => 'rates'], function () {
         Route::get('/', [RateController::class, 'index'])->name('rate.index');
         Route::get('/create', [RateController::class, 'create'])->name('rate.create');
@@ -148,6 +154,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::group(['prefix' => 'activities'], function () {
+        Route::get('/', [ActivityController::class, 'index'])->name('activities.index');
+        Route::post('/store', [ActivityController::class, 'store'])->name('activities.store');
         Route::get('/{date}', [ActivityController::class, 'show'])->name('activities.show');
     });
 
