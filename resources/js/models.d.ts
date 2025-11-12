@@ -29,7 +29,7 @@ export interface Activity {
 }
 
 export interface DailyLog {
-  id: string;
+  id?: string;
   user_id: number;
   name: string;
   first_name: string;
