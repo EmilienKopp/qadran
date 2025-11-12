@@ -8,6 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Carbon\Carbon;
 
+/**
+ * DailyLog View Model
+ * 
+ * This model represents the daily_logs_view database view which aggregates
+ * clock entries by user, project, and date.
+ * 
+ * Data Structure:
+ * - The view aggregates clock entries into daily summaries
+ * - activities() fetches Activity records (time breakdown by task category)
+ * - timeLogs() fetches ClockEntry records (actual clock in/out times)
+ * 
+ * Usage:
+ * - getDaily($date): Get all daily logs for a specific date with related data
+ * - getMonthly($date): Get all daily logs for a month with related data
+ * 
+ * Related Models:
+ * - Activity: Stores the breakdown of time by task category for each day/project
+ * - ClockEntry: Stores the actual clock in/out times
+ * - TaskCategory: Categories for activities (e.g., "Development", "Meeting")
+ */
 class DailyLog extends ReadOnlyModel
 {
     use UsesTenantConnection;
