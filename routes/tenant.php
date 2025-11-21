@@ -20,7 +20,31 @@ $APP_HOST = Uri::of(env('APP_URL'))->host();
 // Set default guard for tenant routes
 config(['auth.defaults.guard' => 'tenant']);
 
+// Root route - shows landing page if no tenant, otherwise redirects based on auth
 Route::get('/', function () {
+    $tenant = Tenant::current();
+    
+    return Inertia::render('Landing', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'authenticated' => Auth::check(),
+        'tenant' => $tenant,
+    ]);
+})->name('tenant.root');
+
+Route::get('/landing', function () {
+    $tenant = Tenant::current();
+
+    return Inertia::render('Landing', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'authenticated' => Auth::check(),
+        'tenant' => $tenant,
+    ]);
+})->name('tenant.landing');
+
+// Welcome/Login page for tenant subdomains
+Route::get('/welcome', function () {
     return Inertia::render('TenantWelcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),

@@ -17,15 +17,6 @@ $APP_HOST = Uri::of(env('APP_URL'))->host();
 Route::get('/known-issues', [KnownIssuesController::class, 'index'])
     ->name('known-issues.index');
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
 Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     $spaceName = $request->input('space');
 
@@ -66,8 +57,8 @@ if (app()->isProduction()) {
         });
     }
 } else {
-    Route::prefix('')->group(function () {
-        require __DIR__.'/tenant.php';
-        require __DIR__.'/auth.php';
-    });
+    // In development, include tenant routes directly
+    // The tenant.php routes will handle both root and subdomain logic
+    require __DIR__.'/tenant.php';
+    require __DIR__.'/auth.php';
 }

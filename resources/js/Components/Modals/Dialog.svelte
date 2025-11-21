@@ -11,6 +11,7 @@
         children?: import('svelte').Snippet;
         'title-right'?: import('svelte').Snippet;
         buttons?: import('svelte').Snippet;
+        transitionName?: string;
         [key: string]: any;
     }
 
@@ -22,6 +23,7 @@
         children,
         'title-right': titleRight,
         buttons,
+        transitionName = "",
         ...rest
     }: Props = $props();
 

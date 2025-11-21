@@ -23,13 +23,19 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check()) {
                 $tenant = Tenant::current();
 
-                // Build parameters based on environment and tenant
-                $params = [];
-                if ($tenant && (app()->environment('staging') || app()->isProduction())) {
-                    $params['account'] = $tenant->host;
+                // If on a tenant subdomain, redirect to dashboard
+                if ($tenant) {
+                    // Build parameters based on environment and tenant
+                    $params = [];
+                    if (app()->environment('staging') || app()->isProduction()) {
+                        $params['account'] = $tenant->host;
+                    }
+
+                    return redirect()->route('dashboard', $params);
                 }
 
-                return redirect()->route('dashboard', $params);
+                // If on root domain (no tenant), redirect to tenant root (which shows landing)
+                return redirect()->route('tenant.root');
             }
         }
 
