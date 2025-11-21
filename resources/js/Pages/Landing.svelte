@@ -23,6 +23,10 @@
     tenant = null,
   }: Props = $props();
 
+  let openedFeatures = $state({id: null});
+
+  setContext('opened-features', openedFeatures);
+
   const features = [
     {
       title: 'Effortless Time Tracking',
@@ -61,24 +65,6 @@
       component: ReportsFeature,
     },
   ];
-
-  let selectedFeature = $state<(typeof features)[0] | null>(null);
-  let modalOpen = $state(false);
-
-  function openFeatureModal(feature: (typeof features)[0]) {
-    selectedFeature = feature;
-
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        modalOpen = true;
-      });
-    } else {
-      modalOpen = true;
-    }
-  }
-
-  let expandedCardId = $state({ current: null });
-  setContext('morph-cards', expandedCardId);
 </script>
 
 <svelte:head>
@@ -250,17 +236,4 @@
     </nav>
   </footer>
 
-  <!-- Feature Detail Modal -->
-  {#if selectedFeature}
-    <Dialog
-      bind:open={modalOpen}
-      class="modal-box max-w-2xl z-30"
-      transitionName="feature-{selectedFeature.title
-        .toLowerCase()
-        .replace(/\s+/g, '-')}"
-    >
-      {@const FeatureComponent = selectedFeature.component}
-      <FeatureComponent />
-    </Dialog>
-  {/if}
 </div>
