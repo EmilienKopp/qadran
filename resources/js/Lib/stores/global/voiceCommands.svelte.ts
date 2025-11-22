@@ -44,6 +44,7 @@ class VoiceCommandsService {
   #error = $state('');
   #isSupported = $state(false);
   #continuousMode = $state(false);
+  #triggerVoiceAssistant = $state(false);
 
   // Private state
   #recognition: SpeechRecognition | null = null;
@@ -315,6 +316,14 @@ class VoiceCommandsService {
     });
 
     // Voice control commands
+    this.registerCommand('assistant', {
+      patterns: ['assistant', 'voice assistant', 'open assistant', 'activate assistant', 'hey assistant'],
+      action: () => {
+        this.activateVoiceAssistant();
+      },
+      description: 'Activate voice assistant for complex instructions'
+    });
+
     this.registerCommand('start-voice', {
       patterns: ['start voice listening', 'enable voice', 'voice on', 'start listening'],
       action: async () => {
@@ -537,6 +546,30 @@ class VoiceCommandsService {
       ...cmd
     }));
   }
+
+  get triggerVoiceAssistant() {
+    return this.#triggerVoiceAssistant;
+  }
+
+  setTriggerVoiceAssistant = (value: boolean) => {
+    this.#triggerVoiceAssistant = value;
+  };
+
+  activateVoiceAssistant = () => {
+    // Stop voice command listening before activating voice assistant
+    if (this.#isListening) {
+      this.stopListening();
+    }
+    // Signal to UI to show voice assistant
+    this.#triggerVoiceAssistant = true;
+  };
+
+  resumeAfterVoiceAssistant = () => {
+    // Resume listening only if in continuous mode
+    if (this.#continuousMode) {
+      this.startListening();
+    }
+  };
 }
 
 export const voiceCommands = new VoiceCommandsService();
