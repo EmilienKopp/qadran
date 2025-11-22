@@ -22,34 +22,20 @@ class StoreClockEntryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'in' => ['nullable', 'date'],
-            'out' => ['nullable', 'date'],
+            'in' => ['date'],
+            'out' => ['date'],
             'note' => ['nullable', 'string'],
             'project_id' => ['exists:tenant.projects,id'],
-            'user_id' => ['required', 'exists:tenant.users,id'],
+            'user_id' => ['required','exists:tenant.users,id'],
             'timezone' => ['nullable', 'timezone'],
         ];
     }
 
     public function prepareForValidation()
     {
-        $now = now()->toDateTimeString();
-        $out = null;
-        $in = null;
-
-        if (empty($this->in)) {
-            $in = $now;
-        } else {
-            $out = $this->out ?? $now;
-        }
-
         $this->merge([
             'user_id' => $this->user()->id,
-            'in' => $in,
-            'out' => $out,
             'timezone' => $this->timezone ?? 'UTC',
         ]);
-
-        \Log::debug('Prepared StoreClockEntryRequest data', $this->all());
     }
 }
