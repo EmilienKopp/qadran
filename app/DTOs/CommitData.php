@@ -15,7 +15,7 @@ class CommitData
         public string $author,
         public string $authorEmail,
         public Carbon $date,
-        public string $url
+        public ?string $url
     ) {}
 
     public function setDiff(Collection $diff): void
@@ -40,7 +40,7 @@ class CommitData
         ];
 
         if ($this->diff !== null) {
-            $data['diff'] = $this->diff->map(fn($file) => $file->toArray())->toArray();
+            $data['diff'] = $this->diff->map(fn ($file) => $file->toArray())->toArray();
         }
 
         return $data;
