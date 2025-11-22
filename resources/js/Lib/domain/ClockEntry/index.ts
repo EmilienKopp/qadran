@@ -9,6 +9,11 @@ export class ClockEntry extends ClockEntryBase {
     latestEntry: ClockEntry | undefined
   ) {
     if (!latestEntry?.out) {
+      const latestEntryIsToday = new Date(latestEntry?.in).toDateString() === new Date().toDateString();
+      if(!latestEntryIsToday) {
+        return 'Clock In';
+      }
+      
       if (latestEntry?.project_id !== nextEntry?.project_id) {
         return 'Switch Project';
       } else {
@@ -33,9 +38,10 @@ export class ClockEntry extends ClockEntryBase {
 
   static async push(form: InertiaForm<Partial<ClockEntry>>) {
     form.post(route('clock-entry.store'), {
-      onSuccess: () => {
+      onSuccess: (e) => {
         toaster.success('Clock entry created successfully');
-        form.reset();
+        // form.reset();
+        console.log(e)
       },
       onError: (errors: Record<string, string>) => {
         toaster.error('An error occurred while creating the clock entry');

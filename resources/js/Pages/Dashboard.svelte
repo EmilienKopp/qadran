@@ -21,9 +21,16 @@
   let latestEntry = $derived(user?.todays_entries?.[0]);
   let projectOptions = asSelectOptions<Project>(user.projects, 'id', 'name');
 
+  const getLastEntry = (field?: string) => {
+    if(field && latestEntry && latestEntry[field as keyof typeof latestEntry]) {
+      return latestEntry[field as keyof typeof latestEntry];
+    }
+    return latestEntry;
+  };
+
   let form = superUseForm({
-    project_id: latestEntry?.project_id,
-    timezone: getTimezone(),
+    project_id: getLastEntry('project_id'),
+    timezone: getLastEntry('timezone') ?? getTimezone(),
   });
 
   let nextAction = $derived.by(() => ClockEntry.determineNextAction($form,latestEntry));
