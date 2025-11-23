@@ -2,9 +2,9 @@
 
 use App\DataAccess\Facades\Tenant;
 use App\Http\Controllers\KnownIssuesController;
+use App\Http\Controllers\PrivacyPolicyController;
 use App\Support\InstanceUrl;
 use App\Support\RequestContextResolver;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Uri;
@@ -16,6 +16,19 @@ $APP_HOST = Uri::of(env('APP_URL'))->host();
 // Public known issues page (landlord-scoped, no auth required)
 Route::get('/known-issues', [KnownIssuesController::class, 'index'])
     ->name('known-issues.index');
+
+// Public privacy policy page (landlord-scoped, no auth required)
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])
+    ->name('privacy-policy.index');
+
+Route::get('/', function () {
+
+    return Inertia::render('Landing', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'authenticated' => Auth::check(),
+    ]);
+})->name('root');
 
 Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     $spaceName = $request->input('space');

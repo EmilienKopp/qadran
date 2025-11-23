@@ -229,7 +229,7 @@
     </aside>
     <nav>
       <div class="grid grid-flow-col gap-4">
-        <button type="button" class="link link-hover">Privacy</button>
+        <a href="/privacy-policy" class="link link-hover">Privacy</a>
         <button type="button" class="link link-hover">Terms</button>
         <button type="button" class="link link-hover">Contact</button>
       </div>

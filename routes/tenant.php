@@ -5,6 +5,7 @@ use App\Http\Controllers\AudioController;
 use App\Http\Controllers\ClockEntryController;
 use App\Http\Controllers\GitHubOAuthController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RateController;
@@ -23,7 +24,7 @@ config(['auth.defaults.guard' => 'tenant']);
 // Root route - shows landing page if no tenant, otherwise redirects based on auth
 Route::get('/', function () {
     $tenant = Tenant::current();
-    
+
     return Inertia::render('Landing', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -52,7 +53,9 @@ Route::get('/welcome', function () {
     ]);
 })->name('tenant.welcome');
 
-
+// Public privacy policy page (tenant-scoped, no auth required)
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])
+    ->name('privacy-policy.index');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
