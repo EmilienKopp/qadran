@@ -29,12 +29,14 @@
     } else {
       openedFeatures.id = shouldOpen ? id : null;
     }
+    console.log(openedFeatures);
   }
 
   const clickOutside = (node: HTMLElement) => {
     const handleClick = (event: MouseEvent) => {
-      if (!node.contains(event.target as Node)) {
+      if (isExpanded && !node.contains(event.target as Node)) {
         openedFeatures.id = null;
+        console.log(openedFeatures);
       }
     };
 
@@ -64,7 +66,10 @@
     <button
       type="button"
       class="absolute top-4 right-4 btn btn-sm btn-circle btn-ghost"
-      onclick={toggle}
+      onclick={(e) => {
+        e.stopPropagation();
+        toggle();
+      }}
     >
       ✕
     </button>
