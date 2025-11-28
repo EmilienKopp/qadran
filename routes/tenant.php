@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AudioController;
 use App\Http\Controllers\ClockEntryController;
 use App\Http\Controllers\GitHubOAuthController;
@@ -184,6 +185,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [ActivityController::class, 'index'])->name('activities.index');
         Route::post('/store', [ActivityController::class, 'store'])->name('activities.store');
         Route::get('/{date}', [ActivityController::class, 'show'])->name('activities.show');
+    });
+
+    Route::group(['prefix' => 'activity-logs'], function () {
+        Route::post('/store', [ActivityLogController::class, 'store'])->name('activity-logs.store');
     });
 
     Route::group(['prefix' => 'settings'], function () {

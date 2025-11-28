@@ -2,30 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BatchStoreActivityRequest;
-use App\Models\Activity;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
-use App\Http\Resources\ActivityResource;
-use App\Http\Resources\DailyLogResource;
+use App\Models\Activity;
 use App\Models\ActivityLog;
+use App\Models\ActivityType;
+use App\Models\Task;
+use App\Models\TaskCategory;
+use App\Models\User;
 use App\Models\Views\DailyLog;
 use App\Repositories\ProjectRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use Carbon\Carbon;
-use App\Models\TaskCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
 
 class ActivityController extends Controller
 {
     public function __construct(
         public UserRepositoryInterface $userRepository,
         public ProjectRepositoryInterface $projectRepository
-    )
-    {
-    }
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -38,7 +35,7 @@ class ActivityController extends Controller
 
         $dailyLogs = DailyLog::getMonthly($date);
 
-        return inertia('Activity/Index', compact( 'projects', 'dailyLogs', 'taskCategories', 'date'));
+        return inertia('Activity/Index', compact('projects', 'dailyLogs', 'taskCategories', 'date'));
     }
 
     /**
@@ -56,9 +53,9 @@ class ActivityController extends Controller
     {
         $validated = $request->validated();
         $activities = $validated['activities'];
-        
+
         // Filter out activities with no duration
-        $activities = array_filter($activities, function($activity) {
+        $activities = array_filter($activities, function ($activity) {
             return isset($activity['duration']) && $activity['duration'] > 0;
         });
 
@@ -68,13 +65,13 @@ class ActivityController extends Controller
 
         // Get the first activity to determine project and date
         $firstActivity = reset($activities);
-        
+
         // Delete existing activities for this user, project, and date
         Activity::where('user_id', auth()->user()->id)
             ->where('project_id', $firstActivity['project_id'])
             ->where('date', $validated['date'])
             ->delete();
-        
+
         // Insert new activities
         foreach ($activities as $activity) {
             Activity::create([
@@ -86,7 +83,7 @@ class ActivityController extends Controller
                 'notes' => $activity['notes'] ?? null,
             ]);
         }
-        
+
         return back()->with('success', 'Activities saved successfully.');
     }
 
@@ -102,16 +99,20 @@ class ActivityController extends Controller
 
         $taskCategories = TaskCategory::all()->transform(function ($taskCategory) {
             $taskCategory->name = __($taskCategory->name);
+
             return $taskCategory;
         });
-        
-        $activities = ActivityLog::with(['clockEntries', 'activityType', 'task'])
-            ->get();
-        
-        $dailyLogs = DailyLog::getDaily($date);
-        
 
-        return inertia('Activity/Daily/Show', compact('activities', 'projects', 'dailyLogs', 'taskCategories', 'date'));
+        $activities = ActivityLog::with(['clockEntry', 'activityType', 'task'])
+            ->get();
+
+        $activityTypes = ActivityType::all();
+
+        $tasks = Task::whereIn('project_id', $projects->pluck('id'))->get();
+
+        $dailyLogs = DailyLog::getDaily($date);
+
+        return inertia('Activity/Daily/Show', compact('activities', 'projects', 'dailyLogs', 'taskCategories', 'activityTypes', 'tasks', 'date'));
     }
 
     /**

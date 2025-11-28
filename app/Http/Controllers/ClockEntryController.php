@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateClockEntryRequest;
 use App\Models\ClockEntry;
 use App\Repositories\ClockEntryRepository;
 use App\Utils\InertiaHelper;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 class ClockEntryController extends Controller
@@ -34,17 +33,11 @@ class ClockEntryController extends Controller
     public function store(StoreClockEntryRequest $request)
     {
         $validated = $request->validated();
-
-        // If this is a clock out (has 'out' field), handle it separately
-        if (isset($validated['out'])) {
-            ClockEntryRepository::clockOut(Auth::id(), $validated['out']);
-        } else {
-            // Clock in
-            ClockEntryRepository::clockIn([
-                'user_id' => Auth::id(),
-                ...$validated,
-            ]);
-        }
+        ClockEntryRepository::clockInOrOut(
+            userId: $validated['user_id'],
+            projectId: $validated['project_id'],
+            time: $validated['time'] ?? null,
+        );
 
         return to_route('dashboard');
     }
@@ -86,7 +79,7 @@ class ClockEntryController extends Controller
     {
         $validated = $request->validated();
         $clockEntry->update($validated);
-        
+
         return back()->with('success', 'Clock entry updated successfully.');
     }
 

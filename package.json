@@ -46,6 +46,7 @@
         "@lucide/svelte": "^0.552.0",
         "@steeze-ui/heroicons": "^2.4.2",
         "@tailwindcss/vite": "^4.1.10",
+        "ag-grid-community": "^34.3.1",
         "dayjs": "^1.11.13",
         "svelte-hero-icons": "^5.2.0",
         "tailwindcss": "^4.1.10",

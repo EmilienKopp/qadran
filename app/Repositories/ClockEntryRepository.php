@@ -10,13 +10,11 @@ use DateTimeInterface;
 class ClockEntryRepository extends Repository
 {
     protected static $model = ClockEntry::class;
+
     protected static array $with = ['project'];
 
     /**
      * Get the active (unclosed) clock entry for a user
-     *
-     * @param int $userId
-     * @return ClockEntry|null
      */
     public static function getActiveEntry(int $userId): ?ClockEntry
     {
@@ -26,11 +24,33 @@ class ClockEntryRepository extends Repository
             ->first();
     }
 
+    public static function clockInOrOut(int $userId, int $projectId, ?DateTimeInterface $time = null): ClockEntry
+    {
+        $activeEntry = static::getActiveEntry($userId);
+
+        if ($activeEntry) {
+            // If there's an active entry, clock out
+            $clockOutTime = $time ?? now();
+            $activeEntry->update(['out' => $clockOutTime]);
+
+            return $activeEntry->fresh();
+        } else {
+            // No active entry, clock in
+            $clockInTime = $time ?? now();
+
+            return ClockEntry::create([
+                'user_id' => $userId,
+                'project_id' => $projectId,
+                'in' => $clockInTime,
+                'timezone' => auth('tenant')->user()->timezone ?? config('app.timezone'),
+            ]);
+        }
+    }
+
     /**
      * Clock in to a project
      *
-     * @param array $data Should contain: user_id, project_id, in (optional), timezone (optional)
-     * @return ClockEntry
+     * @param  array  $data  Should contain: user_id, project_id, in (optional), timezone (optional)
      */
     public static function clockIn(array $data): ClockEntry
     {
@@ -54,7 +74,7 @@ class ClockEntryRepository extends Repository
         }
 
         // If no active entry (or we just closed it), create a new one
-        if (!$activeEntry) {
+        if (! $activeEntry) {
             return ClockEntry::create([
                 'user_id' => $userId,
                 'project_id' => $projectId,
@@ -70,16 +90,12 @@ class ClockEntryRepository extends Repository
 
     /**
      * Clock out of the current active entry
-     *
-     * @param int $userId
-     * @param DateTimeInterface|string|null $clockOutTime
-     * @return ClockEntry|null
      */
-    public static function clockOut(int $userId, DateTimeInterface|string $clockOutTime = null): ?ClockEntry
+    public static function clockOut(int $userId, DateTimeInterface|string|null $clockOutTime = null): ?ClockEntry
     {
         $activeEntry = static::getActiveEntry($userId);
 
-        if (!$activeEntry) {
+        if (! $activeEntry) {
             return null;
         }
 
@@ -95,9 +111,7 @@ class ClockEntryRepository extends Repository
     /**
      * Update a clock entry with clock out time
      *
-     * @param ClockEntry $entry
-     * @param array $data Should contain: out, and optionally note
-     * @return ClockEntry
+     * @param  array  $data  Should contain: out, and optionally note
      */
     public static function updateClockOut(ClockEntry $entry, array $data): ClockEntry
     {
@@ -118,9 +132,6 @@ class ClockEntryRepository extends Repository
     /**
      * Get all clock entries for a user, optionally filtered by date range
      *
-     * @param int $userId
-     * @param Carbon|null $startDate
-     * @param Carbon|null $endDate
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getEntriesForUser(
@@ -146,7 +157,6 @@ class ClockEntryRepository extends Repository
     /**
      * Get today's clock entries for a user
      *
-     * @param int $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getTodayEntries(int $userId)
@@ -160,9 +170,6 @@ class ClockEntryRepository extends Repository
 
     /**
      * Delete a clock entry
-     *
-     * @param ClockEntry $entry
-     * @return bool
      */
     public static function delete(ClockEntry $entry): bool
     {

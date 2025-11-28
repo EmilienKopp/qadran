@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLog;
 use App\Http\Requests\StoreActivityLogRequest;
 use App\Http\Requests\UpdateActivityLogRequest;
+use App\Models\ActivityLog;
 
 class ActivityLogController extends Controller
 {
@@ -27,9 +27,23 @@ class ActivityLogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreActivityLogRequest $request)
+    public function store(StoreActivityLogRequest $request): \Illuminate\Http\RedirectResponse
     {
-        //
+        $validated = $request->validated();
+
+        // Calculate end_offset_seconds if duration_seconds is provided
+        if (isset($validated['duration_seconds']) && ! isset($validated['end_offset_seconds'])) {
+            $validated['end_offset_seconds'] = ($validated['start_offset_seconds'] ?? 0) + $validated['duration_seconds'];
+        }
+
+        // Calculate duration_seconds if end_offset_seconds is provided
+        if (isset($validated['end_offset_seconds']) && ! isset($validated['duration_seconds'])) {
+            $validated['duration_seconds'] = $validated['end_offset_seconds'] - ($validated['start_offset_seconds'] ?? 0);
+        }
+
+        ActivityLog::create($validated);
+
+        return back()->with('success', 'Activity added successfully.');
     }
 
     /**

@@ -1,14 +1,14 @@
 <script lang="ts">
-  
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import OutlineButton from '$components/Buttons/OutlineButton.svelte';
   import PrimaryButton from '$components/Buttons/PrimaryButton.svelte';
   import DurationInput from '$components/DataInput/DurationInput.svelte';
   import Select from '$components/DataInput/Select.svelte';
   import Dialog from '$components/Modals/Dialog.svelte';
+  import AddActivityDialog from '$components/Modals/AddActivityDialog.svelte';
   import { toast } from '$lib/stores';
   import { Duration } from '$lib/utils/duration';
-  import type { TaskCategory } from '$models';
+  import type { ActivityType, Task, TaskCategory } from '$models';
   import { useForm } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import timezone from 'dayjs/plugin/timezone';
@@ -18,14 +18,24 @@
   dayjs.extend(timezone);
   dayjs.extend(utc);
 
-  export let taskCategories: TaskCategory[];
-  export let log: any;
+  let {
+    taskCategories,
+    activityTypes = [],
+    tasks = [],
+    log = $bindable(),
+  }: {
+    taskCategories: TaskCategory[];
+    activityTypes?: ActivityType[];
+    tasks?: Task[];
+    log: any;
+  } = $props();
 
   const logEntry = log.timeLogs[0];
   let aboveMax: boolean = true;
   let loading: boolean = false;
   let safetyOn: boolean = true;
   let clockEntryModalOpen = false;
+  let activityDialogOpen = $state(false);
 
   const clockEntriesForm = useForm({
     entries: log.timeLogs.map((entry: any) => {
@@ -47,28 +57,40 @@
     ),
   });
 
-  $: activitiesTotal = $form.activities
-    .filter((a: any) => a.project_id == log.project_id)
-    .reduce((a: number, b: any) => a + b.duration, 0);
+  // $: activitiesTotal = $form.activities
+  //   .filter((a: any) => a.project_id == log.project_id)
+  //   .reduce((a: number, b: any) => a + b.duration, 0);
 
-  $: if (
-    safetyOn &&
-    log?.total_seconds &&
-    Duration.flooredToMinute(activitiesTotal) >
-      Duration.flooredToMinute(log.total_seconds)
-  ) {
-    toast.show(
-      'Total duration cannot be greater than ' +
-        Duration.toHHMM(log.total_seconds),
-      'error'
-    );
-    aboveMax = true;
-  } else {
-    aboveMax = false;
-  }
+  const activitiesTotal = $derived(
+    $form.activities
+      .filter((a: any) => a.project_id == log.project_id)
+      .reduce((a: number, b: any) => a + b.duration, 0)
+  );
+
+  $effect(() => {
+    if (
+      safetyOn &&
+      log?.total_seconds &&
+      Duration.flooredToMinute(activitiesTotal) >
+        Duration.flooredToMinute(log.total_seconds)
+    ) {
+      toast.show(
+        'Total duration cannot be greater than ' +
+          Duration.toHHMM(log.total_seconds),
+        'error'
+      );
+      aboveMax = true;
+    } else {
+      aboveMax = false;
+    }
+  });
 
   function openTaskModal(activity: any, index: number) {
     console.log(activity, index);
+  }
+
+  function openActivityDialog() {
+    activityDialogOpen = true;
   }
 
   function handleKeydown(e: CustomEvent, activity: any, index: number) {
@@ -98,9 +120,9 @@
     console.log(log.activities);
   }
 
-  async function save() {
+  async function save(e: Event) {
+    e.preventDefault();
     loading = true;
-    console.log($form);
     $form.post(route('activities.store'), {
       onSuccess: () => {
         toast.success('Activities saved successfully');
@@ -115,7 +137,6 @@
   }
 
   async function handleDelete() {
-    console.log($form);
     if (confirm('Are you sure you want to delete this log?')) {
       $form.delete(route('timelog.destroy', { timelog: logEntry.id }), {
         onStart: () => {
@@ -159,12 +180,14 @@
     });
   }
 
-  $: log.activities = $form.activities;
+  $effect(() => {
+    log.activities = $form.activities;
+  });
 </script>
 
 <form
   class="rounded border p-5"
-  on:submit|preventDefault={save}
+  onsubmit={save}
   transition:fade
   class:border-green-600={!$form.isDirty}
   class:border-yellow-100={$form.isDirty && !aboveMax}
@@ -177,9 +200,9 @@
   {:else}
     <div class="flex justify-between text-lg">
       <h2>
-        {log.date}・{log.project_name}・({Duration.toHrMinString(
-          log.total_seconds
-        )})
+        {dayjs(log.date).format(
+          'YYYY-MM-DD'
+        )}・{log.project_name}・({Duration.toHrMinString(log.total_seconds)})
         <span
           class="tooltip"
           data-tip="Safety mode prevents you from saving activities that exceed the total duration of the log."
@@ -189,7 +212,7 @@
             class="text-xs"
             class:text-red-500={!safetyOn}
             class:text-green-400={safetyOn}
-            on:click={() => (safetyOn = !safetyOn)}
+            onclick={() => (safetyOn = !safetyOn)}
           >
             {#if safetyOn}
               <!-- ShieldFillCheck -->
@@ -229,10 +252,10 @@
       <div>
         <MiniButton
           class="text-xs mx-4"
-          on:click={() => (clockEntryModalOpen = true)}
+          onclick={() => (clockEntryModalOpen = true)}
           >Edit clock entries</MiniButton
         >
-        <MiniButton class="text-xs" on:click={handleDelete} color="warning"
+        <MiniButton class="text-xs" onclick={handleDelete} color="warning"
           >Delete</MiniButton
         >
       </div>
@@ -249,9 +272,9 @@
         {#each $form.activities as activity, index}
           <tr>
             <td>
+              {console.log(taskCategories)}
               <Select
                 name="activity_{activity.project_id}[{index}]"
-                label="Task Category"
                 bind:value={activity.task_category_id}
                 items={taskCategories}
                 mapping={{
@@ -262,12 +285,12 @@
             </td>
             <td>
               <DurationInput
-                bind:activity
+                bind:activity={$form.activities[index]}
                 max={log.total_seconds}
                 parentTotal={activitiesTotal}
                 {safetyOn}
-                on:minutekeydown={(e) => handleKeydown(e, activity, index)}
-                on:hourkeydown={(e) => handleKeydown(e, activity, index)}
+                onminutekeydown={(e) => handleKeydown(e, activity, index)}
+                onhourkeydown={(e) => handleKeydown(e, activity, index)}
               />
             </td>
             <td>
@@ -297,13 +320,13 @@
                 >
                   {#if Duration.flooredToMinute(activitiesTotal) < Duration.flooredToMinute(log.total_seconds)}
                     <li>
-                      <button type="button" on:click={() => fill(index)}
+                      <button type="button" onclick={() => fill(index)}
                         >Fill</button
                       >
                     </li>
                   {/if}
                   <li>
-                    <button type="button" on:click={() => clear(index)}
+                    <button type="button" onclick={() => clear(index)}
                       >Clear</button
                     >
                   </li>
@@ -311,19 +334,16 @@
                     <button
                       type="button"
                       class="text-red-300"
-                      on:click={() => removeItem(index)}>Remove</button
+                      onclick={() => removeItem(index)}>Remove</button
                     >
                   </li>
                   <li>
-                    <button
-                      type="button"
-                      on:click={() => openTaskModal(activity, index)}>
-                      Link Task
+                    <button type="button" onclick={openActivityDialog}>
+                      Add Activity Log
                     </button>
                   </li>
                   <li>
-                    <button type="button" on:click={$form.reset()}>Reset</button
-                    >
+                    <button type="button" onclick={() => $form.reset()}>Reset</button>
                   </li>
                 </ul>
               </div>
@@ -331,9 +351,9 @@
           </tr>
         {/each}
         <tr>
-          <td colspan="3">
+          <td colspan="3" class="flex justify-between items-center gap-3 w-full">
             <OutlineButton
-              on:click={() => addRow(log.project_id)}
+              onclick={() => addRow(log.project_id)}
               disabled={$form.processing}
             >
               Add Activity
@@ -380,6 +400,14 @@
   {/each}
 
   <div slot="buttons">
-    <PrimaryButton on:click={updateClockEntries}>Save</PrimaryButton>
+    <PrimaryButton onclick={updateClockEntries}>Save</PrimaryButton>
   </div>
 </Dialog>
+
+<AddActivityDialog
+  bind:open={activityDialogOpen}
+  clockEntryId={logEntry?.id || 0}
+  clockEntryStartTime={logEntry?.in_time || ''}
+  {activityTypes}
+  {tasks}
+/>
