@@ -46,7 +46,7 @@
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
       <div class="overflow-hidden shadow-xs sm:rounded-lg w-full">
         <div
-          class="p-6 text-gray-900 flex flex-col items-center justify-between w-full"
+          class="p-6 flex flex-col items-center justify-between w-full"
         >
           <fieldset class="p-4 flex items-center justify-center gap-8 border rounded-md">
             <legend>
@@ -61,7 +61,7 @@
             </Button>
           </fieldset>
           <div class="w-full mt-4 flex flex-col items-center">
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 mt-8 mb-2">
+            <h2 class="text-xl font-semibold leading-tight mt-8 mb-2">
               Today's Entries
               <MiniButton
                 color="accent"

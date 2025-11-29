@@ -18,9 +18,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $githubConnection = $user->gitHubConnection;
+
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
+            'githubStatus' => [
+                'connected' => $githubConnection !== null,
+                'username' => $githubConnection?->username,
+            ],
         ]);
     }
 

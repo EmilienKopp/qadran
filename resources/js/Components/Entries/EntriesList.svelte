@@ -56,7 +56,7 @@
   </tr>
 {/snippet}
 
-<table class="w-full">
+<table class="table table-zebra">
   <thead>
     <tr>
       <th>Project</th>
@@ -78,33 +78,3 @@
     {/if}
   </tbody>
 </table>
-
-<style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  th,
-  td {
-    border: 1px solid #e2e8f0;
-    padding: 0.5rem;
-    text-align: center;
-  }
-
-  th {
-    background-color: #f7fafc;
-  }
-
-  tr {
-    transition: background-color 0.2s;
-  }
-
-  tr:hover {
-    background-color: #f7fafc;
-  }
-
-  button {
-    cursor: pointer;
-  }
-</style>

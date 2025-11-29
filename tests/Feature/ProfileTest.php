@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\GitHubConnection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -95,5 +97,44 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_profile_page_shows_github_not_connected_when_no_connection(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/profile');
+
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $assert) => $assert
+            ->component('Profile/Edit')
+            ->has('githubStatus')
+            ->where('githubStatus.connected', false)
+            ->where('githubStatus.username', null)
+        );
+    }
+
+    public function test_profile_page_shows_github_connection_status_when_connected(): void
+    {
+        $user = User::factory()->create();
+
+        GitHubConnection::factory()->create([
+            'user_id' => $user->id,
+            'username' => 'testuser',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/profile');
+
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $assert) => $assert
+            ->component('Profile/Edit')
+            ->has('githubStatus')
+            ->where('githubStatus.connected', true)
+            ->where('githubStatus.username', 'testuser')
+        );
     }
 }
