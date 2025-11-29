@@ -185,6 +185,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [ActivityController::class, 'index'])->name('activities.index');
         Route::post('/store', [ActivityController::class, 'store'])->name('activities.store');
         Route::get('/{date}', [ActivityController::class, 'show'])->name('activities.show');
+        Route::delete('/clock-entry/{clockEntry}', [ActivityController::class, 'deleteEntry'])->name('activities.delete-entry');
     });
 
     Route::group(['prefix' => 'activity-logs'], function () {

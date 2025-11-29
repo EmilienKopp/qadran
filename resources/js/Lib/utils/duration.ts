@@ -30,6 +30,9 @@ export class Duration {
     }
 
     public static getMinutes(seconds: number): number {
+        if (isNaN(seconds)) {
+            return 0;
+        }
         const duration = new Duration(seconds);
         return duration.getMinutes();
     }
@@ -46,6 +49,9 @@ export class Duration {
     }
 
     public static getHours(seconds: number): number {
+        if( isNaN(seconds)) {
+            return 0;
+        }
         const duration = new Duration(seconds);
         return duration.getHours();
     }

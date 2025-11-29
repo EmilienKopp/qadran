@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Link, page } from '@inertiajs/svelte';
+  import { Link, page, router } from '@inertiajs/svelte';
   import { onDestroy, onMount } from 'svelte';
   import { fly } from 'svelte/transition';
   import { toaster } from './ToastHandler.svelte';
@@ -39,11 +39,13 @@
   };
 
   onMount(() => {
-    if ($page.props.flash) {
-      toaster.fromFlash($page.props.flash);
-    } else { 
+    router.on('finish', () => {
+     if($page.props.flash) {
+        toaster.fromFlash($page.props.flash);
+      } else {
         toaster.hide();
-    }
+      }
+    });
   });
 
   onDestroy(() => {

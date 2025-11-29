@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -20,16 +21,19 @@ class ActivityLog extends Model
         'notes',
     ];
 
+    #[ExportRelationship(ClockEntry::class)]
     public function clockEntry()
     {
         return $this->belongsTo(ClockEntry::class);
     }
 
+    #[ExportRelationship(ActivityType::class)]
     public function activityType()
     {
         return $this->belongsTo(ActivityType::class);
     }
 
+    #[ExportRelationship(Task::class)]
     public function task()
     {
         return $this->belongsTo(Task::class);

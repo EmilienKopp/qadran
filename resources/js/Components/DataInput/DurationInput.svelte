@@ -2,9 +2,10 @@
     import { Duration } from "$lib/utils/duration";
 
     interface Props {
-        activity: any;
+        activity?: any;
         max?: number;
         parentTotal?: number;
+        name?: string;
         safetyOn?: boolean;
         onhourkeydown?: (detail: { key: string }) => void;
         onminutekeydown?: (detail: { key: string }) => void;
@@ -19,53 +20,45 @@
         onminutekeydown,
     }: Props = $props();
 
-    let hours = $state(Duration.getHours(activity.duration));
-    let minutes = $state(Duration.getMinutes(activity.duration));
+    let hours = $derived(Duration.getHours(activity?.duration_seconds ?? 0));
+    let minutes = $derived(Duration.getMinutes(activity?.duration_seconds ?? 0));
 
     let hoursInput = $state<HTMLInputElement | undefined>();
     let minutesInput = $state<HTMLInputElement | undefined>();
 
-    // Update hours and minutes when activity.duration changes
-    $effect(() => {
-        hours = Duration.getHours(activity.duration);
-        minutes = Duration.getMinutes(activity.duration);
-    });
-
     function hoursChangeHandler(e: Event | KeyboardEvent) {
         const target = e.target as HTMLInputElement;
-        hours = parseInt(target.value);
+        let hoursValue = parseInt(target.value); // local to avoid $derived conflict
         
         if(target.value.toString().length > 2) {
-            hours = target.value.toString().slice(0,2) == '00' ? 0 : parseInt(target.value.toString().slice(0,2));
+            hoursValue = target.value.toString().slice(0,2) == '00' ? 0 : parseInt(target.value.toString().slice(0,2));
             minutesInput?.focus();
             if (minutesInput) {
                 minutesInput.value = (e as InputEvent).data ?? '0';
                 minutesInput.dispatchEvent(new Event('input'));
             }
-        } else if (hours > 23) {
-            console.log("hours", hours, "minutes", minutes);
-            hours = 23;
+        } else if (hoursValue > 23) {
+            hoursValue = 23;
             minutesInput?.focus();
             minutesInput?.dispatchEvent(new Event('input'));
-        } else if (hours < 0) {
-            console.log("hours negative");
-            hours = 0;
+        } else if (hoursValue < 0) {
+            hoursValue = 0;
         }
-        activity.duration = hours * 3600 + minutes * 60;
+        activity.duration_seconds = hoursValue * 3600 + minutes * 60;
     }
 
     function minutesChangeHandler(e: Event | KeyboardEvent) {
         const target = e.target as HTMLInputElement;
-        minutes = parseInt(target.value);
+        let minutesValue = parseInt(target.value); // local to avoid $derived conflict
         
-        if(target.value.toString().length > 2 || minutes > 59) {
-            hours += Math.floor(minutes / 60);
-            minutes = minutes % 60;
+        if(target.value.toString().length > 2 || minutesValue > 59) {
+            hours += Math.floor(minutesValue / 60);
+            minutesValue = minutesValue % 60;
         }
-        activity.duration = hours * 3600 + minutes * 60;
+        activity.duration_seconds = hours * 3600 + minutesValue * 60;
     }
 
-    const isOverLimit = $derived(safetyOn && parentTotal > max);
+    const isOverLimit = $derived(safetyOn && parentTotal > max);    
 </script>
 
 <div class="flex gap-1 items-center">
@@ -78,7 +71,7 @@
             min="0" 
             max="23" 
             step="1" 
-            name="hours"
+            name="hours[]"
             value={hours}
             onfocus={(e) => hoursInput?.select()}
             onkeydown={(e) => onhourkeydown?.({ key: e.key })}
@@ -95,7 +88,7 @@
             min="0" 
             max="60" 
             step="1" 
-            name="minutes"
+            name="minutes[]"
             value={minutes}
             onfocus={(e) => minutesInput?.select()}
             onkeydown={(e) => onminutekeydown?.({ key: e.key })}

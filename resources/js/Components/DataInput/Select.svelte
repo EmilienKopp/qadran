@@ -7,7 +7,7 @@
   interface Props {
     label?: string;
     options?: Option[];
-    value: any;
+    value?: any;
     placeholder?: string;
     error?: string | null;
     errors?: string | string[] | null;

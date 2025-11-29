@@ -1,50 +1,45 @@
 <script lang="ts">
   import MiniButton from '$components/Buttons/MiniButton.svelte';
+  import { GridButton } from '$components/AgGridCustom/GridButton.js';
   import OutlineButton from '$components/Buttons/OutlineButton.svelte';
   import PrimaryButton from '$components/Buttons/PrimaryButton.svelte';
   import NewLogModal from '$components/Modals/NewLogModal.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
+  import MasterGrid from '$components/MasterGrid/index.svelte';
   import { toast } from '$lib/stores';
-  import type { Activity, ActivityType, DailyLog, Task, TaskCategory } from '$models';
+  import {
+    Table as TableIcon,
+    TextCursorInput as FormIcon,
+  } from 'lucide-svelte';
+  import type {
+    Activity,
+    ActivityLog,
+    ActivityType,
+    DailyLog,
+    Task,
+    TaskCategory,
+  } from '$models';
   import { router, useForm } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import DailyLogInputForm from './DailyLogInputForm.svelte';
   import {
     AllCommunityModule,
+    type ICellRendererParams,
     ModuleRegistry,
     createGrid,
   } from 'ag-grid-community';
   import { onMount } from 'svelte';
+  import { smartDuration } from '$lib/utils/formatting';
+  import Dialog from '$components/Modals/Dialog.svelte';
+  import { clock } from '$lib/stores/global/time.svelte';
+  import DailyLogGridForm from './DailyLogGridForm.svelte';
+  import Pikaday from 'pikaday';
+
   ModuleRegistry.registerModules([AllCommunityModule]);
 
-  const gridOptions = {
-    // Row Data: The data to be displayed.
-    rowData: [
-      { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-      { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-      { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ],
-    // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [
-      { field: 'make' },
-      { field: 'model' },
-      { field: 'price' },
-      { field: 'electric' },
-    ],
-  };
+  let datepicker: any;
+  const MODE_STORAGE_KEY = '_qadran_daily_log_mode';
 
-  // let myGridElement: HTMLElement | null = null;
-  onMount(() => {
-    const myGridElement = document.getElementById('myGrid');
-    if (myGridElement) {
-      createGrid(myGridElement, gridOptions);
-    }
-  });
-
-  // export let activities: Activity[];
-  // export let dailyLogs: DailyLog[];
-  // export let taskCategories: TaskCategory[];
-  // export let date: string;
   interface Props {
     dailyLogs?: DailyLog[];
     taskCategories?: TaskCategory[];
@@ -63,105 +58,153 @@
     activities = [],
   }: Props = $props();
 
-  console.log(dailyLogs, taskCategories, date, activities);
+  let dialog: Dialog;
+  let selectedLog = $state<DailyLog | null>(null);
+  let mode: 'form' | 'grid' = $state('grid');
+
+  onMount(() => {
+    const cleaners: (() => void)[] = [];
+
+    const myGridElement = document.getElementById('myGrid');
+    const savedMode = localStorage.getItem(MODE_STORAGE_KEY);
+    console.log('Saved mode:', savedMode);
+    if (savedMode === 'form' || savedMode === 'grid') {
+      mode = savedMode;
+    }
+    if (myGridElement) {
+      const api = createGrid(myGridElement, gridOptions);
+      cleaners.push(() => api.destroy());
+    }
+
+    if (datepicker) {
+      const picker = new Pikaday({
+        field: datepicker,
+      });
+      cleaners.push(() => picker.destroy());
+    }
+
+    return () => {
+      cleaners.forEach((callback) => callback());
+    };
+  });
+
+  const logs = $derived(
+    dailyLogs.map((log) => {
+      const activity = log.activities?.map(
+        (activity: any) =>
+          `${activity.activity_type.name} (${smartDuration(activity.duration_seconds)})`
+      );
+      // Limit to longest 2 then show "+n more" if applicable
+      if (activity && activity.length > 2) {
+        const sortedActivities = log.activities.sort(
+          (a: any, b: any) => b.duration_seconds - a.duration_seconds
+        );
+        const topActivities = sortedActivities
+          .slice(0, 2)
+          .map(
+            (activity: any) =>
+              `${activity.activity_type.name} (${smartDuration(activity.duration_seconds)})`
+          );
+        const remainingCount = sortedActivities.length - 2;
+        activity.length = 0; // Clear original array
+        activity.push(...topActivities);
+        activity.push(`+${remainingCount} more`);
+      }
+      return {
+        ...log,
+        activity: activity?.join(', '),
+      };
+    })
+  );
+
+  const gridOptions = $derived<any>({
+    //TODO: `any` not great but ag-Grid types are complex and I want to have a simple string (non-existing key in object) as field
+    rowData: logs,
+    columnDefs: [
+      { field: 'project_name', headerName: 'Project' },
+      { field: 'duration' },
+      { field: 'activity', flex: 1, onCellClicked: actionClickHandler },
+      {
+        headerName: 'Actions',
+        variant: 'danger',
+        flex: 0,
+        cellRenderer: GridButton,
+        cellRendererParams: { label: 'Delete', onClick: deleteHandler },
+      },
+    ],
+  });
+
+  function actionClickHandler(params: ICellRendererParams) {
+    selectedLog = params.data;
+    dialog.open();
+  }
+
+  function deleteHandler(data: ActivityLog) {
+    if (confirm('Are you sure you want to delete this log?')) {
+      const { clock_entry_id } = data;
+      router.delete(
+        route('activities.delete-entry', { clockEntry: clock_entry_id })
+      );
+    }
+  }
+
+  function onFinish() {
+    dialog?.close();
+  }
 
   let selectedDate = $state(dayjs(date).format('YYYY-MM-DD'));
-  let logModalOpen = $state(false);
-  let log: DailyLog;
 
-  let form = useForm({
-    date: selectedDate,
-    activities: activities,
-  });
-
-  function handleDateSelection() {
-    console.log(selectedDate);
-    if (!selectedDate) return;
-    router.get(route('activities.show', { date: selectedDate }));
+  function toggleMode() {
+    mode = mode === 'form' ? 'grid' : 'form';
+    localStorage.setItem(MODE_STORAGE_KEY, mode);
   }
-
-  async function saveAll() {
-    $form.post(route('activities.store'), {
-      onSuccess: () => {
-        toast.success('Activities saved successfully.');
-      },
-      onError: () => {
-        toast.error('Error saving activities.');
-        console.log($form);
-      },
-    });
-  }
-
-  async function saveAllAndReturn() {
-    $form.post(route('activities.store'), {
-      onSuccess: () => {
-        toast.success('Activities saved successfully.');
-        router.get(route('activities.index'));
-      },
-      onError: () => {
-        toast.error('Error saving activities.');
-      },
-    });
-  }
-
-  function showLogModal() {
-    logModalOpen = true;
-  }
-
-  $effect(() => {
-    $form.date = selectedDate;
-    $form.activities = dailyLogs.flatMap((log) => {
-      return log.activities;
-    });
-  });
 </script>
 
 <AuthenticatedLayout>
-  <header class="grid grid-cols-5 gap-4 items-center mb-4">
-    <div>
-      <h1 class="text-2xl font-semibold">Daily Logs</h1>
-      <input
-        type="date"
-        class="rounded bg-transparent w-44 text-sm"
-        onchange={handleDateSelection}
-        bind:value={selectedDate}
-      />
-    </div>
-    <PrimaryButton on:click={saveAll} loading={$form.processing}
-      >Save All</PrimaryButton
-    >
-    <PrimaryButton on:click={saveAllAndReturn} loading={$form.processing}
-      >Save All and Go Back</PrimaryButton
-    >
-    <OutlineButton href={route('activities.index')}>
-      {#if $form.isDirty}
-        Discard Changes
-      {:else}
-        Go Back
-      {/if}
-    </OutlineButton>
+  <header class="flex gap-10 items-center mb-4">
+    <h1 class="text-2xl font-semibold">Daily Logs</h1>
+    <input
+      type="text"
+      class="input pika-single mt-1"
+      bind:this={datepicker}
+      value={selectedDate}
+    />
   </header>
-
-  <div class="grid 2xl:grid-cols-2 grid-cols-1 gap-4 my-3">
-    {#if dailyLogs.length == 0}
-      <div class="col-span-2">
-        <p>No logs found for this date.</p>
-        <MiniButton type="button" color="info" onclick={showLogModal}>
-          Create a new log
-        </MiniButton>
-      </div>
-    {:else}
-      {#each dailyLogs as log, i}
-        {#if log.activities}
-          <DailyLogInputForm
-            bind:log={dailyLogs[i]}
-            {taskCategories}
-            {activityTypes}
-            {tasks}
-          />
-        {/if}
-      {/each}
-    {/if}
-  </div>
+  <MasterGrid
+    rows={logs}
+    columns={gridOptions.columnDefs}
+    class="h-96 w-full"
+  />
 </AuthenticatedLayout>
-<NewLogModal bind:open={logModalOpen} />
+
+<Dialog title="Edit daily log" bind:this={dialog} class="w-2/3!">
+  <div>
+    <label class="swap swap-rotate mb-2">
+      <input type="checkbox" onchange={toggleMode} />
+      <div class="swap-on" title="Grid View">
+        <TableIcon class="inline size-6 mr-2" />
+      </div>
+      <div class="swap-off" title="Form View">
+        <FormIcon class="inline size-6 mr-2" />
+      </div>
+    </label>
+  </div>
+  {#if selectedLog !== null}
+    {#if mode === 'form'}
+      <DailyLogInputForm
+        bind:log={selectedLog}
+        {taskCategories}
+        {activityTypes}
+        {tasks}
+      />
+    {:else if mode === 'grid'}
+      <DailyLogGridForm
+        bind:log={selectedLog}
+        {taskCategories}
+        {activityTypes}
+        {tasks}
+        {onFinish}
+      />
+    {/if}
+  {/if}
+</Dialog>

@@ -17,3 +17,7 @@ export function empty(value: any): boolean {
 export function exists(value: any): boolean {
   return !empty(value);
 }
+
+export function XOR(...args: boolean[]): boolean {
+  return args.filter(Boolean).length === 1;
+}

@@ -22,6 +22,10 @@ class ModelGen extends Command
     protected $models;
     protected Collection $selectedModels;
 
+    private $connection = 'tenant';
+    private $driver;
+    private $database = 'qadran_db';
+
     public function __construct()
     {
         parent::__construct();
@@ -35,6 +39,7 @@ class ModelGen extends Command
             return;
         }
 
+        $this->setupTenantConnection();
         $this->loadModels();
 
         if ($this->shouldUseAllModels()) {
@@ -81,6 +86,25 @@ class ModelGen extends Command
         return true;
     }
 
+    protected function setupTenantConnection(): void
+    {
+        $this->driver = config('database.default');
+        DB::setDefaultConnection($this->connection);
+        config([
+            "database.connections.{$this->connection}.database" => $this->database,
+        ]);
+
+        app('db')->extend($this->connection, function ($config, $name) {
+            $config['database'] = $this->database;
+
+            return app('db.factory')->make($config, $name);
+        });
+
+        DB::purge($this->connection);
+
+        $this->info("Connected to tenant database: {$this->database}");
+    }
+
     protected function shouldUseAllModels(): bool
     {
         $configModels = config('typegen.models', ['include' => []]);
@@ -91,11 +115,31 @@ class ModelGen extends Command
     {
         if ($this->shouldUseAllModels()) {
             $this->info('Including all models...');
+            $viewModels = collect(app('files')->files(app_path('Models/Views')))
+                ->map(
+                    fn($file) => app()->getNamespace() . 'Models\\Views\\' .
+                        Str::replaceLast('.php', '', str_replace('/', '\\', $file->getRelativePathname()))
+                )
+                ->filter(function ($modelClass) {
+                    if (!class_exists($modelClass)) {
+                        return false;
+                    }
+                    $reflection = new \ReflectionClass($modelClass);
+                    return !$reflection->isAbstract();
+                });
             $this->models = collect(app('files')->files(app_path('Models')))
                 ->map(
                     fn($file) => app()->getNamespace() . 'Models\\' .
                         Str::replaceLast('.php', '', str_replace('/', '\\', $file->getRelativePathname()))
-                );
+                )
+                ->filter(function ($modelClass) {
+                    if (!class_exists($modelClass)) {
+                        return false;
+                    }
+                    $reflection = new \ReflectionClass($modelClass);
+                    return !$reflection->isAbstract();
+                })
+                ->merge($viewModels);
         } else {
             $this->info('Including specified models...');
             $configModels = config('typegen.models', ['include' => []]);
@@ -142,7 +186,7 @@ class ModelGen extends Command
 
             $modelNames[] = $className;
             $columns = $this->getTableColumns($model->getTable());
-            $properties = $this->generateInterfaceProperties($columns);
+            $properties = $this->generateInterfaceProperties($columns, $model);
 
             return "export interface $className {\n$properties\n}";
         })->implode("\n\n");
@@ -154,9 +198,9 @@ class ModelGen extends Command
         app('files')->put($this->typesOutputPath, $interfaces);
     }
 
-    protected function generateInterfaceProperties(Collection $columns): string
+    protected function generateInterfaceProperties(Collection $columns, $model): string
     {
-        return $columns->map(function ($column) {
+        $properties = $columns->map(function ($column) {
             $db_type = $column->data_type;
             $type = config("typegen.mapping.$db_type", 'any');
             $attributeString = $column->is_nullable === 'YES' ? "$column->column_name?" : "$column->column_name";
@@ -167,7 +211,7 @@ class ModelGen extends Command
                 $relatedModel = $this->findRelatedModel($relationship);
                 if ($relatedModel) {
                     $relatedType = class_basename($relatedModel);
-                    $this->line("    Found relationship: $relatedType");
+                    $this->line("    Found belongsTo relationship: $relatedType");
                     $typeEntry .= "\n    $relationship?: $relatedType;";
                 }
             }
@@ -175,6 +219,41 @@ class ModelGen extends Command
             $this->line("    Inserting type: $typeEntry from $db_type");
             return $typeEntry;
         })->implode("\n");
+
+        // Add hasMany and other relationship methods
+        $relationshipProperties = $this->getRelationshipProperties($model);
+        if ($relationshipProperties) {
+            $properties .= "\n" . $relationshipProperties;
+        }
+
+        return $properties;
+    }
+
+    protected function getRelationshipProperties($model): string
+    {
+        $reflection = new \ReflectionClass($model);
+        $relationships = [];
+
+        foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            // Check for ExportRelationship attribute
+            $attributes = $method->getAttributes(\App\Attributes\ExportRelationship::class);
+
+            if (!empty($attributes)) {
+                $attribute = $attributes[0]->newInstance();
+                $relationName = $method->name;
+                $relatedType = class_basename($attribute->relatedModel);
+
+                if ($attribute->isCollection()) {
+                    $relationships[] = "    {$relationName}?: {$relatedType}[];";
+                    $this->line("    Found #[ExportRelationship] collection: {$relationName} -> {$relatedType}[]");
+                } else {
+                    $relationships[] = "    {$relationName}?: {$relatedType};";
+                    $this->line("    Found #[ExportRelationship] single: {$relationName} -> {$relatedType}");
+                }
+            }
+        }
+
+        return implode("\n", $relationships);
     }
 
     protected function generateModelClasses(): void

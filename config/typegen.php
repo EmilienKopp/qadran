@@ -8,7 +8,7 @@ return [
     ]
   ],
 
-  'output' => resource_path('js\\models.d.ts'),
+  'output' => resource_path('js/models.d.ts'),
 
   'mapping' => [
     'integer' => 'number',

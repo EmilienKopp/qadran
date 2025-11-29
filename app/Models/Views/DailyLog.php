@@ -2,27 +2,29 @@
 
 namespace App\Models\Views;
 
+use App\Attributes\ExportRelationship;
 use App\Models\Activity;
+use App\Models\ActivityLog;
 use App\Models\ClockEntry;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use Carbon\Carbon;
 
 /**
  * DailyLog View Model
- * 
+ *
  * This model represents the daily_logs_view database view which aggregates
  * clock entries by user, project, and date.
- * 
+ *
  * Data Structure:
  * - The view aggregates clock entries into daily summaries
  * - activities() fetches Activity records (time breakdown by task category)
  * - timeLogs() fetches ClockEntry records (actual clock in/out times)
- * 
+ *
  * Usage:
  * - getDaily($date): Get all daily logs for a specific date with related data
  * - getMonthly($date): Get all daily logs for a month with related data
- * 
+ *
  * Related Models:
  * - Activity: Stores the breakdown of time by task category for each day/project
  * - ClockEntry: Stores the actual clock in/out times
@@ -38,18 +40,13 @@ class DailyLog extends ReadOnlyModel
         'date' => 'date',
         'total_seconds' => 'integer',
         'total_minutes' => 'float',
+        'activities' => 'array',
     ];
 
-    /**
-     * Get activities for this daily log
-     */
+    #[ExportRelationship(ActivityLog::class, type: 'hasMany')]
     public function activities()
     {
-        return Activity::where('user_id', $this->user_id)
-            ->where('project_id', $this->project_id)
-            ->where('date', $this->date)
-            ->with('taskCategory')
-            ->get();
+        return $this->hasMany(ActivityLog::class, 'clock_entry_id', 'clock_entry_id');
     }
 
     /**
@@ -70,19 +67,20 @@ class DailyLog extends ReadOnlyModel
     public static function getDaily($date)
     {
         return static::where('user_id', auth()->user()->id)
+            ->with('activities.clockEntry', 'activities.activityType', 'activities.task')
             ->where('date', $date)
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($dailyLog) {
                 // Fetch related data
-                $dailyLog->activities = $dailyLog->activities();
+                // $dailyLog->activities = $dailyLog->activities();
                 $dailyLog->timeLogs = $dailyLog->timeLogs();
-                
+
                 // Ensure total_seconds is set
-                if (!$dailyLog->total_seconds && $dailyLog->timeLogs->isNotEmpty()) {
+                if (! $dailyLog->total_seconds && $dailyLog->timeLogs->isNotEmpty()) {
                     $dailyLog->total_seconds = $dailyLog->timeLogs->sum('duration_seconds');
                 }
-                
+
                 return $dailyLog;
             });
     }
@@ -102,11 +100,11 @@ class DailyLog extends ReadOnlyModel
             ->map(function ($dailyLog) {
                 $dailyLog->activities = $dailyLog->activities();
                 $dailyLog->timeLogs = $dailyLog->timeLogs();
-                
-                if (!$dailyLog->total_seconds && $dailyLog->timeLogs->isNotEmpty()) {
+
+                if (! $dailyLog->total_seconds && $dailyLog->timeLogs->isNotEmpty()) {
                     $dailyLog->total_seconds = $dailyLog->timeLogs->sum('duration_seconds');
                 }
-                
+
                 return $dailyLog;
             });
     }

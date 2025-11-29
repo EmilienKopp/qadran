@@ -115,13 +115,14 @@ class ClockEntryController extends Controller
     {
         try {
             $success = ClockEntryRepository::delete($clockEntry);
+
             if (! $success) {
-                InertiaHelper::fail('Could not delete the clock entry.');
+                throw new \Exception('Could not delete the clock entry.');
             }
         } catch (\Exception $e) {
             InertiaHelper::fail('Could not delete the clock entry.');
         }
 
-        return redirect()->back();
+        return back()->with('success', 'Clock entry deleted successfully.');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class GitHubConnection extends Model
 {
     use UsesTenantConnection;
-    
+
     protected $table = "github_connections";
     protected $fillable = [
         'user_id',
@@ -30,6 +31,7 @@ class GitHubConnection extends Model
         'refresh_token',
     ];
 
+    #[ExportRelationship(User::class)]
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

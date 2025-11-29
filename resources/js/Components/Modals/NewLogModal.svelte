@@ -47,6 +47,10 @@
             }
         });
     }
+
+    export function openModal() {
+        open = true;
+    }
 </script>
 
 <Dialog title="Create a new log" onsubmit={handleSubmit} bind:open>

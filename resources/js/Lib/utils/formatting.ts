@@ -44,6 +44,15 @@ export function secondsToHHMMSS(seconds: number | undefined): string {
   return dayjs.duration(seconds ?? 0, 'seconds').format(DURATION_FORMAT);
 }
 
+export function smartDuration(seconds: number | undefined): string {
+  if (!seconds) return '';
+  if (seconds < 3600) {
+    return dayjs.duration(1000 * seconds).format('mm[m]');
+  } else {
+    return dayjs.duration(1000 * seconds).format('H[h] mm[m]');
+  }
+}
+
 export function timespan(
   start: Date | string,
   end: Date | string,

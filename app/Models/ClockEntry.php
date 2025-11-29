@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Carbon\Carbon;
 use EmilienKopp\DatesFormatter\FormatsDates;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -25,6 +26,11 @@ class ClockEntry extends Model
         'timezone',
     ];
 
+    protected $casts = [
+        'in' => 'datetime',
+        'out' => 'datetime',
+    ];
+
     protected $appends = [
         'duration_seconds',
     ];
@@ -32,22 +38,25 @@ class ClockEntry extends Model
     public static function booted()
     {
         static::saving(function ($clockEntry) {
-            if (!$clockEntry->timezone) {
+            if (! $clockEntry->timezone) {
                 $clockEntry->timezone = $clockEntry->user->timezone ?? config('app.timezone');
             }
         });
     }
 
+    #[ExportRelationship(Project::class)]
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
 
+    #[ExportRelationship(User::class)]
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    #[ExportRelationship(ActivityLog::class, type: 'hasMany')]
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class);
@@ -60,7 +69,7 @@ class ClockEntry extends Model
 
     public function scopeOwn($query, $userOrId = null)
     {
-        if (!$userOrId) {
+        if (! $userOrId) {
             $userOrId = Auth::user();
         } elseif ($userOrId instanceof User) {
             $userOrId = $userOrId->id;
@@ -72,7 +81,7 @@ class ClockEntry extends Model
     protected function inTime(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)
+            get: fn ($value) => Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('H:i:s'),
         );
@@ -81,7 +90,7 @@ class ClockEntry extends Model
     protected function outTime(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)
+            get: fn ($value) => Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('H:i:s'),
         );
@@ -89,12 +98,12 @@ class ClockEntry extends Model
 
     protected function in(): Attribute
     {
-        if (!$this->timezone) {
+        if (! $this->timezone) {
             $this->timezone = config('app.timezone');
         }
 
         return Attribute::make(
-            get: fn($value) => isset($value)
+            get: fn ($value) => isset($value)
             ? Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('Y-m-d H:i:s')
@@ -104,12 +113,12 @@ class ClockEntry extends Model
 
     protected function out(): Attribute
     {
-        if (!$this->timezone) {
+        if (! $this->timezone) {
             $this->timezone = config('app.timezone');
         }
 
         return Attribute::make(
-            get: fn($value) => isset($value)
+            get: fn ($value) => isset($value)
             ? Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('Y-m-d H:i:s')
@@ -119,12 +128,12 @@ class ClockEntry extends Model
 
     protected function date(): Attribute
     {
-        if (!$this->timezone) {
+        if (! $this->timezone) {
             $this->timezone = config('app.timezone');
         }
 
         return Attribute::make(
-            get: fn($value) => Carbon::parse($value)
+            get: fn ($value) => Carbon::parse($value)
                 ->setTimezone($this->timezone)
                 ->format('Y-m-d'),
         );
@@ -134,7 +143,7 @@ class ClockEntry extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!$this->in || !$this->out) {
+                if (! $this->in || ! $this->out) {
                     return null;
                 }
 

@@ -4,6 +4,36 @@
   themes: lofi --default, black --prefersdark;
 }
 
+@theme {
+  --color-danger: #dc2626;
+  --color-danger-content: #ffffff;
+}
+
+@plugin "daisyui/theme" {
+  name: "lofi";
+  --color-danger: #dc2626;
+  --color-danger-content: #ffffff;
+}
+
+@plugin "daisyui/theme" {
+  name: "black";
+  --color-danger: #dc2626;
+  --color-danger-content: #ffffff;
+}
+
+@layer utilities {
+  .btn-danger {
+    @apply bg-danger text-danger-content;
+  }
+
+  .btn-danger:hover {
+    @apply brightness-90;
+  }
+
+  .btn-danger:active {
+    @apply brightness-75;
+  }
+}
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -13,24 +43,23 @@
 @source "../**/*.svelte";
 @source "../../storage/framework/views/*.php";
 
-
 /* Webkit browsers (Chrome, Safari, newer Edge) */
--webkit-scrollbar {
+::-webkit-scrollbar {
     width: 6px;
     /* Thin scrollbar */
 }
 
--webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: transparent;
 }
 
--webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: rgba(156, 163, 175, 0.5);
     /* Gray-400 with opacity */
     border-radius: 3px;
 }
 
--webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background-color: rgba(107, 114, 128, 0.7);
     /* Gray-500 with opacity on hover */
 }
@@ -41,4 +70,21 @@
     /* "thin", "auto", or "none" */
     scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
     /* thumb and track color */
+}
+
+/* Pikaday datepicker styles */
+input.pika-single {
+    @apply bg-base-200 cursor-pointer;
+}
+
+.is-today .pika-button {
+    @apply bg-primary/20 text-primary font-bold;
+}
+
+.is-selected .pika-button {
+    @apply bg-primary text-primary-content font-bold;
+}
+
+.is-today.is-selected .pika-button {
+    @apply bg-primary text-primary-content font-bold ring-2;
 }
