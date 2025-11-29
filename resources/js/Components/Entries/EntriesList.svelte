@@ -1,10 +1,12 @@
 <script lang="ts">
+  import OutlineButton from '$components/Buttons/OutlineButton.svelte';
   import DeleteButton from '$components/Display/DeleteButton.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
   import { clock } from '$lib/stores/global/time.svelte';
   import { time, timespan } from '$lib/utils/formatting';
-  import { router } from '@inertiajs/svelte';
+  import { Link, router } from '@inertiajs/svelte';
+  import dayjs from 'dayjs';
   import { fade } from 'svelte/transition';
 
   interface Props {
@@ -46,6 +48,9 @@
         {entry.out ? timespan(entry.in, entry.out) : clock.since(entry.in)}
     </td>
     <td>
+        <OutlineButton viewTransition class="mr-2" href={route('activities.show', dayjs(entry.in).format('YYYY-MM-DD'))}>
+          See Details
+        </OutlineButton>
       <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)} />
     </td>
   </tr>

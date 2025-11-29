@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
+use App\Models\ActivityLog;
 use App\Models\ActivityType;
 use App\Models\ClockEntry;
 use App\Models\Task;
@@ -18,6 +19,7 @@ use App\Repositories\UserRepositoryInterface;
 use App\Utils\InertiaHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ActivityController extends Controller
 {
@@ -25,7 +27,8 @@ class ActivityController extends Controller
         public UserRepositoryInterface $userRepository,
         public ProjectRepositoryInterface $projectRepository,
         public ActivityLogRepositoryInterface $activityLogRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -83,9 +86,28 @@ class ActivityController extends Controller
         $tasks = Task::whereIn('project_id', $projects->pluck('id'))->get();
 
         $dailyLogs = DailyLog::getDaily($date);
-        \Log::debug('Date: '.$date.' Daily Logs: '.$dailyLogs->count());
+        $daysWithEntries = DailyLog::selectRaw('DISTINCT date, count(*) as entry_count')
+            ->where('user_id', $user->id)
+            ->groupBy('date')
+            ->get(['date', 'entry_count'])
+            ->map(function ($item) {
+                return [
+                    ...$item->toArray(),
+                    'title' => $item->entry_count . " " . Str::plural('entry', $item->entry_count) . " on " . Carbon::parse($item->date)->format('F j, Y'),
+                ];
+            })
+            ->toArray();
 
-        return inertia('Activity/Daily/Show', compact('activities', 'projects', 'dailyLogs', 'taskCategories', 'activityTypes', 'tasks', 'date'));
+        return inertia('Activity/Daily/Show', compact(
+            'activities', 
+            'projects',
+             'dailyLogs', 
+             'taskCategories',
+              'activityTypes', 
+              'tasks',
+               'date', 
+               'daysWithEntries'
+            ));
     }
 
     /**
@@ -117,7 +139,7 @@ class ActivityController extends Controller
         try {
             $success = ClockEntryRepository::delete($clockEntry);
 
-            if (! $success) {
+            if (!$success) {
                 throw new \Exception('Could not delete the clock entry.');
             }
         } catch (\Exception $e) {
