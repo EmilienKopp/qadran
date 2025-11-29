@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -13,6 +14,7 @@ class Task extends Model
 
     protected $guarded = [];
 
+    #[ExportRelationship(Project::class)]
     public function project()
     {
         return $this->belongsTo(Project::class);

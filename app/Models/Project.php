@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,11 +16,13 @@ class Project extends Model
 
     protected $guarded = [];
 
+    #[ExportRelationship(ClockEntry::class, type: 'hasMany')]
     public function entries()
     {
         return $this->hasMany(ClockEntry::class);
     }
 
+    #[ExportRelationship(Task::class, type: 'hasMany')]
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -30,6 +33,7 @@ class Project extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
+    #[ExportRelationship(Organization::class)]
     public function organization()
     {
         return $this->belongsTo(Organization::class);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Attributes\ExportRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -25,6 +26,7 @@ class Organization extends Model
             ->withTimestamps();
     }
 
+    #[ExportRelationship(Project::class, type: 'hasMany')]
     public function projects()
     {
         return $this->hasMany(Project::class);

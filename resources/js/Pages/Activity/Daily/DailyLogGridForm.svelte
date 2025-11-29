@@ -21,6 +21,7 @@
     onFinish?: () => any;
     onSuccess?: (response: any) => void;
     onError?: (errors: any) => void;
+    onClose?: () => void;
   }
 
   let {
@@ -30,6 +31,7 @@
     onFinish,
     onSuccess,
     onError,
+    onClose,
   }: Props = $props();
 
   let grid: MasterGrid;
@@ -228,7 +230,7 @@
     / {log ? smartDuration(log.total_seconds) : 'N/A'}
   </div>
   <div class="w-full grid grid-cols-2 gap-6 mt-6">
-    <OutlineButton>
+    <OutlineButton type="button" onclick={() => onClose && onClose()}>
       Cancel
     </OutlineButton>
     <PrimaryButton type="submit">Save</PrimaryButton>

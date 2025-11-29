@@ -11,6 +11,9 @@ export interface Activity {
     notes?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    user?: User;
+    project?: Project;
+    taskCategory?: TaskCategory;
 }
 
 export interface ActivityLog {
@@ -28,6 +31,9 @@ export interface ActivityLog {
     created_at?: Date | string;
     updated_at?: Date | string;
     expense_id?: number;
+    clockEntry?: ClockEntry;
+    activityType?: ActivityType;
+    task?: Task;
 }
 
 export interface ActivityType {
@@ -38,6 +44,7 @@ export interface ActivityType {
     icon?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    activities?: ActivityLog[];
 }
 
 export interface ClockEntry {
@@ -59,6 +66,9 @@ export interface ClockEntry {
     currency: string;
     amount?: number;
     date?: Date;
+    project?: Project;
+    user?: User;
+    activityLogs?: ActivityLog[];
 }
 
 export interface Currency {
@@ -86,6 +96,7 @@ export interface GitHubConnection {
     token_expires_at?: Date | string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    user?: User;
 }
 
 export interface Industry {
@@ -115,6 +126,7 @@ export interface Organization {
     metadata?: any;
     created_at?: Date | string;
     updated_at?: Date | string;
+    projects?: Project[];
 }
 
 export interface OrganizationUser {
@@ -166,6 +178,9 @@ export interface Project {
     created_at?: Date | string;
     updated_at?: Date | string;
     deleted_at?: Date | string;
+    entries?: ClockEntry[];
+    tasks?: Task[];
+    organization?: Organization;
 }
 
 export interface ProjectUser {
@@ -236,6 +251,7 @@ export interface Report {
     aggregated_diff?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    user?: User;
 }
 
 export interface RepositorySettings {
@@ -280,6 +296,7 @@ export interface Task {
     priority: string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    project?: Project;
 }
 
 export interface TaskCategoriesAlias {
@@ -292,6 +309,7 @@ export interface TaskCategory {
     description?: string;
     created_at?: Date | string;
     updated_at?: Date | string;
+    tasks?: Task[];
 }
 
 export interface TaskCategoryAlias {
@@ -336,6 +354,9 @@ export interface User {
     workos_id?: string;
     timezone?: string;
     n8n_config?: any;
+    clockEntries?: ClockEntry[];
+    reports?: Report[];
+    voiceCommands?: VoiceCommand[];
 }
 
 export interface VoiceCommand {
@@ -347,6 +368,7 @@ export interface VoiceCommand {
     metadata?: any;
     created_at?: Date | string;
     updated_at?: Date | string;
+    user?: User;
 }
 
 export interface DailyLog {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Attributes\ExportRelationship;
 use App\Casts\N8nConfigCast;
 use App\Traits\HasGitHubConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -88,6 +89,7 @@ class User extends Authenticatable
             ->using(ProjectUser::class);
     }
 
+    #[ExportRelationship(ClockEntry::class, type: 'hasMany')]
     public function clockEntries()
     {
         return $this->hasMany(ClockEntry::class)->with('project');
@@ -98,11 +100,13 @@ class User extends Authenticatable
         return $this->clockEntries()->today()->orderBy('created_at', 'desc');
     }
 
+    #[ExportRelationship(Report::class, type: 'hasMany')]
     public function reports()
     {
         return $this->hasMany(Report::class);
     }
 
+    #[ExportRelationship(VoiceCommand::class, type: 'hasMany')]
     public function voiceCommands()
     {
         return $this->hasMany(VoiceCommand::class);

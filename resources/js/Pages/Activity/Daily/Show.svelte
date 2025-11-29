@@ -1,12 +1,7 @@
 <script lang="ts">
-  import MiniButton from '$components/Buttons/MiniButton.svelte';
   import { GridButton } from '$components/AgGridCustom/GridButton.js';
-  import OutlineButton from '$components/Buttons/OutlineButton.svelte';
-  import PrimaryButton from '$components/Buttons/PrimaryButton.svelte';
-  import NewLogModal from '$components/Modals/NewLogModal.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import MasterGrid from '$components/MasterGrid/index.svelte';
-  import { toast } from '$lib/stores';
   import {
     Table as TableIcon,
     TextCursorInput as FormIcon,
@@ -19,7 +14,7 @@
     Task,
     TaskCategory,
   } from '$models';
-  import { router, useForm } from '@inertiajs/svelte';
+  import { router } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import DailyLogInputForm from './DailyLogInputForm.svelte';
   import {
@@ -31,7 +26,6 @@
   import { onMount } from 'svelte';
   import { smartDuration } from '$lib/utils/formatting';
   import Dialog from '$components/Modals/Dialog.svelte';
-  import { clock } from '$lib/stores/global/time.svelte';
   import DailyLogGridForm from './DailyLogGridForm.svelte';
   import Pikaday from 'pikaday';
 
@@ -96,9 +90,9 @@
       );
       // Limit to longest 2 then show "+n more" if applicable
       if (activity && activity.length > 2) {
-        const sortedActivities = log.activities.sort(
+        const sortedActivities = log.activities?.sort(
           (a: any, b: any) => b.duration_seconds - a.duration_seconds
-        );
+        ) ?? [];
         const topActivities = sortedActivities
           .slice(0, 2)
           .map(
@@ -123,7 +117,12 @@
     columnDefs: [
       { field: 'project_name', headerName: 'Project' },
       { field: 'duration' },
-      { field: 'activity', flex: 1, onCellClicked: actionClickHandler },
+      { field: 'activity',
+        flex: 1, 
+        onCellClicked: actionClickHandler,
+        cellClass: 'focus-within:border-0! cursor-pointer',
+        valueFormatter: (params: any) => params.value || 'No activities recorded',
+      },
       {
         headerName: 'Actions',
         variant: 'danger',
@@ -204,6 +203,7 @@
         {activityTypes}
         {tasks}
         {onFinish}
+        onClose={() => dialog.close()}
       />
     {/if}
   {/if}
