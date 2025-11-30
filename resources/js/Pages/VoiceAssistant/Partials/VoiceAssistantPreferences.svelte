@@ -61,10 +61,10 @@
 
 <section class="space-y-6">
   <header>
-    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h2 class="text-lg font-medium  dark:">
       Voice Assistant Preferences
     </h2>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-1 text-sm  dark:">
       Customize your AI voice assistant behavior and settings.
     </p>
   </header>
@@ -73,29 +73,29 @@
     <!-- Current Preferences -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Model</div>
-        <div class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
+        <div class="text-sm font-medium  dark:">Model</div>
+        <div class="mt-1 text-base font-semibold  dark:">
           {preferences?.model || 'claude-sonnet-4-20250514'}
         </div>
       </div>
 
       <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Timeout</div>
-        <div class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
+        <div class="text-sm font-medium  dark:">Timeout</div>
+        <div class="mt-1 text-base font-semibold  dark:">
           {preferences?.timeout || 30}s
         </div>
       </div>
 
       <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Max Tokens</div>
-        <div class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
+        <div class="text-sm font-medium  dark:">Max Tokens</div>
+        <div class="mt-1 text-base font-semibold  dark:">
           {preferences?.max_tokens?.toLocaleString() || '4,096'}
         </div>
       </div>
 
       <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Temperature</div>
-        <div class="mt-1 text-base font-semibold text-gray-900 dark:text-gray-100">
+        <div class="text-sm font-medium  dark:">Temperature</div>
+        <div class="mt-1 text-base font-semibold  dark:">
           {preferences?.temperature || 0.7}
         </div>
       </div>
@@ -120,10 +120,10 @@
 <!-- Update Preferences Modal -->
 <Modal bind:this={preferencesModal}>
   <Form bind:this={formRef} action={VoiceAssistantController.updatePreferences()} method="POST" class="p-6" resetOnSuccess>
-    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h3 class="text-lg font-medium  dark:">
       Update Preferences
     </h3>
-    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-2 text-sm  dark:">
       Customize how your AI voice assistant behaves.
     </p>
 
@@ -180,7 +180,7 @@
           max="2"
           required
         />
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <p class="mt-1 text-xs  dark:">
           Higher values make output more random, lower values more focused
         </p>
       </div>
@@ -191,7 +191,7 @@
         type="button"
         onclick={closePreferencesModal}
         disabled={formRef?.processing}
-        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark: dark:hover:bg-gray-600"
       >
         Cancel
       </button>
@@ -209,10 +209,10 @@
 <!-- Deactivate Confirmation Modal -->
 <Modal bind:this={deactivateModal}>
   <form onsubmit={deactivateAssistant} class="p-6">
-    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h3 class="text-lg font-medium  dark:">
       Deactivate AI Voice Assistant
     </h3>
-    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-2 text-sm  dark:">
       Are you sure you want to deactivate your AI voice assistant?
     </p>
 
@@ -224,10 +224,10 @@
           class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
         />
         <div>
-          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm font-medium  dark:">
             Delete workflow in n8n
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">
+          <div class="text-xs  dark:">
             This will permanently remove the workflow from n8n
           </div>
         </div>
@@ -240,10 +240,10 @@
           class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
         />
         <div>
-          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div class="text-sm font-medium  dark:">
             Revoke access tokens
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">
+          <div class="text-xs  dark:">
             This will invalidate all AI Assistant tokens
           </div>
         </div>
@@ -255,7 +255,7 @@
         type="button"
         onclick={closeDeactivateModal}
         disabled={$deactivateForm.processing}
-        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark: dark:hover:bg-gray-600"
       >
         Cancel
       </button>

@@ -64,7 +64,7 @@
         'yellow': 'bg-yellow-100 text-yellow-800 border-yellow-300',
         'green': 'bg-green-100 text-green-800 border-green-300',
       };
-      return colorMap[statusColor] || 'bg-gray-100 text-gray-800 border-gray-300';
+      return colorMap[statusColor] || 'bg-gray-100  border-gray-300';
     }
 
     // Fallback to category-based colors
@@ -73,11 +73,11 @@
       'indeterminate': 'bg-yellow-100 text-yellow-800 border-yellow-300',
       'done': 'bg-green-100 text-green-800 border-green-300',
     };
-    return categoryMap[statusCategory || ''] || 'bg-gray-100 text-gray-800 border-gray-300';
+    return categoryMap[statusCategory || ''] || 'bg-gray-100  border-gray-300';
   }
 
   function getPriorityColor(priority: string | null): string {
-    if (!priority) return 'text-gray-500';
+    if (!priority) return '';
 
     const priorityLower = priority.toLowerCase();
     if (priorityLower.includes('highest') || priorityLower.includes('critical')) {
@@ -89,9 +89,9 @@
     } else if (priorityLower.includes('low')) {
       return 'text-blue-600';
     } else if (priorityLower.includes('lowest')) {
-      return 'text-gray-500';
+      return '';
     }
-    return 'text-gray-600';
+    return '';
   }
 
   // Group issues by status category and deployment status
@@ -141,10 +141,10 @@
         <div class="flex items-center gap-4">
           <img src="/images/QADRAN_logoonly_alpha.png" alt="Logo" class="h-10 w-auto" />
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-3xl font-bold  dark:text-white">
               Known Issues
             </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p class="text-sm  dark: mt-1">
               Current status of reported issues
             </p>
           </div>
@@ -163,7 +163,7 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {#if issues.length === 0}
       <div class="bg-white rounded-lg shadow p-8 text-center dark:bg-gray-800">
-        <p class="text-gray-600 dark:text-gray-400 text-lg">
+        <p class=" dark: text-lg">
           No known issues at this time. Check back later!
         </p>
       </div>
@@ -187,15 +187,15 @@
                           ? 'bg-yellow-500'
                           : 'bg-blue-500'}"
                   ></span>
-                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white capitalize">
+                  <h2 class="text-xl font-semibold  dark:text-white capitalize">
                     {categoryName}
                   </h2>
-                  <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <span class="text-sm font-normal  dark:">
                     ({categoryIssues.length})
                   </span>
                 </div>
                 <svg
-                  class="w-5 h-5 text-gray-500 transition-transform {collapsed[categoryName] ? '' : 'rotate-180'}"
+                  class="w-5 h-5  transition-transform {collapsed[categoryName] ? '' : 'rotate-180'}"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -210,27 +210,27 @@
                   <table class="w-full table-fixed">
                     <thead class="bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
                       <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                        <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-32">
                           Issue
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-96">
+                        <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-96">
                           Summary
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                        <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-32">
                           Priority
                         </th>
                         {#if categoryName === 'deployed'}
-                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">
+                          <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-48">
                             Deployed
                           </th>
-                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                          <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-32">
                             PR/Commits
                           </th>
                         {:else}
-                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-36">
+                          <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-36">
                             Reported
                           </th>
-                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">
+                          <th class="px-6 py-3 text-left text-xs font-medium  dark: uppercase tracking-wider w-32">
                             Duration
                           </th>
                         {/if}
@@ -248,13 +248,13 @@
                                   class="w-4 h-4"
                                 />
                               {/if}
-                              <span class="text-sm font-mono text-gray-900 dark:text-gray-300">
+                              <span class="text-sm font-mono  dark:">
                                 {issue.jira_key}
                               </span>
                             </div>
                           </td>
                           <td class="px-6 py-4 w-96">
-                            <div class="text-sm text-gray-900 dark:text-white font-medium truncate">
+                            <div class="text-sm  dark:text-white font-medium truncate">
                               {issue.summary}
                             </div>
                           </td>
@@ -273,15 +273,15 @@
                                 </span>
                               </div>
                             {:else}
-                              <span class="text-sm text-gray-400">-</span>
+                              <span class="text-sm ">-</span>
                             {/if}
                           </td>
                           {#if categoryName === 'deployed'}
-                            <td class="px-6 py-4 whitespace-nowrap w-48 text-sm text-gray-600 dark:text-gray-400">
+                            <td class="px-6 py-4 whitespace-nowrap w-48 text-sm  dark:">
                               {#if issue.deployed_at}
                                 {new Date(issue.deployed_at).toLocaleDateString()}
                               {:else}
-                                <span class="text-gray-400">-</span>
+                                <span class="">-</span>
                               {/if}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap w-32">
@@ -298,18 +298,18 @@
                                   </svg>
                                 </a>
                               {:else if issue.deployment_metadata?.commits && issue.deployment_metadata.commits.length > 0}
-                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="text-sm  dark:">
                                   {issue.deployment_metadata.commits.length} commit{issue.deployment_metadata.commits.length > 1 ? 's' : ''}
                                 </span>
                               {:else}
-                                <span class="text-sm text-gray-400">-</span>
+                                <span class="text-sm ">-</span>
                               {/if}
                             </td>
                           {:else}
-                            <td class="px-6 py-4 whitespace-nowrap w-36 text-sm text-gray-600 dark:text-gray-400">
+                            <td class="px-6 py-4 whitespace-nowrap w-36 text-sm  dark:">
                               {issue.first_reported_human}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap w-32 text-sm text-gray-600 dark:text-gray-400">
+                            <td class="px-6 py-4 whitespace-nowrap w-32 text-sm  dark:">
                               {issue.current_status_duration_human}
                             </td>
                           {/if}
@@ -327,7 +327,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600 dark:text-gray-400">
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm  dark:">
     <p>Last updated: {new Date().toLocaleString()}</p>
     <p class="mt-2">
       Issues are automatically synced from Jira. For support, please contact your administrator.

@@ -354,6 +354,7 @@ export interface User {
     workos_id?: string;
     timezone?: string;
     n8n_config?: any;
+    roles?: Role[];
     clockEntries?: ClockEntry[];
     reports?: Report[];
     voiceCommands?: VoiceCommand[];

@@ -41,10 +41,10 @@
 
 <section class="space-y-6">
   <header>
-    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h2 class="text-lg font-medium  dark:">
       Activate AI Voice Assistant
     </h2>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-1 text-sm  dark:">
       Set up your personal AI voice assistant to interact with your workspace.
     </p>
   </header>
@@ -152,10 +152,10 @@
 <!-- Activation Confirmation Modal -->
 <Modal bind:this={activateModal}>
   <div class="p-6">
-    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h3 class="text-lg font-medium  dark:">
       Activate AI Voice Assistant
     </h3>
-    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-2 text-sm  dark:">
       This will create the necessary credentials and workflow for your AI voice assistant.
       Are you sure you want to proceed?
     </p>
@@ -165,7 +165,7 @@
         type="button"
         onclick={closeActivateModal}
         disabled={processing}
-        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium  hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark: dark:hover:bg-gray-600"
       >
         Cancel
       </button>

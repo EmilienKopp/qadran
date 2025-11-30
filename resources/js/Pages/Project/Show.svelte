@@ -27,7 +27,7 @@
 
 <AuthenticatedLayout>
   <Header>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <h2 class="font-semibold text-xl  leading-tight">
       {project.name}
       
       <Button type="button" href={route('project.edit', project.id)} class="ml-4">

@@ -12,6 +12,7 @@
     error?: string | null;
     errors?: string | string[] | null;
     class?: string;
+    fieldsetClass?: string;
     type?:
       | 'text'
       | 'number'
@@ -42,6 +43,7 @@
     errors,
     type = 'text',
     class: className = '',
+    fieldsetClass = '',
     placeholder = 'Type here',
     onchange,
     oninput,
@@ -63,9 +65,14 @@
     normalizedError && 'input-error',
     className,
   ))
+
+  const fieldsetClasses = $derived(twMerge(
+    'fieldset w-full',
+    fieldsetClass
+  ));
 </script>
 
-<fieldset class="fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
+<fieldset class={fieldsetClasses} data-error={normalizedError ? 'true' : 'false'}>
   {#if label}
     <InputLabel for={rest.id} {required}>{label}</InputLabel>
   {/if}

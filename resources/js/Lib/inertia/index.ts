@@ -18,8 +18,12 @@ export function hookSuccess<T extends object>(
   form.recentlySuccessful && callback();
 }
 
-export function getPage(): Page {
-  return get(page);
+export function getPage(path?: keyof Page): any {
+  const p = get(page);
+  if (path) {
+    return path.split('.').reduce((obj: any, key: string) => obj && obj[key], p);
+  }
+  return p;
 }
 
 /**
@@ -46,8 +50,8 @@ export function getUserRoleName(): string {
     return 'guest';
   }
 
-  if(roles.filter((r: any) => r.name !== 'user').length > 0) {
-    return roles.filter((r: any) => r.name !== 'user')[0].name;
+  if(roles.filter((r) => r.name !== 'user').length > 0) {
+    return roles.filter((r) => r.name !== 'user')[0].name;
   }
 
   return 'user';
@@ -59,7 +63,7 @@ export function getUserRoleName(): string {
 export function getAllUserRoles(): string[] {
   return (
     get(page)
-      ?.props.auth.user.roles?.map((role: any) => role.name)
-      .filter((r) => r != 'user') ?? []
+      ?.props.auth.user.roles?.map((role) => role.name)
+      .filter((r: string) => r != 'user') ?? []
   );
 }

@@ -23,7 +23,7 @@
 
 <AuthenticatedLayout>
   <Header>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <h2 class="font-semibold text-xl  leading-tight">
       {report.title}
       
       <Button type="button" href={route('report.edit', report.id)} class="ml-4">

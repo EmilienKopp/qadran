@@ -108,7 +108,7 @@
                     <th class="flex items-center justify-between">
                         <span>Activities</span>
                         {#if scrollY > 125}
-                            <div class="text-gray-400">{readableMonth} {year}</div>
+                            <div class="">{readableMonth} {year}</div>
                         {/if}
                         <div class="flex gap-2">
                             <Button variant="accent" onclick={scrollToTop}>To Top</Button>
@@ -131,7 +131,7 @@
                         }}
                     >
                         <td>
-                            <div class="text-gray-400 text-center">
+                            <div class=" text-center">
                                 {dayjs(key).date()}<br />
                                 ({dayjs.weekdaysShort()[dayjs(key).day()]})
                             </div>

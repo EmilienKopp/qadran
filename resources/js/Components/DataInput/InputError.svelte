@@ -2,7 +2,7 @@
   import clsx from "clsx";
 
   interface Props {
-    message?: string;
+    message?: string | null;
     class?: string;
 }
 

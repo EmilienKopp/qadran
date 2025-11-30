@@ -161,7 +161,7 @@
         <pre data-prefix="> "><code>{line}</code></pre>
       {/each}
     {:else}
-      <pre data-prefix="$"><code class="text-gray-500"
+      <pre data-prefix="$"><code class=""
           >Output will appear here...</code
         ></pre>
     {/if}

@@ -76,7 +76,7 @@
       <option value="" disabled selected>{placeholder}</option>
     {/if}
     {#each options as option}
-      <option value={option.value} class="text-black">{option.name}</option>
+      <option value={option.value}>{option.name}</option>
     {/each}
   </select>
   <InputError message={normalizedError} />

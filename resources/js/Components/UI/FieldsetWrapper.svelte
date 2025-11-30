@@ -15,7 +15,7 @@
       {title}
     </legend>
     {#if description}
-      <p class="mt-1 text-xs sm:text-sm text-gray-600">{description}</p>
+      <p class="mt-1 text-xs sm:text-sm ">{description}</p>
     {/if}
     <div class="mt-4">
       {@render children?.()}

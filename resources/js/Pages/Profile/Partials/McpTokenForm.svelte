@@ -4,8 +4,8 @@
   import Input from '$components/DataInput/Input.svelte';
   import InputError from '$components/DataInput/InputError.svelte';
   import InputLabel from '$components/DataInput/InputLabel.svelte';
+  import SectionCard from '$components/UI/SectionCard.svelte';
   import { router, useForm } from '@inertiajs/svelte';
-  import { twMerge } from 'tailwind-merge';
 
   interface Props {
     class?: string;
@@ -131,83 +131,84 @@
   }
 </script>
 
-<section class={twMerge('space-y-6', className)}>
-  <header>
-    <h2 class="text-lg font-medium text-gray-900">MCP Access Tokens</h2>
-    <p class="mt-1 text-sm text-gray-600">
-      Create and manage API tokens for Model Context Protocol (MCP) access. These tokens allow AI clients to interact with your Qadran data through the MCP server.
-    </p>
-  </header>
+<SectionCard
+  title="MCP Access Tokens"
+  subtitle="Create and manage API tokens for Model Context Protocol (MCP) access. These tokens allow AI clients to interact with your Qadran data through the MCP server."
+  class={className}
+>
+  {#snippet content()}
+    <div class="space-y-6">
+      <div class="flex gap-4">
+        <Button type="button" onclick={openCreateModal}>
+          Create
+        </Button>
 
-  <div class="flex gap-4">
-    <Button type="button" onclick={openCreateModal}>
-      Create New MCP Token
-    </Button>
-    
-    <Button type="button" variant="secondary" onclick={showConnectionInfo}>
-      View Connection Info
-    </Button>
-  </div>
+        <Button disabled={!mcpConnectionInfo} type="button" variant="secondary" onclick={showConnectionInfo}>
+          View information
+        </Button>
+      </div>
 
-  {#if mcpTokens.length > 0}
-    <div class="overflow-hidden rounded-md border border-gray-200">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Name
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Last Used
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Created
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Expires
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200 bg-white">
-          {#each mcpTokens as token}
-            <tr>
-              <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                {token.name.replace('MCP: ', '')}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
-                {formatDate(token.last_used_at)}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
-                {formatDate(token.created_at)}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
-                {token.expires_at ? formatDate(token.expires_at) : 'Never'}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
-                <Button 
-                  type="button" 
-                  variant="danger" 
-                  size="sm"
-                  onclick={() => deleteToken(token.id, token.name)}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
+      {#if mcpTokens.length > 0}
+        <div class="overflow-hidden rounded-md border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ">
+                  Name
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ">
+                  Last Used
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ">
+                  Created
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ">
+                  Expires
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              {#each mcpTokens as token}
+                <tr>
+                  <td class="px-6 py-4 text-sm font-medium ">
+                    {token.name.replace('MCP: ', '')}
+                  </td>
+                  <td class="px-6 py-4 text-sm ">
+                    {formatDate(token.last_used_at)}
+                  </td>
+                  <td class="px-6 py-4 text-sm ">
+                    {formatDate(token.created_at)}
+                  </td>
+                  <td class="px-6 py-4 text-sm ">
+                    {token.expires_at ? formatDate(token.expires_at) : 'Never'}
+                  </td>
+                  <td class="px-6 py-4 text-sm ">
+                    <Button
+                      type="button"
+                      variant="danger"
+                      size="sm"
+                      onclick={() => deleteToken(token.id, token.name)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <div class="text-center py-12">
+          <p class="">No MCP tokens created yet.</p>
+          <p class="text-sm  mt-1">Create your first token to get started with MCP integration.</p>
+        </div>
+      {/if}
     </div>
-  {:else}
-    <div class="text-center py-12">
-      <p class="text-gray-500">No MCP tokens created yet.</p>
-      <p class="text-sm text-gray-400 mt-1">Create your first token to get started with MCP integration.</p>
-    </div>
-  {/if}
-</section>
+  {/snippet}
+</SectionCard>
 
 <!-- Create Token Modal -->
 <Modal bind:this={createModal}>
@@ -231,7 +232,7 @@
         {#if $createForm.errors.name}
           <InputError message={$createForm.errors.name} />
         {/if}
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm ">
           Choose a descriptive name to help you identify this token later.
         </p>
       </div>
@@ -248,7 +249,7 @@
         {#if $createForm.errors.expires_at}
           <InputError message={$createForm.errors.expires_at} />
         {/if}
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm ">
           Leave empty for a token that never expires (not recommended for production).
         </p>
       </div>
@@ -320,7 +321,7 @@
               Copy
             </Button>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm ">
             Use this formatted token in your MCP client configuration.
           </p>
         </div>
@@ -345,26 +346,26 @@
     {#snippet children()}
       <div class="space-y-6">
         <div>
-          <h4 class="font-medium text-gray-900">Tenant Information</h4>
+          <h4 class="font-medium ">Tenant Information</h4>
           <dl class="mt-2 space-y-1 text-sm">
             <div class="flex">
-              <dt class="w-20 text-gray-500">Host:</dt>
-              <dd class="text-gray-900">{mcpConnectionInfo.tenant_host}</dd>
+              <dt class="w-20 ">Host:</dt>
+              <dd class="">{mcpConnectionInfo.tenant_host}</dd>
             </div>
             <div class="flex">
-              <dt class="w-20 text-gray-500">Name:</dt>
-              <dd class="text-gray-900">{mcpConnectionInfo.tenant_name}</dd>
+              <dt class="w-20 ">Name:</dt>
+              <dd class="">{mcpConnectionInfo.tenant_name}</dd>
             </div>
             <div class="flex">
-              <dt class="w-20 text-gray-500">MCP URL:</dt>
-              <dd class="text-gray-900 break-all">{mcpConnectionInfo.mcp_url}</dd>
+              <dt class="w-20 ">MCP URL:</dt>
+              <dd class=" break-all">{mcpConnectionInfo.mcp_url}</dd>
             </div>
           </dl>
         </div>
 
         <div>
-          <h4 class="font-medium text-gray-900">VS Code Configuration</h4>
-          <p class="mt-1 text-sm text-gray-600">Add this to your VS Code settings:</p>
+          <h4 class="font-medium ">VS Code Configuration</h4>
+          <p class="mt-1 text-sm ">Add this to your VS Code settings:</p>
           <pre class="mt-2 rounded-md bg-gray-100 p-3 text-xs overflow-x-auto"><code>{JSON.stringify(mcpConnectionInfo.example_config.vscode, null, 2).replace(':YOUR_TOKEN', ':YOUR_ACTUAL_TOKEN')}</code></pre>
           <Button
             type="button"
@@ -377,8 +378,8 @@
         </div>
 
         <div>
-          <h4 class="font-medium text-gray-900">Authentication Format</h4>
-          <p class="mt-1 text-sm text-gray-600">Use this format in the Authorization header:</p>
+          <h4 class="font-medium ">Authentication Format</h4>
+          <p class="mt-1 text-sm ">Use this format in the Authorization header:</p>
           <code class="mt-1 block rounded-md bg-gray-100 p-2 text-sm">
             Bearer {mcpConnectionInfo.auth_format.replace(':YOUR_TOKEN', ':YOUR_ACTUAL_TOKEN')}
           </code>

@@ -7,7 +7,7 @@
   let { title = 'Qadran', children }: Props = $props();
 </script>
 
-<h1 class="text-2xl font-semibold text-gray-900">{ title }</h1>
+<h1 class="text-2xl font-semibold ">{ title }</h1>
 <div
   class="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0"
 >

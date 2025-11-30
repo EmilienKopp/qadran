@@ -2,8 +2,9 @@
   import Button from '$components/Actions/Button.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import InputError from '$components/DataInput/InputError.svelte';
-  import InputLabel from '$components/DataInput/InputLabel.svelte';
-  import { Link, page, useForm } from '@inertiajs/svelte';
+  import SectionCard from '$components/UI/SectionCard.svelte';
+  import { getPage } from '$lib/inertia';
+  import { Form, Link } from '@inertiajs/svelte';
 
   interface Props {
     mustVerifyEmail?: boolean;
@@ -13,88 +14,98 @@
 
   let { mustVerifyEmail = false, status, class: className }: Props = $props();
 
-  const user = $page.props.auth.user;
-
-  const form = useForm({
-    name: user.name,
-    email: user.email,
-  });
-
-  function handleSubmitted(e: Event) {
-    e.preventDefault();
-    if ($form.recentlySuccessful) {
-      $form.reset();
-    }
-  }
+  const {
+    props: {
+      auth: { user },
+    },
+  } = getPage();
 </script>
 
-<section class={className}>
-  <header>
-    <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
+<SectionCard
+  title="Profile Information"
+  subtitle="Update your account's profile information and email address."
+  class={className}
+>
+  {#snippet content()}
+    <Form class="space-y-6" method="PATCH" action={route('profile.update')}>
+      {#snippet children({ errors, processing }: any)}
+        <fieldset>
+          <div class="space-y-4 grid grid-cols-3 gap-4">
+            <Input
+              id="first_name"
+              name="first_name"
+              type="text"
+              label="First Name"
+              class="mt-1 block w-full"
+              value={user.first_name}
+              required
+              autofocus
+              autocomplete="name"
+            />
 
-    <p class="mt-1 text-sm text-gray-600">
-      Update your account's profile information and email address.
-    </p>
-  </header>
+            <Input
+              id="middle_name"
+              name="middle_name"
+              type="text"
+              label="Middle Name"
+              class="mt-1 block w-full"
+              value={user.middle_name}
+              autocomplete="name"
+            />
 
-  <form onsubmit={handleSubmitted}
-    class="mt-6 space-y-6"
-  >
-    <div>
-      <InputLabel for="name" value="Name" />
+            <Input
+              id="last_name"
+              name="last_name"
+              type="text"
+              label="Last Name"
+              class="mt-1 block w-full"
+              value={user.last_name}
+              required
+              autocomplete="name"
+            />
 
-      <Input
-        id="name"
-        name="name"
-        type="text"
-        class="mt-1 block w-full"
-        bind:value={$form.name}
-        required
-        autofocus
-        autocomplete="name"
-      />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              label="Email"
+              class="mt-1 block w-full"
+              value={user.email}
+              fieldsetClass="col-span-full"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <InputError message={errors.first_name} />
+          <InputError message={errors.middle_name} />
+          <InputError message={errors.last_name} />
+          <InputError message={errors.email} />
+        </fieldset>
 
-      <InputError message={$form.errors.name} />
-    </div>
+        {#if mustVerifyEmail && user.email_verified_at === null}
+          <p class="mt-2 text-sm">
+            Your email address is unverified.
+            <Link
+              href={route('verification.send')}
+              method="post"
+              as="button"
+              class="rounded-md text-sm  underline focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Click here to re-send the verification email.
+            </Link>
+          </p>
 
-    <div>
-      <InputLabel for="email" value="Email" />
+          {#if status === 'verification-link-sent'}
+            <div class="mt-2 text-sm font-medium text-green-600">
+              A new verification link has been sent to your email address.
+            </div>
+          {/if}
+        {/if}
 
-      <Input
-        id="email"
-        name="email"
-        type="email"
-        class="mt-1 block w-full"
-        bind:value={form.email}
-        required
-        autocomplete="username"
-      />
-
-      <InputError message={$form.errors.email} />
-    </div>
-
-    {#if mustVerifyEmail && user.email_verified_at === null}
-      <p class="mt-2 text-sm text-gray-800">
-        Your email address is unverified.
-        <Link
-          href={route('verification.send')}
-          method="post"
-          as="button"
-          class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Click here to re-send the verification email.
-        </Link>
-      </p>
-
-      {#if status === 'verification-link-sent'}
-        <div class="mt-2 text-sm font-medium text-green-600">
-          A new verification link has been sent to your email address.
+        <div class="flex items-center gap-4">
+          <Button variant="primary" disabled={processing}>Save</Button>
         </div>
-      {/if}
-    {/if}
-
-    <div class="flex items-center gap-4">
-      <Button variant="primary" disabled={$form.processing}>Save</Button>
-    </div>
-  </form>
-</section>
+      {/snippet}
+    </Form>
+  {/snippet}
+</SectionCard>

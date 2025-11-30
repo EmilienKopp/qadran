@@ -35,7 +35,7 @@
 <AuthenticatedLayout>
   <Header>
     <h2
-      class="flex items-center justify-between w-full font-semibold text-xl text-gray-800 leading-tight"
+      class="flex items-center justify-between w-full font-semibold text-xl  leading-tight"
     >
       Organizations (viewing as {RoleContext.selected})
       <Button href={route('organization.create')}>Create</Button>

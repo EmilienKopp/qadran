@@ -65,7 +65,7 @@
 </script>
 
 {#if tableData?.length === 0}
-  <div class="text-center text-gray-500 p-4">No data available</div>
+  <div class="text-center  p-4">No data available</div>
 {:else}
   <div class="overflow-x-auto shadow-md rounded-lg">
     <table class="table table-zebra table-sm w-full {className}">
