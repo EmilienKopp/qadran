@@ -13,6 +13,8 @@ interface UserRepositoryInterface extends BaseRepositoryInterface
 
     public function findByGitHubId(string $githubUserId): ?User;
 
+    public function findByGoogleId(string $googleUserId): ?User;
+
     public function findByEmail(string $email): ?User;
 
     public function all(): Collection;

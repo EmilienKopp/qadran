@@ -27,12 +27,6 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $isDesktop = RequestContextResolver::isDesktop();
 
-        \Log::debug('Repository registration', [
-            'isDesktop' => $isDesktop,
-            'context' => RequestContextResolver::getExecutionContext()->value ?? 'unknown',
-            'sapi' => php_sapi_name(),
-        ]);
-
         // Auto-discover repository interfaces and bind them
         $this->autoDiscoverRepositories($isDesktop);
     }

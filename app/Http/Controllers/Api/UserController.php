@@ -42,6 +42,17 @@ class UserController extends Controller
         return response()->json($user->load('gitHubConnection'));
     }
 
+    public function byGoogleId(string $googleId)
+    {
+        $user = $this->userRepository->findByGoogleId($googleId);
+
+        if (! $user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user->load('googleConnection'));
+    }
+
     public function byEmail(Request $request)
     {
         $email = $request->query('email');

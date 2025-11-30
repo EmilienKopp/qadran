@@ -46,6 +46,17 @@ class RemoteUserRepository extends BaseRemoteRepository implements UserRepositor
         }
     }
 
+    public function findByGoogleId(string $googleUserId): ?User
+    {
+        try {
+            $data = $this->get("{$this->resourceEndpoint}/by-google-id/{$googleUserId}");
+
+            return $this->hydrate($data);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function findByEmail(string $email): ?User
     {
         try {

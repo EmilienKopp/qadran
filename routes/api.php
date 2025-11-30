@@ -25,6 +25,7 @@ Route::middleware('api')->group(function () {
     Route::get('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'show']);
     Route::get('/users/by-workos-id/{workosId}', [\App\Http\Controllers\Api\UserController::class, 'byWorkosId']);
     Route::get('/users/by-github-id/{githubId}', [\App\Http\Controllers\Api\UserController::class, 'byGitHubId']);
+    Route::get('/users/by-google-id/{googleId}', [\App\Http\Controllers\Api\UserController::class, 'byGoogleId']);
     Route::get('/users/by-email', [\App\Http\Controllers\Api\UserController::class, 'byEmail']);
     Route::post('/users', [\App\Http\Controllers\Api\UserController::class, 'store']);
     Route::put('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'update']);

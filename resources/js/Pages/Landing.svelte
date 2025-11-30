@@ -93,7 +93,7 @@
 
     <div class="navbar-end gap-2 mr-4">
       {#if canLogin}
-        <a href="/welcome/login" class="btn btn-ghost btn-sm">
+        <a href="/login" class="btn btn-ghost btn-sm">
           {authenticated && tenant ? 'Dashboard' : 'Login'}
         </a>
         {#if canRegister}

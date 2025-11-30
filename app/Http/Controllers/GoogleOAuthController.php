@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GitHubConnection;
+use App\Models\GoogleConnection;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
-use App\Services\GitHubService;
 use App\Support\RequestContextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,43 +14,42 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Native\Laravel\Facades\Settings;
 
-class GitHubOAuthController extends Controller
+class GoogleOAuthController extends Controller
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository
     ) {}
 
     /**
-     * Redirect to GitHub OAuth for authentication or account linking
+     * Redirect to Google OAuth for authentication or account linking
      */
     public function redirect(): RedirectResponse
     {
         // No authentication check - supports both login and linking
         // Scopes can be configured in config/services.php
-        return Socialite::driver('github')->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     /**
-     * Handle GitHub OAuth callback - routes to authentication or linking
+     * Handle Google OAuth callback - routes to authentication or linking
      */
     public function callback(Request $request)
     {
         try {
-            $githubUser = Socialite::driver('github')->user();
+            $googleUser = Socialite::driver('google')->user();
             // Access token through property (Laravel Socialite provides this dynamically)
             // @phpstan-ignore-next-line
-            $token = $githubUser->token ?? '';
+            $token = $googleUser->token ?? '';
 
             // Check if user is authenticated - determines flow
             if (Auth::check()) {
-                return $this->handleAccountLinking(Auth::user(), $githubUser, $token);
+                return $this->handleAccountLinking(Auth::user(), $googleUser, $token);
             }
-            
-            return $this->handleAuthentication($githubUser, $token);
+
+            return $this->handleAuthentication($googleUser, $token);
 
         } catch (InvalidStateException $e) {
             if (Auth::check()) {
-
                 return redirect()->route('settings.integrations')
                     ->with('error', 'Invalid OAuth state. Please try again.');
             }
@@ -59,58 +57,63 @@ class GitHubOAuthController extends Controller
             return redirect('/')
                 ->with('error', 'Invalid OAuth state. Please try again.');
         } catch (\Exception $e) {
+            \Log::error('Google OAuth callback error', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+
             if (Auth::check()) {
-                \Log::error('GitHub OAuth callback error for authenticated user', [
-                    'user_id' => Auth::id(),
-                ]);
                 return redirect()->route('settings.integrations')
-                    ->with('error', 'An error occurred during GitHub authentication.');
+                    ->with('error', 'An error occurred during Google authentication.');
             }
 
-            return redirect('/login')
-                ->with('error', 'An error occurred during GitHub authentication.');
+            return redirect('/')
+                ->with('error', 'An error occurred during Google authentication.');
         }
     }
 
     /**
      * Handle authentication flow (login/registration)
      */
-    private function handleAuthentication($githubUser, string $token): RedirectResponse
+    private function handleAuthentication($googleUser, string $token): RedirectResponse
     {
-        // Lookup user by GitHub ID
-        $user = $this->userRepository->findByGitHubId($githubUser->getId())
-            ?? $this->userRepository->findByEmail($githubUser->getEmail());
+        // Lookup user by Google ID
+        $user = $this->userRepository->findByGoogleId($googleUser->getId());
 
         // Create user if doesn't exist (web mode only)
         if (! $user) {
             if (RequestContextResolver::isDesktop()) {
-                \Log::debug('GitHub user not found in desktop mode', [
-                    'github_user_id' => $githubUser->getId(),
-                ]);
-                return redirect('/login')
+                return redirect('/')
                     ->with('error', 'User not found. Please sign up via web first.');
             }
 
             // Validate email is present
-            if (! $githubUser->getEmail()) {
-                return redirect('/login')
-                    ->with('error', 'Please make your GitHub email public to continue.');
+            if (! $googleUser->getEmail()) {
+                return redirect('/')
+                    ->with('error', 'Unable to retrieve email from Google. Please try again.');
             }
 
             $user = User::create([
-                'first_name' => $this->extractFirstName($githubUser->getName()),
-                'last_name' => $this->extractLastName($githubUser->getName()),
-                'email' => $githubUser->getEmail(),
+                'first_name' => $googleUser->user['given_name'] ?? $this->extractFirstName($googleUser->getName()),
+                'last_name' => $googleUser->user['family_name'] ?? $this->extractLastName($googleUser->getName()),
+                'email' => $googleUser->getEmail(),
                 'password' => bcrypt(Str::random(16)),
                 'email_verified_at' => now(),
             ]);
         }
 
-        // Create or update GitHub connection
-        $this->createOrUpdateConnection($user, $githubUser, $token);
+        // Create or update Google connection
+        $this->createOrUpdateConnection($user, $googleUser, $token);
 
         // Login user
         Auth::guard('tenant')->login($user);
+
+        \Log::info('Google authentication successful', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'has_tenant' => \App\Models\Landlord\Tenant::current() !== null,
+            'session_id' => request()->session()->getId(),
+        ]);
 
         // Desktop mode: store in settings (if NativePHP is available)
         if (RequestContextResolver::isDesktop()) {
@@ -139,62 +142,53 @@ class GitHubOAuthController extends Controller
         // No tenant context - user needs to select/create organization
         // Show landing page with success message
         return redirect('/')
-            ->with('success', 'Successfully logged in with GitHub! Please select or create your organization.');
+            ->with('success', 'Successfully logged in with Google! Please select or create your organization.');
     }
 
     /**
      * Handle account linking flow (for already authenticated users)
      */
-    private function handleAccountLinking(User $currentUser, $githubUser, string $token): RedirectResponse
+    private function handleAccountLinking(User $currentUser, $googleUser, string $token): RedirectResponse
     {
-        // Check if this GitHub account is already linked to another user
-        $existingConnection = GitHubConnection::where('github_user_id', $githubUser->getId())
+        // Check if this Google account is already linked to another user
+        $existingConnection = GoogleConnection::where('google_user_id', $googleUser->getId())
             ->where('user_id', '!=', $currentUser->id)
             ->first();
 
         if ($existingConnection) {
             return redirect()->route('settings.integrations')
-                ->with('error', 'This GitHub account is already linked to another user.');
+                ->with('error', 'This Google account is already linked to another user.');
         }
 
-        // Check if current user already has a GitHub connection
-        $currentConnection = GitHubConnection::where('user_id', $currentUser->id)->first();
+        // Check if current user already has a Google connection
+        $currentConnection = GoogleConnection::where('user_id', $currentUser->id)->first();
 
-        if ($currentConnection && $currentConnection->github_user_id != $githubUser->getId()) {
-            // User is trying to link a different GitHub account
+        if ($currentConnection && $currentConnection->google_user_id != $googleUser->getId()) {
+            // User is trying to link a different Google account
             return redirect()->route('settings.integrations')
                 ->with('confirm_replace', [
-                    'message' => 'You already have a GitHub account linked. Do you want to replace it?',
-                    'current_username' => $currentConnection->username,
-                    'new_username' => $githubUser->getNickname(),
+                    'message' => 'You already have a Google account linked. Do you want to replace it?',
+                    'current_email' => $currentConnection->email,
+                    'new_email' => $googleUser->getEmail(),
                     'temp_data' => encrypt([
-                        'github_user_id' => $githubUser->getId(),
-                        'username' => $githubUser->getNickname(),
+                        'google_user_id' => $googleUser->getId(),
+                        'email' => $googleUser->getEmail(),
                         'access_token' => $token,
-                        'refresh_token' => $githubUser->refreshToken ?? null,
-                        'expires_in' => $githubUser->expiresIn ?? null,
+                        'refresh_token' => $googleUser->refreshToken ?? null,
+                        'expires_in' => $googleUser->expiresIn ?? null,
                     ]),
                 ]);
         }
 
         // Create or update the connection
-        $connection = $this->createOrUpdateConnection($currentUser, $githubUser, $token);
-
-        // Test the connection
-        $service = new GitHubService($connection);
-        if (! $service->testConnection()) {
-            $connection->delete();
-
-            return redirect()->route('settings.integrations')
-                ->with('error', 'Failed to establish GitHub connection. Please try again.');
-        }
+        $this->createOrUpdateConnection($currentUser, $googleUser, $token);
 
         return redirect()->route('settings.integrations')
-            ->with('success', "GitHub account @{$githubUser->getNickname()} linked successfully!");
+            ->with('success', "Google account {$googleUser->getEmail()} linked successfully!");
     }
 
     /**
-     * Confirm replacement of existing GitHub connection
+     * Confirm replacement of existing Google connection
      */
     public function confirmReplace(Request $request): RedirectResponse
     {
@@ -205,7 +199,7 @@ class GitHubOAuthController extends Controller
 
         if ($request->confirm !== 'yes') {
             return redirect()->route('settings.integrations')
-                ->with('info', 'GitHub account linking cancelled.');
+                ->with('info', 'Google account linking cancelled.');
         }
 
         try {
@@ -213,54 +207,45 @@ class GitHubOAuthController extends Controller
             $currentUser = Auth::user();
 
             // Delete existing connection
-            GitHubConnection::where('user_id', $currentUser->id)->delete();
+            GoogleConnection::where('user_id', $currentUser->id)->delete();
 
             // Create new connection
-            $connection = GitHubConnection::create([
+            GoogleConnection::create([
                 'user_id' => $currentUser->id,
-                'github_user_id' => $tempData['github_user_id'],
-                'username' => $tempData['username'],
+                'google_user_id' => $tempData['google_user_id'],
+                'email' => $tempData['email'],
                 'access_token' => $tempData['access_token'],
                 'refresh_token' => $tempData['refresh_token'],
                 'token_expires_at' => $tempData['expires_in'] ?
                     now()->addSeconds($tempData['expires_in']) : null,
             ]);
 
-            // Test the connection
-            $service = new GitHubService($connection);
-            if (! $service->testConnection()) {
-                $connection->delete();
-
-                return redirect()->route('settings.integrations')
-                    ->with('error', 'Failed to establish GitHub connection.');
-            }
-
             return redirect()->route('settings.integrations')
-                ->with('success', "GitHub account @{$tempData['username']} linked successfully!");
+                ->with('success', "Google account {$tempData['email']} linked successfully!");
 
         } catch (\Exception $e) {
             return redirect()->route('settings.integrations')
-                ->with('error', 'Failed to link GitHub account.');
+                ->with('error', 'Failed to link Google account.');
         }
     }
 
     /**
-     * Disconnect GitHub account
+     * Disconnect Google account
      */
     public function disconnect(Request $request): RedirectResponse
     {
-        $connection = GitHubConnection::where('user_id', Auth::id())->first();
+        $connection = GoogleConnection::where('user_id', Auth::id())->first();
 
         if ($connection) {
-            $username = $connection->username;
+            $email = $connection->email;
             $connection->delete();
 
             return redirect()->back()
-                ->with('success', "GitHub account @{$username} disconnected successfully.");
+                ->with('success', "Google account {$email} disconnected successfully.");
         }
 
         return redirect()->back()
-            ->with('error', 'No GitHub account found to disconnect.');
+            ->with('error', 'No Google account found to disconnect.');
     }
 
     /**
@@ -268,7 +253,7 @@ class GitHubOAuthController extends Controller
      */
     public function status()
     {
-        $connection = GitHubConnection::where('user_id', Auth::id())->first();
+        $connection = GoogleConnection::where('user_id', Auth::id())->first();
 
         if (! $connection) {
             return response()->json([
@@ -277,34 +262,31 @@ class GitHubOAuthController extends Controller
             ]);
         }
 
-        $service = new GitHubService($connection);
-        $isValid = $service->testConnection();
-
         return response()->json([
-            'connected' => $isValid,
-            'status' => $isValid ? 'connected' : 'invalid_token',
-            'username' => $connection->username,
+            'connected' => true,
+            'status' => 'connected',
+            'email' => $connection->email,
             'connected_at' => $connection->created_at->toISOString(),
             'token_expired' => $connection->isTokenExpired(),
         ]);
     }
 
     /**
-     * Create or update GitHub connection
+     * Create or update Google connection
      */
-    private function createOrUpdateConnection(User $user, $githubUser, string $token): GitHubConnection
+    private function createOrUpdateConnection(User $user, $googleUser, string $token): GoogleConnection
     {
-        return GitHubConnection::updateOrCreate(
+        return GoogleConnection::updateOrCreate(
             [
                 'user_id' => $user->id,
             ],
             [
-                'github_user_id' => $githubUser->getId(),
-                'username' => $githubUser->getNickname(),
+                'google_user_id' => $googleUser->getId(),
+                'email' => $googleUser->getEmail(),
                 'access_token' => $token,
-                'refresh_token' => $githubUser->refreshToken ?? null,
-                'token_expires_at' => $githubUser->expiresIn ?
-                    now()->addSeconds($githubUser->expiresIn) : null,
+                'refresh_token' => $googleUser->refreshToken ?? null,
+                'token_expires_at' => $googleUser->expiresIn ?
+                    now()->addSeconds($googleUser->expiresIn) : null,
             ]
         );
     }
@@ -315,7 +297,7 @@ class GitHubOAuthController extends Controller
     private function extractFirstName(?string $fullName): string
     {
         if (! $fullName) {
-            return 'GitHub';
+            return 'Google';
         }
         $parts = explode(' ', $fullName, 2);
 

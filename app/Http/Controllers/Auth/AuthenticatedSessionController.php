@@ -114,11 +114,30 @@ class AuthenticatedSessionController extends Controller
     //     return to_route('dashboard');
     // }
 
+    public function create()
+    {
+        return Inertia::render('Auth/Login', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => session('status'),
+        ]);
+    }
+
     /**
      * Handle an incoming authentication request (password-based fallback).
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Find tenant by space identifier
+        $tenant = Tenant::where('host', $request->input('space'))->first();
+        if (! $tenant) {
+            return back()->withErrors([
+                'space' => 'Space not found. Please check your organization identifier.',
+            ])->onlyInput('email', 'space');
+        }
+
+        // Set tenant context before authentication
+        $tenant->makeCurrent();
+
         $request->authenticate();
         $request->session()->regenerate();
 

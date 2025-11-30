@@ -38,6 +38,13 @@ class LocalUserRepository implements UserRepositoryInterface
         })->first();
     }
 
+    public function findByGoogleId(string $googleUserId): ?User
+    {
+        return User::whereHas('googleConnection', function ($query) use ($googleUserId) {
+            $query->where('google_user_id', $googleUserId);
+        })->first();
+    }
+
     public function findByEmail(string $email): ?User
     {
         return User::where('email', $email)->first();
