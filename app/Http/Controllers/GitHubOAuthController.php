@@ -18,10 +18,11 @@ class GitHubOAuthController extends Controller
     public function redirect(): RedirectResponse
     {
         // Ensure user is authenticated before linking
-        if (!Auth::check()) {
-            return redirect()->route('login')
-                ->with('error', 'Please log in first to connect your GitHub account.');
-        }
+        // if (!Auth::check()) {
+        //     return redirect()->route('login')
+        //         ->with('error', 'Please log in first to connect your GitHub account.');
+        // }
+
 
         return Socialite::driver('github')
             ->scopes(['repo', 'user:email'])

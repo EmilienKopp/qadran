@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Native\Desktop\Facades\Settings;
 use WorkOS\UserManagement;
-use WorkOS\WorkOS;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -136,6 +135,12 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        // NOTE: To fully logout from WorkOS AuthKit, we would need to:
+        // 1. Store the WorkOS access token (or sid claim) during authentication
+        // 2. Extract the sid and redirect to WorkOS logout URL
+        // For now, we only logout from Laravel. The WorkOS session will timeout
+        // based on your WorkOS dashboard session timeout configuration.
 
         return redirect('/');
     }
