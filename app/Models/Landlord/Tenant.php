@@ -11,7 +11,7 @@ use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant
 {
-    use HasFactory, UsesLandlordConnection, HasFeatures;
+    use HasFactory, HasFeatures, UsesLandlordConnection;
 
     protected $fillable = [
         'id',

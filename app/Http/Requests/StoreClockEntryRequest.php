@@ -26,7 +26,7 @@ class StoreClockEntryRequest extends FormRequest
             'out' => ['date'],
             'note' => ['nullable', 'string'],
             'project_id' => ['exists:tenant.projects,id'],
-            'user_id' => ['required','exists:tenant.users,id'],
+            'user_id' => ['required', 'exists:tenant.users,id'],
             'timezone' => ['nullable', 'timezone'],
         ];
     }

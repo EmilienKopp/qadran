@@ -1,12 +1,11 @@
 <?php
 
-
 return [
 
     'associations' => [
-      'qadranio' => config('plans.secret'),
-      'devdan' => config('plans.secret'),
-      'demo' => config('plans.secret'),
+        'qadranio' => config('plans.secret'),
+        'devdan' => config('plans.secret'),
+        'demo' => config('plans.secret'),
     ],
 
     'secret' => [
@@ -34,4 +33,4 @@ return [
             'voice_assistant' => 'premium',
         ],
     ],
-  ];
+];

@@ -12,7 +12,7 @@ class PrismAIActionTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('not implemented in PrismAIAction');
 
-        $action = new PrismAIAction();
+        $action = new PrismAIAction;
         $action->textToCommand('system prompt', 'user text');
     }
 }

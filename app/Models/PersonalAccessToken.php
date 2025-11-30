@@ -7,8 +7,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class PersonalAccessToken extends SanctumPersonalAccessToken
 {
-  use UsesTenantConnection;
+    use UsesTenantConnection;
 
-  protected $table = 'personal_access_tokens';
-
+    protected $table = 'personal_access_tokens';
 }

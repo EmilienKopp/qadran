@@ -7,10 +7,10 @@ use JsonSerializable;
 class VoiceCommand implements JsonSerializable
 {
     /**
-     * @param string $command The command name
-     * @param array<CommandParameter> $params Array of command parameters
-     * @param float|null $confidence Confidence score (0-1)
-     * @param array|null $metadata Additional metadata
+     * @param  string  $command  The command name
+     * @param  array<CommandParameter>  $params  Array of command parameters
+     * @param  float|null  $confidence  Confidence score (0-1)
+     * @param  array|null  $metadata  Additional metadata
      */
     public function __construct(
         public string $command,
@@ -23,10 +23,10 @@ class VoiceCommand implements JsonSerializable
     {
         return array_filter([
             'command' => $this->command,
-            'params' => array_map(fn(CommandParameter $p) => $p->jsonSerialize(), $this->params),
+            'params' => array_map(fn (CommandParameter $p) => $p->jsonSerialize(), $this->params),
             'confidence' => $this->confidence,
             'metadata' => $this->metadata,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     public static function fromArray(array $data): self
@@ -34,7 +34,7 @@ class VoiceCommand implements JsonSerializable
         return new self(
             command: $data['command'],
             params: array_map(
-                fn(array $param) => CommandParameter::fromArray($param),
+                fn (array $param) => CommandParameter::fromArray($param),
                 $data['params'] ?? []
             ),
             confidence: $data['confidence'] ?? null,
@@ -52,6 +52,7 @@ class VoiceCommand implements JsonSerializable
                 return $param;
             }
         }
+
         return null;
     }
 
@@ -68,7 +69,8 @@ class VoiceCommand implements JsonSerializable
      */
     public function hasRequiredParams(array $requiredLabels): bool
     {
-        $paramLabels = array_map(fn(CommandParameter $p) => $p->label, $this->params);
+        $paramLabels = array_map(fn (CommandParameter $p) => $p->label, $this->params);
+
         return empty(array_diff($requiredLabels, $paramLabels));
     }
 
@@ -82,7 +84,7 @@ class VoiceCommand implements JsonSerializable
         }
 
         foreach ($this->params as $param) {
-            if (!$param instanceof CommandParameter) {
+            if (! $param instanceof CommandParameter) {
                 return false;
             }
         }
@@ -157,6 +159,6 @@ class VoiceCommand implements JsonSerializable
             return new \DateTime($timestamp);
         }
 
-        return new \DateTime();
+        return new \DateTime;
     }
 }

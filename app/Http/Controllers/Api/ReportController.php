@@ -20,12 +20,14 @@ class ReportController extends Controller
     public function show(int $id)
     {
         $report = $this->reportRepository->find($id);
+
         return response()->json($report);
     }
 
     public function byProject(int $projectId)
     {
         $reports = $this->reportRepository->findByProject($projectId);
+
         return response()->json($reports);
     }
 
@@ -36,6 +38,7 @@ class ReportController extends Controller
         ]);
 
         $report = $this->reportRepository->create($validated);
+
         return response()->json($report, 201);
     }
 
@@ -46,19 +49,20 @@ class ReportController extends Controller
         ]);
 
         $report = $this->reportRepository->update($id, $validated);
-        if (!$report) {
+        if (! $report) {
             return response()->json(['error' => 'Report not found'], 404);
         }
+
         return response()->json($report);
     }
 
     public function destroy(int $id)
     {
         $deleted = $this->reportRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['error' => 'Report not found'], 404);
         }
+
         return response()->json(['message' => 'Report deleted'], 200);
     }
-
 }

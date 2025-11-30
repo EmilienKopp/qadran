@@ -2,7 +2,6 @@
 
 namespace App\Models\Views;
 
-use App\Traits\CanSortPaginatedWithCallback;
 use Illuminate\Database\Eloquent\Model;
 
 /**

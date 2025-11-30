@@ -3,9 +3,9 @@
 namespace App\Domain\Project;
 
 use App\Models\Organization;
+use App\Models\Project;
 use App\Models\Rate;
 use App\Models\User;
-use App\Models\Project;
 use Date;
 use Illuminate\Support\Collection;
 
@@ -15,83 +15,91 @@ const SPECIFICITY_DEFAULT = 3;
 
 class ProjectCost
 {
+    public Project $project;
 
-  public Project $project;
-  public Organization $organization;
-  public Collection $users;
-  public Collection $entries;
-  public Collection $rates;
-  public int $currentCost;
+    public Organization $organization;
 
-  public function __construct(Project $project)
-  {
-    $this->project = $project->load('organization', 'users', 'entries');
-    $this->organization = $project->organization;
-    $this->users = $project->users;
-    $this->entries = $project->entries;
-    $this->rates = $this->fetchAllRatesForProject();
-  }
+    public Collection $users;
 
+    public Collection $entries;
 
-  public function calculateCost($cutoffDate = null): int
-  {
-    $cost = 0;
-    $cutoffDate = $cutoffDate ? Date::make($cutoffDate) : now();
+    public Collection $rates;
 
-    $selectedEntries = $this->entries->where('out', '<=', $cutoffDate);
+    public int $currentCost;
 
-    foreach ($selectedEntries as $entry) {
-      if (!$entry->duration_seconds)
-        continue;
-
-      $duration = $this->durationToHours($entry->duration_seconds);
-      $effectiveRate = $this->getRateBySpecificity(
-        $entry->user_id, 
-        $this->organization->id
-      );
-
-      if ($effectiveRate) {
-        $cost += $effectiveRate->amount * $duration;
-      }
+    public function __construct(Project $project)
+    {
+        $this->project = $project->load('organization', 'users', 'entries');
+        $this->organization = $project->organization;
+        $this->users = $project->users;
+        $this->entries = $project->entries;
+        $this->rates = $this->fetchAllRatesForProject();
     }
-    return $cost;
-  }
 
-  private function roundDurationToNearestMinute(int $seconds): int
-  {
-    return round($seconds / 60) * 60;
-  }
+    public function calculateCost($cutoffDate = null): int
+    {
+        $cost = 0;
+        $cutoffDate = $cutoffDate ? Date::make($cutoffDate) : now();
 
-  private function durationToHours(int $seconds): float
-  {
-    $duration = $this->roundDurationToNearestMinute($seconds);
-    return $duration / 3600;
-  }
+        $selectedEntries = $this->entries->where('out', '<=', $cutoffDate);
 
-  private function fetchAllRatesForProject(): Collection
-  {
-    return Rate::where('project_id', $this->project->id)
-      ->orWhere('organization_id', $this->organization->id)
-      ->orWhereIn('user_id', $this->users->pluck('id'))
-      ->get();
-  }
+        foreach ($selectedEntries as $entry) {
+            if (! $entry->duration_seconds) {
+                continue;
+            }
 
-  /**
-   * Get the most specific rate for a project based on user and organization.
-   * Returns user-specific rate first, then organization-specific, then default (project-wide).
-   */
-  private function getRateBySpecificity(int $userId, int $organizationId): ?Rate
-  {
-    return $this->rates
-      ->sortBy(function ($rate) use ($userId, $organizationId) {
+            $duration = $this->durationToHours($entry->duration_seconds);
+            $effectiveRate = $this->getRateBySpecificity(
+                $entry->user_id,
+                $this->organization->id
+            );
 
-        if ($rate->user_id === $userId)
-          return SPECIFICITY_USER;
+            if ($effectiveRate) {
+                $cost += $effectiveRate->amount * $duration;
+            }
+        }
 
-        if ($rate->organization_id === $organizationId)
-          return SPECIFICITY_ORGANIZATION;
+        return $cost;
+    }
 
-        return SPECIFICITY_DEFAULT;
-      })->first();
-  }
+    private function roundDurationToNearestMinute(int $seconds): int
+    {
+        return round($seconds / 60) * 60;
+    }
+
+    private function durationToHours(int $seconds): float
+    {
+        $duration = $this->roundDurationToNearestMinute($seconds);
+
+        return $duration / 3600;
+    }
+
+    private function fetchAllRatesForProject(): Collection
+    {
+        return Rate::where('project_id', $this->project->id)
+            ->orWhere('organization_id', $this->organization->id)
+            ->orWhereIn('user_id', $this->users->pluck('id'))
+            ->get();
+    }
+
+    /**
+     * Get the most specific rate for a project based on user and organization.
+     * Returns user-specific rate first, then organization-specific, then default (project-wide).
+     */
+    private function getRateBySpecificity(int $userId, int $organizationId): ?Rate
+    {
+        return $this->rates
+            ->sortBy(function ($rate) use ($userId, $organizationId) {
+
+                if ($rate->user_id === $userId) {
+                    return SPECIFICITY_USER;
+                }
+
+                if ($rate->organization_id === $organizationId) {
+                    return SPECIFICITY_ORGANIZATION;
+                }
+
+                return SPECIFICITY_DEFAULT;
+            })->first();
+    }
 }

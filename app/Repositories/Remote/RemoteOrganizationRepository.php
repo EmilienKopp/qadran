@@ -13,6 +13,7 @@ class RemoteOrganizationRepository extends BaseRemoteRepository implements Organ
     {
         try {
             $data = $this->get("{$this->resourceEndpoint}/{$id}");
+
             return $this->hydrate($data);
         } catch (\Exception $e) {
             return null;
@@ -22,18 +23,21 @@ class RemoteOrganizationRepository extends BaseRemoteRepository implements Organ
     public function all(): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint);
+
         return $this->hydrateCollection($data);
     }
 
     public function findByUser(int $userId): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint, ['user_id' => $userId]);
+
         return $this->hydrateCollection($data);
     }
 
     public function create(array $data): Organization
     {
         $responseData = $this->post($this->resourceEndpoint, $data);
+
         return $this->hydrate($responseData);
     }
 
@@ -41,6 +45,7 @@ class RemoteOrganizationRepository extends BaseRemoteRepository implements Organ
     {
         try {
             $responseData = $this->put("{$this->resourceEndpoint}/{$id}", $data);
+
             return $this->hydrate($responseData);
         } catch (\Exception $e) {
             return null;

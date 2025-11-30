@@ -3,22 +3,21 @@
 namespace App\Services;
 
 use App\Enums\RoleEnum;
-use App\Enums\OrganizationType;
 use App\Models\Landlord\Tenant;
 use App\Models\Organization;
-use App\Models\User;
 use App\Models\OrganizationUser;
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use WorkOS\Organizations;
 use WorkOS\UserManagement;
-use Exception;
 
+use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\warning;
-use function Laravel\Prompts\error;
 
 class OrganizationSetupService
 {
@@ -39,7 +38,7 @@ class OrganizationSetupService
         return [
             'organization' => $organization,
             'tenant' => $tenant,
-            'user' => $user
+            'user' => $user,
         ];
     }
 
@@ -53,9 +52,10 @@ class OrganizationSetupService
 
         // Check if organization already exists
         $existing = Organization::where('name', $orgData['name'])->first();
-        
+
         if ($existing) {
             warning("  ⚠️  Organization '{$orgData['name']}' already exists - using existing");
+
             return $existing;
         }
 
@@ -63,7 +63,7 @@ class OrganizationSetupService
         $createData = [
             'name' => $orgData['name'],
             'type' => $orgData['type']->value,
-            'description' => $orgData['name'] . ' organization'
+            'description' => $orgData['name'].' organization',
         ];
 
         // Handle WorkOS integration
@@ -85,15 +85,16 @@ class OrganizationSetupService
     public function createWorkOSOrganization(array $orgData): string
     {
         try {
-            $organizations = new Organizations();
-            
+            $organizations = new Organizations;
+
             $workosOrg = $organizations->createOrganization($orgData['name']);
 
             info("  ✅ Created WorkOS organization: {$workosOrg->id}");
+
             return $workosOrg->id;
 
         } catch (Exception $e) {
-            error("  ❌ Failed to create WorkOS organization: " . $e->getMessage());
+            error('  ❌ Failed to create WorkOS organization: '.$e->getMessage());
             throw $e;
         }
     }
@@ -103,14 +104,15 @@ class OrganizationSetupService
      */
     public function createTenant(Organization $organization, array $orgData): Tenant
     {
-        $database = 'qadran_' . Str::slug($orgData['name'], '_');
-        $domain = Str::slug($orgData['name']) . '.local';
+        $database = 'qadran_'.Str::slug($orgData['name'], '_');
+        $domain = Str::slug($orgData['name']).'.local';
 
         // Check if tenant already exists
         $existing = Tenant::where('org_id', $organization->id)->first();
-        
+
         if ($existing) {
-            warning("  ⚠️  Tenant for organization already exists - using existing");
+            warning('  ⚠️  Tenant for organization already exists - using existing');
+
             return $existing;
         }
 
@@ -122,7 +124,7 @@ class OrganizationSetupService
             'database' => $database,
             'domain' => $domain,
             'host' => Str::slug($orgData['name']),
-            'org_id' => $organization->id
+            'org_id' => $organization->id,
         ]);
 
         info("  ✅ Created tenant: {$tenant->name} (Database: {$database})");
@@ -135,21 +137,22 @@ class OrganizationSetupService
      */
     public function createTenantDatabase(string $database): void
     {
-        $templateDb = env('DB_DATABASE', 'tenant') . '_template';
+        $templateDb = env('DB_DATABASE', 'tenant').'_template';
 
         try {
             $pdo = new \PDO(
-                "pgsql:host=" . env('DB_HOST') . ";port=" . env('DB_PORT', 5432),
+                'pgsql:host='.env('DB_HOST').';port='.env('DB_PORT', 5432),
                 env('DB_USERNAME'),
                 env('DB_PASSWORD')
             );
 
             // Check if database exists
-            $stmt = $pdo->prepare("SELECT 1 FROM pg_database WHERE datname = ?");
+            $stmt = $pdo->prepare('SELECT 1 FROM pg_database WHERE datname = ?');
             $stmt->execute([$database]);
 
             if ($stmt->fetch()) {
                 warning("    ⚠️  Tenant database '{$database}' already exists - skipping creation");
+
                 return;
             }
 
@@ -158,7 +161,7 @@ class OrganizationSetupService
             info("    ✅ Created tenant database: {$database}");
 
         } catch (Exception $e) {
-            error("    ❌ Failed to create tenant database: " . $e->getMessage());
+            error('    ❌ Failed to create tenant database: '.$e->getMessage());
             throw $e;
         }
     }
@@ -178,9 +181,10 @@ class OrganizationSetupService
 
             // Check if user already exists
             $existing = User::where('email', $userData['email'])->first();
-            
+
             if ($existing) {
                 warning("  ⚠️  User '{$userData['email']}' already exists in tenant - using existing");
+
                 return $existing;
             }
 
@@ -198,7 +202,7 @@ class OrganizationSetupService
                 'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
                 'workos_id' => $workosId,
-                'email_verified_at' => now()
+                'email_verified_at' => now(),
             ]);
 
             // Create roles if they don't exist
@@ -211,16 +215,16 @@ class OrganizationSetupService
             OrganizationUser::create([
                 'user_id' => $user->id,
                 'organization_id' => $organization->id,
-                'elevated' => true
+                'elevated' => true,
             ]);
 
             info("  ✅ Created admin user: {$user->email}");
-            info("  ✅ Assigned roles: Admin, Business Owner");
+            info('  ✅ Assigned roles: Admin, Business Owner');
 
             return $user;
 
         } catch (Exception $e) {
-            error("  ❌ Failed to create user in tenant: " . $e->getMessage());
+            error('  ❌ Failed to create user in tenant: '.$e->getMessage());
             throw $e;
         } finally {
             // Reset database connection to default
@@ -234,8 +238,8 @@ class OrganizationSetupService
     public function createWorkOSUser(array $userData): string
     {
         try {
-            $userManagement = new UserManagement();
-            
+            $userManagement = new UserManagement;
+
             $nameParts = explode(' ', $userData['name'], 2);
             $firstName = $nameParts[0] ?? $userData['name'];
             $lastName = $nameParts[1] ?? '';
@@ -249,10 +253,11 @@ class OrganizationSetupService
             );
 
             info("  ✅ Created WorkOS user: {$workosUser->id}");
+
             return $workosUser->id;
 
         } catch (Exception $e) {
-            error("  ❌ Failed to create WorkOS user: " . $e->getMessage());
+            error('  ❌ Failed to create WorkOS user: '.$e->getMessage());
             throw $e;
         }
     }
@@ -264,14 +269,14 @@ class OrganizationSetupService
     {
         try {
             foreach (RoleEnum::values() as $roleName) {
-                if (!Role::where('name', $roleName)->exists()) {
+                if (! Role::where('name', $roleName)->exists()) {
                     Role::create(['name' => $roleName]);
                 }
             }
-            
-            info("    ✅ Roles created/verified in tenant");
+
+            info('    ✅ Roles created/verified in tenant');
         } catch (Exception $e) {
-            error("    ❌ Failed to create roles: " . $e->getMessage());
+            error('    ❌ Failed to create roles: '.$e->getMessage());
             throw $e;
         }
     }

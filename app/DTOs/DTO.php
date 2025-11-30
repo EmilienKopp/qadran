@@ -20,6 +20,7 @@ class DTO implements Arrayable
                 $data[$key] = $value;
             }
         }
+
         return $data;
     }
 }

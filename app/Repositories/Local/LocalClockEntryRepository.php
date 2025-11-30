@@ -38,19 +38,21 @@ class LocalClockEntryRepository implements ClockEntryRepositoryInterface
     public function update(int $id, array $data): ?ClockEntry
     {
         $entry = ClockEntry::find($id);
-        if (!$entry) {
+        if (! $entry) {
             return null;
         }
         $entry->update($data);
+
         return $entry->fresh();
     }
 
     public function delete(int $id): bool
     {
         $entry = ClockEntry::find($id);
-        if (!$entry) {
+        if (! $entry) {
             return false;
         }
+
         return $entry->delete();
     }
 }

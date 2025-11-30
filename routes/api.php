@@ -1,7 +1,6 @@
 <?php
 
 // use App\Http\Controllers\API\GitReportController;
-use App\Models\PersonalAccessToken;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +24,7 @@ Route::middleware('api')->group(function () {
     Route::get('/users', [\App\Http\Controllers\Api\UserController::class, 'index']);
     Route::get('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'show']);
     Route::get('/users/by-workos-id/{workosId}', [\App\Http\Controllers\Api\UserController::class, 'byWorkosId']);
+    Route::get('/users/by-github-id/{githubId}', [\App\Http\Controllers\Api\UserController::class, 'byGitHubId']);
     Route::get('/users/by-email', [\App\Http\Controllers\Api\UserController::class, 'byEmail']);
     Route::post('/users', [\App\Http\Controllers\Api\UserController::class, 'store']);
     Route::put('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'update']);
@@ -81,11 +81,11 @@ Route::middleware('api')->group(function () {
 });
 
 // Route all GET routes to just return the result of the DataAccess/Local class method called
-//TODO: Depcrecate
+// TODO: Depcrecate
 Route::middleware('api')->group(function () {
     // Special route for find method with ID parameter
     Route::get('/{model}/find/{id}', function (Request $request, $model, $id) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
 
         \Log::debug('API GET Request (find)', [
             'dataAccessClass' => $dataAccessClass,
@@ -104,7 +104,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::get('/{model}/{method}', function (Request $request, $model, $method) {
-        $dataAccessClass = 'App\\DataAccess\\Local\\' . ucfirst($model);
+        $dataAccessClass = 'App\\DataAccess\\Local\\'.ucfirst($model);
         $args = $request->query(); // Use query() instead of all() to exclude route params
 
         if (class_exists($dataAccessClass) && method_exists($dataAccessClass, $method)) {

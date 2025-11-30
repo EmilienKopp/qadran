@@ -1,16 +1,14 @@
 <?php
 
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\PersonalAccessToken;
 use App\Models\Landlord\Tenant;
+use App\Models\PersonalAccessToken;
+use Illuminate\Http\Request;
 
 class N8NController extends Controller
 {
-
     public function decryptTenant(Request $request)
     {
         $request->validate(['tenant_id' => 'required']);
@@ -35,7 +33,6 @@ class N8NController extends Controller
         }
     }
 
-
     /**
      * Handle incoming webhook requests from n8n.
      *
@@ -44,6 +41,6 @@ class N8NController extends Controller
      */
     public function handleWebhook()
     {
-        //TODO
+        // TODO
     }
 }

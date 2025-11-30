@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\ProjectRole;
-use App\Utils\Formatters;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProjectUserSeeder extends Seeder
@@ -24,13 +22,13 @@ class ProjectUserSeeder extends Seeder
 
             $pivotData = $selectedUsers->map(function ($user) {
                 $roles = collect(ProjectRole::values())->random(rand(1, 3))->toArray();
-                
+
                 return [
                     'user_id' => $user->id,
                     'roles' => $user->id == 1 ? [ProjectRole::DEV] : $roles,
                 ];
             });
-            
+
             $project->users()->attach($pivotData->toArray());
 
         });

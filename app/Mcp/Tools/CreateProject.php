@@ -4,7 +4,6 @@ namespace App\Mcp\Tools;
 
 use App\Enums\ProjectStatus;
 use App\Enums\ProjectType;
-use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -52,7 +51,7 @@ class CreateProject extends TenantAwareTool
             );
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to create project: ' . $e->getMessage());
+            return $this->errorResponse('Failed to create project: '.$e->getMessage());
         }
     }
 

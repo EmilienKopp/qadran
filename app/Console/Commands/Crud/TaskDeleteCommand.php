@@ -24,7 +24,7 @@ class TaskDeleteCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['id'])) {
+        if (! $this->validateArguments(['id'])) {
             return self::FAILURE;
         }
 
@@ -33,19 +33,21 @@ class TaskDeleteCommand extends BaseTenantAwareCrudCommand
 
         $task = Task::find($id);
 
-        if (!$task) {
+        if (! $task) {
             $this->error("❌ Task with ID {$id} not found.");
+
             return self::FAILURE;
         }
 
         $this->warn("⚠️  About to delete task: {$task->title}");
-        
+
         if ($force) {
-            $this->warn("🔥 FORCE DELETE: This will permanently remove the task and cannot be undone!");
+            $this->warn('🔥 FORCE DELETE: This will permanently remove the task and cannot be undone!');
         }
 
-        if (!$this->confirm('Are you sure you want to proceed?')) {
+        if (! $this->confirm('Are you sure you want to proceed?')) {
             $this->info('❌ Operation cancelled.');
+
             return self::SUCCESS;
         }
 
@@ -57,10 +59,11 @@ class TaskDeleteCommand extends BaseTenantAwareCrudCommand
                 $task->delete();
                 $this->info("🗑️  Task deleted: {$task->title}");
             }
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to delete task: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

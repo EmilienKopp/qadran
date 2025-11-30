@@ -28,15 +28,16 @@ class TaskUpdateCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['id'])) {
+        if (! $this->validateArguments(['id'])) {
             return self::FAILURE;
         }
 
         $id = $this->argument('id');
         $task = Task::find($id);
 
-        if (!$task) {
+        if (! $task) {
             $this->error("❌ Task with ID {$id} not found.");
+
             return self::FAILURE;
         }
 
@@ -54,8 +55,9 @@ class TaskUpdateCommand extends BaseTenantAwareCrudCommand
         }
 
         if ($priority = $this->option('priority')) {
-            if (!in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
-                $this->error("❌ Invalid priority. Must be one of: low, medium, high, urgent");
+            if (! in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
+                $this->error('❌ Invalid priority. Must be one of: low, medium, high, urgent');
+
                 return self::FAILURE;
             }
             $updates['priority'] = $priority;
@@ -69,13 +71,15 @@ class TaskUpdateCommand extends BaseTenantAwareCrudCommand
             try {
                 $updates['due_date'] = \Carbon\Carbon::createFromFormat('Y-m-d', $dueDate);
             } catch (\Exception $e) {
-                $this->error("❌ Invalid due date format. Use YYYY-MM-DD (e.g., 2025-12-31)");
+                $this->error('❌ Invalid due date format. Use YYYY-MM-DD (e.g., 2025-12-31)');
+
                 return self::FAILURE;
             }
         }
 
         if (empty($updates)) {
             $this->warn('⚠️  No updates provided. Use options like --title, --description, --priority, etc.');
+
             return self::SUCCESS;
         }
 
@@ -84,10 +88,11 @@ class TaskUpdateCommand extends BaseTenantAwareCrudCommand
             $task->refresh();
 
             $this->showSuccess('Task updated', $task);
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to update task: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

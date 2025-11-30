@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Landlord\KnownIssue;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class KnownIssueWebhookController extends Controller
 {
@@ -26,7 +26,7 @@ class KnownIssueWebhookController extends Controller
 
             \Log::debug('Received webhook', [
                 'issue_count' => count($issues),
-                'has_github_data' => !empty($githubData),
+                'has_github_data' => ! empty($githubData),
             ]);
 
             $created = 0;
@@ -55,7 +55,7 @@ class KnownIssueWebhookController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process webhook: ' . $e->getMessage(),
+                'message' => 'Failed to process webhook: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -137,7 +137,7 @@ class KnownIssueWebhookController extends Controller
         // Match Jira issue keys (e.g., QAD-123, PROJ-456)
         preg_match_all('/\b([A-Z]{2,10}-\d+)\b/', $text, $matches);
 
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             foreach ($matches[1] as $key) {
                 $jiraKeys[] = $key;
             }
@@ -151,8 +151,9 @@ class KnownIssueWebhookController extends Controller
     {
         $jiraKey = $issueData['key'] ?? null;
 
-        if (!$jiraKey) {
+        if (! $jiraKey) {
             Log::warning('Skipping issue without key', ['data' => $issueData]);
+
             return;
         }
 

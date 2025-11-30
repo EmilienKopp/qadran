@@ -11,7 +11,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class RateType extends Model
 {
     use UsesTenantConnection;
-    
+
     protected $fillable = [
         'name',
         'description',
@@ -44,4 +44,4 @@ class RateType extends Model
     {
         return $this->belongsTo(User::class);
     }
-} 
+}

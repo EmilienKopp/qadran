@@ -8,7 +8,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class RepositorySettings extends Model
 {
     use UsesTenantConnection;
-    
+
     protected $fillable = [
         'repository_id',
         'repository',

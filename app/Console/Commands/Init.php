@@ -378,7 +378,7 @@ class Init extends Command
 
         $tenant = Tenant::where('database', $this->TENANT_TEMPLATE_DATABASE)->first();
 
-        if (!$tenant) {
+        if (! $tenant) {
             $this->error('Tenant template not found');
             throw new \Exception('Tenant template not found');
         }
@@ -390,7 +390,7 @@ class Init extends Command
         Config::set('database.connections.tenant.database', $tenant->database);
         DB::purge('tenant');
 
-        $this->info('Running migrations on tenant database: ' . $tenant->database);
+        $this->info('Running migrations on tenant database: '.$tenant->database);
 
         $this->call('migrate', [
             '--database' => 'tenant',

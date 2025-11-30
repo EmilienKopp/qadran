@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use Illuminate\Support\Facades\Context;
 use Native\Laravel\Events\App\ApplicationBooted;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ApplicationBootedListener
 {

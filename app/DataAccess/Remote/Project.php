@@ -2,7 +2,7 @@
 
 namespace App\DataAccess\Remote;
 
-use App\DataAccess\{ProjectDataAccess};
+use App\DataAccess\ProjectDataAccess;
 
 class Project extends BaseRemoteAccess implements ProjectDataAccess
 {

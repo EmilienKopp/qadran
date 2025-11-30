@@ -71,7 +71,6 @@ class GetClockEntries extends Tool
             $summary .= ". Total time: {$totalHours} hours ({$totalSeconds} seconds)";
         }
 
-
         $table = "\n\n## Clock Entries\n\n";
         $table .= "| ID | Project | ProjectId | Clock In | Clock Out | Duration | Notes |\n";
         $table .= "|---|---|---|---|---|---|\n";

@@ -3,16 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Landlord\Tenant;
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
-use Laravel\Pennant\Feature;
-use Native\Desktop\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;
-use Laravel\Sanctum\Sanctum;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,13 +20,12 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         app()->singleton(UserManagement::class, function ($app) {
-            return new UserManagement();
+            return new UserManagement;
         });
 
         // Register multitenancy service provider
         $this->app->register(\Spatie\Multitenancy\MultitenancyServiceProvider::class);
     }
-
 
     /**
      * Bootstrap any application services.
@@ -50,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Register custom user provider for desktop mode
             Auth::provider('remote', function ($app, array $config) {
-                return new \App\Auth\RemoteUserProvider();
+                return new \App\Auth\RemoteUserProvider;
             });
 
             // Use remote provider for tenant guard

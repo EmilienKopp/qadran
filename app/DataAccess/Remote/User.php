@@ -2,7 +2,7 @@
 
 namespace App\DataAccess\Remote;
 
-use App\DataAccess\{UserDataAccess};
+use App\DataAccess\UserDataAccess;
 use App\Models\User as UserModel;
 
 class User extends BaseRemoteAccess implements UserDataAccess

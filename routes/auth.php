@@ -18,9 +18,11 @@ Route::middleware('guest')->group(function () {
 
     Route::post('welcome/register', [RegisteredUserController::class, 'store']);
 
-    Route::get('welcome/login', [AuthenticatedSessionController::class, 'create'])
+    // Primary authentication: GitHub OAuth
+    Route::get('welcome/login', [GitHubOAuthController::class, 'redirect'])
         ->name('login');
 
+    // Fallback: password-based login (keeping for backward compatibility)
     Route::post('welcome/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('welcome/forgot-password', [PasswordResetLinkController::class, 'create'])
@@ -36,8 +38,14 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
 });
-Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
-    ->name('authenticate');
+
+// GitHub OAuth callback (handles both login and linking)
+Route::get('auth/github/callback', [GitHubOAuthController::class, 'callback'])
+    ->name('github.callback');
+
+// WorkOS authentication (commented out - available for rollback)
+// Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
+//     ->name('authenticate');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

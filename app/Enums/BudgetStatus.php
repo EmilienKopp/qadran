@@ -13,5 +13,5 @@ enum BudgetStatus: string
     case Active = 'active';
     case Exhausted = 'exhausted';
     case Cancelled = 'cancelled';
-    
+
 }

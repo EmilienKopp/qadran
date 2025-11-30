@@ -106,24 +106,26 @@ class AIService
     public function textToAssistant(string $text, ?string $webhookUrl = null)
     {
         $extraData = auth('tenant')->user()->projects()->pluck('name')->toArray();
-        $systemPrompt = AIPromptRegistry::getVoiceAssistantSystemPrompt( $text,$extraData);
+        $systemPrompt = AIPromptRegistry::getVoiceAssistantSystemPrompt($text, $extraData);
         $response = $this->commandAction->textToAssistant($systemPrompt, $text, $webhookUrl);
         \Log::debug('AIService textToAssistant response', ['response' => $response]);
+
         return $response;
     }
 
     public function getMcpEndpointUrl(?string $tenantHost = null): string
     {
-        $tenant = \App\Models\Landlord\Tenant::current() 
+        $tenant = \App\Models\Landlord\Tenant::current()
             ?? \App\Models\Landlord\Tenant::where('host', $tenantHost)->first();
-        if(!$tenant) {
-             throw new \Exception('No tenant found for MCP endpoint URL generation');
+        if (! $tenant) {
+            throw new \Exception('No tenant found for MCP endpoint URL generation');
         }
         $route = route('mcp.qadran');
         if (Str::contains($route, 'localhost')) {
-            $route = 'http://host.docker.internal:' . parse_url($route, PHP_URL_PORT) . '/mcp/qadran';
+            $route = 'http://host.docker.internal:'.parse_url($route, PHP_URL_PORT).'/mcp/qadran';
         }
-        $route .= '?tenant=' . $tenant->host;
+        $route .= '?tenant='.$tenant->host;
+
         return $route;
     }
 }

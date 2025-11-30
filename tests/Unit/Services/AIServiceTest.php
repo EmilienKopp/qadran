@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\AIService;
-use App\Services\AI\Contracts\AIActionInterface;
 use App\Enums\ReportTypes;
-use Tests\TestCase;
+use App\Services\AI\Contracts\AIActionInterface;
+use App\Services\AIService;
 use Mockery;
+use Tests\TestCase;
 
 class AIServiceTest extends TestCase
 {

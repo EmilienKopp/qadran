@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Landlord\Tenant;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Landlord\Tenant;
 
 return new class extends Migration
 {

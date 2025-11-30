@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\OrganizationType;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StoreOrganizationRequest extends FormRequest
 {
@@ -24,7 +24,7 @@ class StoreOrganizationRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'in:' . OrganizationType::implode()],
+            'type' => ['required', 'string', 'in:'.OrganizationType::implode()],
             'description' => ['nullable', 'string'],
         ];
     }

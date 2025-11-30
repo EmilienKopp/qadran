@@ -38,7 +38,7 @@ class KnownIssueStatusHistory extends Model
      */
     public function getDurationHuman(): string
     {
-        if (!$this->duration_seconds) {
+        if (! $this->duration_seconds) {
             return 'Unknown';
         }
 
@@ -48,6 +48,7 @@ class KnownIssueStatusHistory extends Model
 
         if ($days > 0) {
             $hours = $hours % 24;
+
             return "{$days}d {$hours}h";
         } elseif ($hours > 0) {
             return "{$hours}h {$minutes}m";

@@ -4,11 +4,11 @@ namespace App\Repositories\Remote;
 
 use App\Repositories\BaseRepositoryInterface;
 use GuzzleHttp\Client;
-use Illuminate\Support\Collection;
 
 abstract class BaseRemoteRepository implements BaseRepositoryInterface
 {
     protected string $model;
+
     protected string $resourceEndpoint;
 
     public function __construct(protected Client $client, protected ?string $baseUrl = null)
@@ -25,14 +25,14 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
         $resource = str_replace(['Remote', 'Repository'], '', $className);
         $resource = strtolower(\Illuminate\Support\Str::plural($resource));
         $endpoint = "{$this->baseUrl}/api/{$resource}";
-        
+
         \Log::debug('BaseRemoteRepository getEndpoint', [
             'className' => $className,
             'resource' => $resource,
             'baseUrl' => $this->baseUrl,
             'endpoint' => $endpoint,
         ]);
-        
+
         return $endpoint;
     }
 
@@ -42,8 +42,8 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
     protected function get(string $endpoint, array $params = []): array
     {
         $url = $endpoint;
-        if (!empty($params)) {
-            $url .= '?' . http_build_query($params);
+        if (! empty($params)) {
+            $url .= '?'.http_build_query($params);
         }
 
         \Log::debug('BaseRemoteRepository making GET request', [
@@ -54,7 +54,7 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
         ]);
 
         $response = $this->client->get($url);
-        
+
         if ($response->getStatusCode() !== 200) {
             \Log::error('BaseRemoteRepository GET request failed', [
                 'url' => $url,
@@ -66,7 +66,7 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
 
         $data = json_decode($response->getBody()->getContents(), true);
         \Log::debug('BaseRemoteRepository GET response', ['data' => $data]);
-        
+
         return $data;
     }
 
@@ -80,10 +80,10 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-            ]
+            ],
         ]);
 
-        if (!in_array($response->getStatusCode(), [200, 201])) {
+        if (! in_array($response->getStatusCode(), [200, 201])) {
             throw new \Exception("Remote API request failed: {$response->getStatusCode()}");
         }
 
@@ -100,10 +100,10 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-            ]
+            ],
         ]);
 
-        if (!$response->getStatusCode() === 200) {
+        if (! $response->getStatusCode() === 200) {
             throw new \Exception("Remote API request failed: {$response->getStatusCode()}");
         }
 
@@ -116,17 +116,17 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
     protected function deleteRequest(string $endpoint): bool
     {
         $response = $this->client->delete($endpoint);
-        
+
         return in_array($response->getStatusCode(), [200, 204]);
     }
 
     protected function hydrate(?array $data)
     {
-        if (!$data) {
+        if (! $data) {
             return null;
         }
 
-        if (!isset($this->model)) {
+        if (! isset($this->model)) {
             throw new \Exception('Model property must be set in repository');
         }
 
@@ -138,15 +138,16 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
             }
         }
 
-        $model = new $this->model();
+        $model = new $this->model;
         $model->forceFill($data);
         $model->exists = true;
+
         return $model;
     }
 
     protected function hydrateCollection(?array $data)
     {
-        if (!$data) {
+        if (! $data) {
             return collect([]);
         }
 
@@ -158,7 +159,7 @@ abstract class BaseRemoteRepository implements BaseRepositoryInterface
             }
         }
 
-        return collect($data)->map(fn($item) => $this->hydrate($item));
+        return collect($data)->map(fn ($item) => $this->hydrate($item));
     }
 
     protected function getRepositoryName(): string

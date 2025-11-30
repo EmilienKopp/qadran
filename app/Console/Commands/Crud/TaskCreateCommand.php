@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Crud;
 
-use App\Models\Task;
 use App\Models\Project;
+use App\Models\Task;
 
 class TaskCreateCommand extends BaseTenantAwareCrudCommand
 {
@@ -29,7 +29,7 @@ class TaskCreateCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['title'])) {
+        if (! $this->validateArguments(['title'])) {
             return self::FAILURE;
         }
 
@@ -43,16 +43,18 @@ class TaskCreateCommand extends BaseTenantAwareCrudCommand
         // Validate project if provided
         if ($projectId) {
             $project = Project::find($projectId);
-            if (!$project) {
+            if (! $project) {
                 $this->error("❌ Project with ID {$projectId} not found.");
+
                 return self::FAILURE;
             }
             $this->info("📋 Using project: {$project->name}");
         }
 
         // Validate priority
-        if (!in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
-            $this->error("❌ Invalid priority. Must be one of: low, medium, high, urgent");
+        if (! in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
+            $this->error('❌ Invalid priority. Must be one of: low, medium, high, urgent');
+
             return self::FAILURE;
         }
 
@@ -61,7 +63,8 @@ class TaskCreateCommand extends BaseTenantAwareCrudCommand
             try {
                 $dueDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dueDate);
             } catch (\Exception $e) {
-                $this->error("❌ Invalid due date format. Use YYYY-MM-DD (e.g., 2025-12-31)");
+                $this->error('❌ Invalid due date format. Use YYYY-MM-DD (e.g., 2025-12-31)');
+
                 return self::FAILURE;
             }
         }
@@ -82,10 +85,11 @@ class TaskCreateCommand extends BaseTenantAwareCrudCommand
             $task = Task::create($taskData);
 
             $this->showSuccess('Task created', $task);
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to create task: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

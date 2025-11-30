@@ -63,11 +63,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // GitHub OAuth routes
+    // GitHub OAuth routes for account linking
+    // Note: Primary login route is in routes/auth.php
     Route::get('/settings/github/connect', [GitHubOAuthController::class, 'redirect'])
         ->name('github.connect');
-    Route::get('/auth/github/callback', [GitHubOAuthController::class, 'callback'])
-        ->name('github.callback');
+    // Callback route moved to routes/auth.php to handle both login and linking
     Route::post('/settings/github/confirm-replace', [GitHubOAuthController::class, 'confirmReplace'])
         ->name('github.confirm-replace');
     Route::delete('/settings/github/disconnect', [GitHubOAuthController::class, 'disconnect'])

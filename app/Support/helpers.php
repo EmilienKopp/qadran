@@ -2,8 +2,7 @@
 
 use Spatie\Multitenancy\Models\Tenant;
 
-
-if(! function_exists('tenant')) {
+if (! function_exists('tenant')) {
     /**
      * Get the current tenant.
      */
@@ -13,7 +12,7 @@ if(! function_exists('tenant')) {
     }
 }
 
-if(! function_exists('account')) {
+if (! function_exists('account')) {
     /**
      * Get the current tenant's ID.
      */
@@ -23,7 +22,7 @@ if(! function_exists('account')) {
     }
 }
 
-if(! function_exists('timezone')) {
+if (! function_exists('timezone')) {
     /**
      * Get the current user OR tenant timezone.
      */

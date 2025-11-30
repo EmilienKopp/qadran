@@ -31,19 +31,21 @@ class LocalTaskRepository implements TaskRepositoryInterface
     public function update(int $id, array $data): ?Task
     {
         $task = Task::find($id);
-        if (!$task) {
+        if (! $task) {
             return null;
         }
         $task->update($data);
+
         return $task->fresh();
     }
 
     public function delete(int $id): bool
     {
         $task = Task::find($id);
-        if (!$task) {
+        if (! $task) {
             return false;
         }
+
         return $task->delete();
     }
 }

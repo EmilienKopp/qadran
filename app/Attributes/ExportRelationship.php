@@ -10,8 +10,7 @@ class ExportRelationship
     public function __construct(
         public string $relatedModel,
         public ?string $type = null,
-    ) {
-    }
+    ) {}
 
     public function isCollection(): bool
     {

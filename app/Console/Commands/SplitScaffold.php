@@ -3,12 +3,13 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class SplitScaffold extends Command
 {
     protected $signature = 'split:scaffold {model : The name of the model}';
+
     protected $description = 'Generate Svelte pages (Index, Create, Show, Edit) for a model';
 
     protected Filesystem $files;
@@ -29,7 +30,7 @@ class SplitScaffold extends Command
         $pagesPath = resource_path("js/Pages/{$pascalCaseModel}");
 
         // Create pages directory
-        if (!$this->files->isDirectory($pagesPath)) {
+        if (! $this->files->isDirectory($pagesPath)) {
             $this->files->makeDirectory($pagesPath, 0755, true);
             $this->info("Created directory: {$pagesPath}");
         }

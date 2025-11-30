@@ -13,6 +13,7 @@ class RemoteProjectRepository extends BaseRemoteRepository implements ProjectRep
     {
         try {
             $data = $this->get("{$this->resourceEndpoint}/{$id}");
+
             return $this->hydrate($data);
         } catch (\Exception $e) {
             return null;
@@ -22,18 +23,21 @@ class RemoteProjectRepository extends BaseRemoteRepository implements ProjectRep
     public function all(): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint);
+
         return $this->hydrateCollection($data);
     }
 
     public function findByOrganization(int $organizationId): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint, ['organization_id' => $organizationId]);
+
         return $this->hydrateCollection($data);
     }
 
     public function create(array $data): Project
     {
         $responseData = $this->post($this->resourceEndpoint, $data);
+
         return $this->hydrate($responseData);
     }
 
@@ -41,6 +45,7 @@ class RemoteProjectRepository extends BaseRemoteRepository implements ProjectRep
     {
         try {
             $responseData = $this->put("{$this->resourceEndpoint}/{$id}", $data);
+
             return $this->hydrate($responseData);
         } catch (\Exception $e) {
             return null;
@@ -56,6 +61,7 @@ class RemoteProjectRepository extends BaseRemoteRepository implements ProjectRep
     {
         $userId = $user instanceof \App\Models\User ? $user->id : $user;
         $data = $this->get($this->resourceEndpoint, ['user_id' => $userId]);
+
         return $this->hydrateCollection($data);
     }
 }

@@ -4,7 +4,6 @@ namespace App\Models\Landlord;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class KnownIssue extends Model
 {
@@ -55,7 +54,7 @@ class KnownIssue extends Model
      */
     public function getCurrentStatusDurationInSeconds(): int
     {
-        if (!$this->current_status_since) {
+        if (! $this->current_status_since) {
             return 0;
         }
 
@@ -67,7 +66,7 @@ class KnownIssue extends Model
      */
     public function getCurrentStatusDurationHuman(): string
     {
-        if (!$this->current_status_since) {
+        if (! $this->current_status_since) {
             return 'Unknown';
         }
 
@@ -79,7 +78,7 @@ class KnownIssue extends Model
      */
     public function getTimeSinceReportedHuman(): string
     {
-        if (!$this->first_reported_at) {
+        if (! $this->first_reported_at) {
             return 'Unknown';
         }
 
@@ -97,9 +96,9 @@ class KnownIssue extends Model
     /**
      * Update the status and record the change in history.
      */
-    public function updateStatus(string $newStatus, string $statusCategory = null, string $statusCategoryName = null): void
+    public function updateStatus(string $newStatus, ?string $statusCategory = null, ?string $statusCategoryName = null): void
     {
-        if (!$this->hasStatusChanged($newStatus)) {
+        if (! $this->hasStatusChanged($newStatus)) {
             return;
         }
 

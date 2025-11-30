@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Organization;
+use App\Models\OrganizationUser;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Organization;
-use App\Models\User;
-use App\Models\OrganizationUser;
 
 class OrganizationSeeder extends Seeder
 {
@@ -29,7 +28,7 @@ class OrganizationSeeder extends Seeder
                         'user_id' => $user->id,
                         'elevated' => rand(0, 10) < 2, // 20% chance of being elevated
                         'created_at' => now(),
-                        'updated_at' => now()
+                        'updated_at' => now(),
                     ];
                 });
 
@@ -44,7 +43,7 @@ class OrganizationSeeder extends Seeder
                     'user_id' => $user->id,
                     'elevated' => false,
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
             });
         });

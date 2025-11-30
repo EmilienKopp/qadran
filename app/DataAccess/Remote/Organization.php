@@ -2,7 +2,7 @@
 
 namespace App\DataAccess\Remote;
 
-use App\DataAccess\{OrganizationDataAccess};
+use App\DataAccess\OrganizationDataAccess;
 
 class Organization extends BaseRemoteAccess implements OrganizationDataAccess
 {

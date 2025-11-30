@@ -10,7 +10,7 @@ class AIPromptRegistryTest extends TestCase
     public function test_get_git_report_system_prompt_returns_string()
     {
         $prompt = AIPromptRegistry::getGitReportSystemPrompt();
-        
+
         $this->assertIsString($prompt);
         $this->assertNotEmpty($prompt);
         $this->assertStringContainsString('git log', $prompt);
@@ -19,7 +19,7 @@ class AIPromptRegistryTest extends TestCase
     public function test_get_technical_git_prompt_returns_string()
     {
         $prompt = AIPromptRegistry::getTechnicalGitPrompt();
-        
+
         $this->assertIsString($prompt);
         $this->assertNotEmpty($prompt);
         $this->assertStringContainsString('development activity', $prompt);
@@ -28,7 +28,7 @@ class AIPromptRegistryTest extends TestCase
     public function test_get_non_technical_git_prompt_returns_string()
     {
         $prompt = AIPromptRegistry::getNonTechnicalGitPrompt();
-        
+
         $this->assertIsString($prompt);
         $this->assertNotEmpty($prompt);
         $this->assertStringContainsString('non-tech', $prompt);
@@ -48,7 +48,7 @@ class AIPromptRegistryTest extends TestCase
             $extraData,
             $currentDateTime
         );
-        
+
         $this->assertIsString($prompt);
         $this->assertNotEmpty($prompt);
         $this->assertStringContainsString('create_task', $prompt);

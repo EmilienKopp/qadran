@@ -28,19 +28,19 @@ class CreateMcpTokenRequest extends FormRequest
                 'regex:/^[a-zA-Z0-9\s\-_\.]+$/', // Allow only alphanumeric, spaces, hyphens, underscores, and dots
                 function ($attribute, $value, $fail) {
                     $exists = $this->user()->tokens()
-                        ->where('name', 'MCP: ' . $value)
+                        ->where('name', 'MCP: '.$value)
                         ->exists();
-                    
+
                     if ($exists) {
                         $fail('An MCP token with this name already exists.');
                     }
-                }
+                },
             ],
             'expires_at' => [
                 'nullable',
                 'date',
                 'after:now',
-                'before:' . now()->addYears(5)->toISOString(), // Max 5 years
+                'before:'.now()->addYears(5)->toISOString(), // Max 5 years
             ],
         ];
     }
@@ -66,7 +66,7 @@ class CreateMcpTokenRequest extends FormRequest
         // Trim and sanitize the name
         if ($this->has('name')) {
             $this->merge([
-                'name' => trim($this->input('name'))
+                'name' => trim($this->input('name')),
             ]);
         }
     }

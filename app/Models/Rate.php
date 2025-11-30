@@ -10,7 +10,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class Rate extends Model
 {
     use UsesTenantConnection;
-    
+
     protected $fillable = [
         'rate_type_id',
         'rate_frequency',
@@ -65,10 +65,10 @@ class Rate extends Model
     {
         return $query->where(function ($q) {
             $q->whereNull('effective_until')
-              ->orWhere('effective_until', '>', now());
+                ->orWhere('effective_until', '>', now());
         })->where(function ($q) {
             $q->whereNull('effective_from')
-              ->orWhere('effective_from', '<=', now());
+                ->orWhere('effective_from', '<=', now());
         });
     }
 
@@ -76,4 +76,4 @@ class Rate extends Model
     {
         return $query->where('is_default', true);
     }
-} 
+}

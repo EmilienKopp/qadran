@@ -6,12 +6,11 @@ use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum ReportTypes: string
 {
-  use ExtendedEnum;
+    use ExtendedEnum;
 
-  case TECHNICAL = 'technical';
-  case FINANCIAL = 'financial';
-  case OPERATIONAL = 'operational';
-  case TASK_BASED = 'task_based';
+    case TECHNICAL = 'technical';
+    case FINANCIAL = 'financial';
+    case OPERATIONAL = 'operational';
+    case TASK_BASED = 'task_based';
 
 }
-

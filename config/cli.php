@@ -1,7 +1,6 @@
 <?php
 
-
-  return [
+return [
     'whitelist' => [
         'inspire',
         'project:create',
@@ -10,4 +9,4 @@
         'task:list',
         'test:stream',
     ],
-  ];
+];

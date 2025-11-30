@@ -28,15 +28,16 @@ class ProjectUpdateCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['id'])) {
+        if (! $this->validateArguments(['id'])) {
             return self::FAILURE;
         }
 
         $id = $this->argument('id');
         $project = Project::find($id);
 
-        if (!$project) {
+        if (! $project) {
             $this->error("❌ Project with ID {$id} not found.");
+
             return self::FAILURE;
         }
 
@@ -54,16 +55,18 @@ class ProjectUpdateCommand extends BaseTenantAwareCrudCommand
         }
 
         if ($status = $this->option('status')) {
-            if (!in_array($status, ['active', 'inactive', 'completed', 'on_hold'])) {
-                $this->error("❌ Invalid status. Must be one of: active, inactive, completed, on_hold");
+            if (! in_array($status, ['active', 'inactive', 'completed', 'on_hold'])) {
+                $this->error('❌ Invalid status. Must be one of: active, inactive, completed, on_hold');
+
                 return self::FAILURE;
             }
             $updates['status'] = $status;
         }
 
         if ($type = $this->option('type')) {
-            if (!in_array($type, ['client', 'internal', 'personal'])) {
-                $this->error("❌ Invalid type. Must be one of: client, internal, personal");
+            if (! in_array($type, ['client', 'internal', 'personal'])) {
+                $this->error('❌ Invalid type. Must be one of: client, internal, personal');
+
                 return self::FAILURE;
             }
             $updates['type'] = $type;
@@ -75,6 +78,7 @@ class ProjectUpdateCommand extends BaseTenantAwareCrudCommand
 
         if (empty($updates)) {
             $this->warn('⚠️  No updates provided. Use options like --name, --description, --status, etc.');
+
             return self::SUCCESS;
         }
 
@@ -83,10 +87,11 @@ class ProjectUpdateCommand extends BaseTenantAwareCrudCommand
             $project->refresh();
 
             $this->showSuccess('Project updated', $project);
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to update project: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

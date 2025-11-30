@@ -20,12 +20,14 @@ class OrganizationController extends Controller
     public function show(int $id)
     {
         $organization = $this->organizationRepository->find($id);
+
         return response()->json($organization);
     }
 
     public function byUser(int $userId)
     {
         $organizations = $this->organizationRepository->findByUser($userId);
+
         return response()->json($organizations);
     }
 
@@ -36,6 +38,7 @@ class OrganizationController extends Controller
         ]);
 
         $organization = $this->organizationRepository->create($validated);
+
         return response()->json($organization, 201);
     }
 
@@ -46,18 +49,20 @@ class OrganizationController extends Controller
         ]);
 
         $organization = $this->organizationRepository->update($id, $validated);
-        if (!$organization) {
+        if (! $organization) {
             return response()->json(['error' => 'Organization not found'], 404);
         }
+
         return response()->json($organization);
     }
 
     public function destroy(int $id)
     {
         $deleted = $this->organizationRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['error' => 'Organization not found'], 404);
         }
+
         return response()->json(['message' => 'Organization deleted'], 200);
     }
 }

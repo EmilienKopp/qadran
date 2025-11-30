@@ -24,7 +24,7 @@ class GitLogResponse
             'since' => $this->since?->toISOString(),
             'until' => $this->until?->toISOString(),
             'total_count' => $this->totalCount,
-            'commits' => $this->commits->map(fn($commit) => $commit->toArray())->toArray(),
+            'commits' => $this->commits->map(fn ($commit) => $commit->toArray())->toArray(),
         ];
     }
 }

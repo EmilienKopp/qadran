@@ -2,7 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Features\{VoiceAssistantMode, VoiceAssistant};
+use App\Features\VoiceAssistant;
+use App\Features\VoiceAssistantMode;
 use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class HandleInertiaRequests extends Middleware
     {
         $userId = $request->user()?->id;
         $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
+
         return [
             ...parent::share($request),
             'auth' => [

@@ -3,13 +3,15 @@
 namespace App\Support;
 
 use Illuminate\Support\Str;
-use ReflectionClass;
 
 class DataAccessDiscovery
 {
     protected string $interfacePath = 'app/DataAccess';
+
     protected string $localNamespace = 'App\\DataAccess\\Local\\';
+
     protected string $remoteNamespace = 'App\\DataAccess\\Remote\\';
+
     protected string $interfaceNamespace = 'App\\DataAccess\\';
 
     /**
@@ -25,8 +27,8 @@ class DataAccessDiscovery
         foreach ($interfaces as $interface) {
             $resourceName = $this->extractResourceName($interface);
 
-            $localClass = $this->localNamespace . $resourceName;
-            $remoteClass = $this->remoteNamespace . $resourceName;
+            $localClass = $this->localNamespace.$resourceName;
+            $remoteClass = $this->remoteNamespace.$resourceName;
 
             $discovered[$interface] = [
                 'local' => class_exists($localClass) ? $localClass : null,
@@ -45,15 +47,15 @@ class DataAccessDiscovery
         $path = base_path($this->interfacePath);
         $interfaces = [];
 
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return $interfaces;
         }
 
-        $files = glob($path . '/*DataAccess.php');
+        $files = glob($path.'/*DataAccess.php');
 
         foreach ($files as $file) {
             $filename = basename($file, '.php');
-            $interface = $this->interfaceNamespace . $filename;
+            $interface = $this->interfaceNamespace.$filename;
 
             if (interface_exists($interface)) {
                 $interfaces[] = $interface;
@@ -70,6 +72,7 @@ class DataAccessDiscovery
     protected function extractResourceName(string $interface): string
     {
         $className = class_basename($interface);
+
         return Str::before($className, 'DataAccess');
     }
 
@@ -80,7 +83,7 @@ class DataAccessDiscovery
     {
         return array_filter(
             $this->discover(),
-            fn($implementations) => $implementations['local'] !== null || $implementations['remote'] !== null
+            fn ($implementations) => $implementations['local'] !== null || $implementations['remote'] !== null
         );
     }
 }

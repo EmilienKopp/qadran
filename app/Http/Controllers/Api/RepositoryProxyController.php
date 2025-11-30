@@ -28,19 +28,21 @@ class RepositoryProxyController extends Controller
             'TaskRepository' => \App\Repositories\Local\LocalTaskRepository::class,
         ];
 
-        if (!isset($repositoryMap[$repository])) {
+        if (! isset($repositoryMap[$repository])) {
             \Log::warning('Repository not allowed', ['repository' => $repository]);
+
             return response()->json(['error' => 'Repository not allowed'], 403);
         }
 
         $repoClass = $repositoryMap[$repository];
         $repoInstance = app($repoClass);
 
-        if (!method_exists($repoInstance, $method)) {
+        if (! method_exists($repoInstance, $method)) {
             \Log::warning('Method not found', [
                 'repository' => $repository,
-                'method' => $method
+                'method' => $method,
             ]);
+
             return response()->json(['error' => 'Method not found'], 404);
         }
 
@@ -48,7 +50,7 @@ class RepositoryProxyController extends Controller
             \Log::info('Repository proxy call', [
                 'repository' => $repository,
                 'method' => $method,
-                'args' => $args
+                'args' => $args,
             ]);
 
             $result = $repoInstance->$method(...$args);
@@ -81,12 +83,12 @@ class RepositoryProxyController extends Controller
                 'repository' => $repository,
                 'method' => $method,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'error' => 'Internal error',
-                'message' => app()->environment('local') ? $e->getMessage() : 'An error occurred'
+                'message' => app()->environment('local') ? $e->getMessage() : 'An error occurred',
             ], 500);
         }
     }
