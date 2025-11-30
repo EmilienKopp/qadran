@@ -1,0 +1,11 @@
+/* AG Grid theme overrides using Tailwind/DaisyUI color variables */
+:root {
+  --ag-background-color: var(--color-base-100);
+  --ag-foreground-color: var(--color-base-content);
+  --ag-header-background-color: var(--color-base-200);
+  --ag-header-foreground-color: var(--color-base-content);
+  --ag-row-hover-color: var(--color-base-200);
+  --ag-selected-row-background-color: var(--color-base-300);
+  --ag-border-color: var(--color-base-400);
+  --ag-secondary-border-color: var(--color-base-200);
+}
