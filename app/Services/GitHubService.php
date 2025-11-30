@@ -297,4 +297,25 @@ class GitHubService
             'User-Agent' => config('app.name', 'Laravel'),
         ])->get(self::GITHUB_API_BASE.$endpoint, $params);
     }
+
+
+    private function getBranchesCacheKey(string $repository): string
+    {
+        return "github_branches_{$this->connection->id}_{$repository}";
+    }
+
+    private function getRepositoriesCacheKey(): string
+    {
+        return "github_repos_{$this->connection->id}";
+    }
+
+    public function clearCache()
+    {
+        Cache::forget($this->getRepositoriesCacheKey());
+        $refetchedRepositories = $this->getRepositories();
+        foreach ($refetchedRepositories as $repo) {
+            Cache::forget($this->getBranchesCacheKey($repo['name']));
+        }
+        Cache::forget($this->getBranchesCacheKey('*'));
+    }
 }

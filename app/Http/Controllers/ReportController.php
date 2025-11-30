@@ -6,6 +6,7 @@ use App\Models\Report;
 use App\Services\AIService;
 use App\Services\GitHubService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class ReportController extends Controller
@@ -159,5 +160,12 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         //
+    }
+
+    public function bustCache()
+    {
+        GitHubService::forUser(auth()->id())->clearCache();
+
+        return response()->json(['message' => 'Report cache busted successfully.']);
     }
 }

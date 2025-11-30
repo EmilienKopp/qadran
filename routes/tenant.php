@@ -175,6 +175,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/store', [ReportController::class, 'store'])->name('report.store');
         Route::post('/generate', [ReportController::class, 'generate'])->name('report.generate');
         Route::post('/logs', [ReportController::class, 'fetchCommits'])->name('report.fetch-commits');
+        Route::post('/bust-cache', [ReportController::class, 'bustCache'])->name('report.bust-cache');
         Route::get('/{report}', [ReportController::class, 'show'])->name('report.show');
         Route::get('/{report}/edit', [ReportController::class, 'edit'])->name('report.edit');
         Route::patch('/{report}', [ReportController::class, 'update'])->name('report.update');

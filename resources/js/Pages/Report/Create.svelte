@@ -108,6 +108,10 @@
       only: ['logs'],
     });
   }
+
+  async function bustCache() {
+    router.post(route('report.bust-cache'));
+  }
 </script>
 
 <AuthenticatedLayout>
@@ -234,7 +238,7 @@
             ></Textarea>
             <div class="label">
               <span class="label-text-alt"
-                >Tip: Use 'git log --oneline -10' to get recent commits</span
+                >Tip: Use 'git log --oneline -10 --author=$(git config user.email)' to get recent commits</span
               >
             </div>
           </div>
