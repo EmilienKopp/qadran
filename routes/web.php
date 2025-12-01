@@ -33,13 +33,13 @@ Route::get('/', function () {
 Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     $spaceName = $request->input('space');
 
-    if (! $spaceName) {
+    if (!$spaceName) {
         return back()->withErrors(['space' => 'Space name is required']);
     }
 
     $tenant = Tenant::getByDomainOrHost($spaceName);
 
-    if (! $tenant) {
+    if (!$tenant) {
         return back()->withErrors(['space' => 'Space not found. Please check the name and try again.']);
     }
     $instanceUrl = InstanceUrl::fetch($tenant['host']);
@@ -60,18 +60,17 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
 if (app()->isProduction()) {
     if (app()->environment('staging')) {
         Route::prefix('{account}')->group(function () {
-            require __DIR__.'/tenant.php';
-            require __DIR__.'/auth.php';
+            require __DIR__ . '/tenant.php';
         });
     } else {
-        Route::domain('{account}.'.$APP_HOST)->group(function () {
-            require __DIR__.'/tenant.php';
-            require __DIR__.'/auth.php';
+        Route::domain('{account}.' . $APP_HOST)->group(function () {
+            require __DIR__ . '/tenant.php';
         });
     }
 } else {
     // In development, include tenant routes directly
     // The tenant.php routes will handle both root and subdomain logic
-    require __DIR__.'/tenant.php';
-    require __DIR__.'/auth.php';
+    require __DIR__ . '/tenant.php';
 }
+
+require __DIR__ . '/auth.php';
