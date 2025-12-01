@@ -36,9 +36,14 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $email = $request->email;
+        if(app()->isProduction()) {
+            $email = preg_replace('/\+.*@/', '@', $request->email);
+        }
+
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $email,
             'password' => Hash::make($request->password),
         ]);
 
