@@ -25,7 +25,7 @@ class OrganizationCreateCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['name'])) {
+        if (! $this->validateArguments(['name'])) {
             return self::FAILURE;
         }
 
@@ -41,10 +41,11 @@ class OrganizationCreateCommand extends BaseTenantAwareCrudCommand
             ]);
 
             $this->showSuccess('Organization created', $organization);
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to create organization: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

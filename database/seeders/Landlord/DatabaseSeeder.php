@@ -2,10 +2,10 @@
 
 namespace Database\Seeders\Landlord;
 
-use App\Models\Landlord\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Landlord\Tenant;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Landlord\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder

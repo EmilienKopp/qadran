@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rate;
-use App\Models\RateType;
 use App\Enums\RateFrequency;
 use App\Enums\RateTypeScope;
+use App\Models\Rate;
+use App\Models\RateType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -22,7 +22,7 @@ class RateController extends Controller
             ->get();
 
         return Inertia::render('Rate/Index', [
-            'rates' => $rates
+            'rates' => $rates,
         ]);
     }
 
@@ -78,7 +78,7 @@ class RateController extends Controller
     public function show(Rate $rate)
     {
         $rate->load(['rateType', 'organization', 'project', 'user']);
-        
+
         return Inertia::render('Rate/Show', [
             'rate' => $rate,
         ]);
@@ -90,7 +90,7 @@ class RateController extends Controller
     public function edit(Rate $rate)
     {
         $rate->load(['rateType', 'organization', 'project', 'user']);
-        
+
         return Inertia::render('Rate/Edit', [
             'rate' => $rate,
             'frequencies' => RateFrequency::toSelectOptions(),
@@ -135,6 +135,7 @@ class RateController extends Controller
     {
         try {
             $rate->delete();
+
             return redirect()
                 ->route('rate.index')
                 ->with('success', 'Rate deleted successfully.');
@@ -144,4 +145,4 @@ class RateController extends Controller
                 ->with('error', 'Unable to delete rate.');
         }
     }
-} 
+}

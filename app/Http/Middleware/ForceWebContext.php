@@ -17,12 +17,12 @@ class ForceWebContext
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        
+
         // If this is a StreamedResponse, wrap it with a class that has the 'original' property
         if ($response instanceof StreamedResponse) {
             return new StreamedResponseWithOriginal($response);
         }
-        
+
         return $response;
     }
 }
@@ -35,22 +35,22 @@ class ForceWebContext
 class StreamedResponseWithOriginal extends StreamedResponse
 {
     public $original = null;
-    
+
     private $wrappedResponse;
-    
+
     public function __construct(StreamedResponse $response)
     {
         $this->wrappedResponse = $response;
-        
+
         // Copy all the important properties from the original response
         parent::__construct(
-            function() use ($response) {
+            function () use ($response) {
                 // Get the callback from the original response
                 $reflection = new \ReflectionClass($response);
                 $callbackProperty = $reflection->getProperty('callback');
                 $callbackProperty->setAccessible(true);
                 $callback = $callbackProperty->getValue($response);
-                
+
                 if ($callback) {
                     call_user_func($callback);
                 }
@@ -59,7 +59,7 @@ class StreamedResponseWithOriginal extends StreamedResponse
             $response->headers->all()
         );
     }
-    
+
     public function __call($method, $arguments)
     {
         return call_user_func_array([$this->wrappedResponse, $method], $arguments);

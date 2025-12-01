@@ -31,19 +31,21 @@ class LocalTenantRepository implements TenantRepositoryInterface
     public function update(int $id, array $data): ?Tenant
     {
         $tenant = Tenant::find($id);
-        if (!$tenant) {
+        if (! $tenant) {
             return null;
         }
         $tenant->update($data);
+
         return $tenant->fresh();
     }
 
     public function delete(int $id): bool
     {
         $tenant = Tenant::find($id);
-        if (!$tenant) {
+        if (! $tenant) {
             return false;
         }
+
         return $tenant->delete();
     }
 }

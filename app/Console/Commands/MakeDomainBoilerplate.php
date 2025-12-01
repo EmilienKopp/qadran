@@ -3,14 +3,15 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class MakeDomainBoilerplate extends Command
 {
     protected $signature = 'split:domain
                             {model : The name of the model}
                             {roles* : The roles to generate strategies for}';
+
     protected $description = 'Create a domain context and strategies for a model';
 
     protected Filesystem $files;
@@ -25,7 +26,7 @@ class MakeDomainBoilerplate extends Command
     {
         $model = $this->argument('model');
         $roles = $this->argument('roles');
-        
+
         $pascalCaseDomainName = Str::studly($model);
         $lowerCaseDomainName = Str::lower($model);
 
@@ -33,11 +34,11 @@ class MakeDomainBoilerplate extends Command
         $strategiesPath = "{$domainPath}/strategies";
 
         // Create directories
-        if (!$this->files->isDirectory($domainPath)) {
+        if (! $this->files->isDirectory($domainPath)) {
             $this->files->makeDirectory($domainPath, 0755, true);
             $this->info("Created directory: {$domainPath}");
         }
-        if (!$this->files->isDirectory($strategiesPath)) {
+        if (! $this->files->isDirectory($strategiesPath)) {
             $this->files->makeDirectory($strategiesPath, 0755, true);
             $this->info("Created directory: {$strategiesPath}");
         }
@@ -74,6 +75,7 @@ class MakeDomainBoilerplate extends Command
     protected function generateIndexTsContent(string $pascalCaseDomainName): string
     {
         $lowerCaseDomainName = Str::lower($pascalCaseDomainName);
+
         return <<<TS
 import { router } from "@inertiajs/svelte";
 import { toaster } from "\$components/Feedback/Toast/ToastHandler.svelte";
@@ -103,7 +105,7 @@ TS;
     {
         $imports = [];
         $cases = [];
-        
+
         if (empty($roles)) {
             // Default strategy only
             $imports[] = "import { Default{$pascalCaseDomainName}TableStrategy } from './strategies/default{$pascalCaseDomainName}TableStrategy';";
@@ -116,12 +118,12 @@ TS;
                 $imports[] = "import { {$roleName}{$pascalCaseDomainName}TableStrategy } from './strategies/{$roleFileName}{$pascalCaseDomainName}TableStrategy';";
                 $cases[] = "      case '{$role}':\n        return new {$roleName}{$pascalCaseDomainName}TableStrategy();";
             }
-            $cases[] = "      default:\n        return new " . Str::studly($roles[0]) . "{$pascalCaseDomainName}TableStrategy();";
+            $cases[] = "      default:\n        return new ".Str::studly($roles[0])."{$pascalCaseDomainName}TableStrategy();";
         }
-        
+
         $importsString = implode("\n", $imports);
         $casesString = implode("\n", $cases);
-        
+
         return <<<TS
 import { BaseDataDisplayStrategy } from '../../core/strategies/dataDisplayStrategy';
 import { Context } from '\$lib/core/contexts/context';
@@ -148,7 +150,7 @@ TS;
     {
         $lowerCaseDomainName = Str::lower($pascalCaseDomainName);
         $roleName = Str::studly($role);
-        
+
         return <<<TS
 import type { DataAction, DataHeader, IDataStrategy } from '\$types/common/dataDisplay';
 
@@ -185,6 +187,7 @@ TS;
     protected function generateDefaultStrategyContent(string $pascalCaseDomainName): string
     {
         $lowerCaseDomainName = Str::lower($pascalCaseDomainName);
+
         return <<<TS
 import { DataAction, IDataStrategy } from '\$types/common/dataDisplay';
 

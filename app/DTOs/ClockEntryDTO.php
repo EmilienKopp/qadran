@@ -2,9 +2,7 @@
 
 namespace App\DTOs;
 
-
 use Carbon\Carbon;
-use Illuminate\Contracts\Support\Arrayable;
 
 class ClockEntryDTO extends DTO
 {

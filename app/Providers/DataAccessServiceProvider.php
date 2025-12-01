@@ -23,7 +23,7 @@ class DataAccessServiceProvider extends ServiceProvider
      */
     protected function registerDataAccessDiscovery(): void
     {
-        $discovery = new DataAccessDiscovery();
+        $discovery = new DataAccessDiscovery;
         $bindings = $discovery->getBindings();
 
         foreach ($bindings as $interface => $implementations) {
@@ -47,7 +47,7 @@ class DataAccessServiceProvider extends ServiceProvider
     /**
      * Determine the current execution context
      */
-    protected function determineContext(): ExecutionContext   
+    protected function determineContext(): ExecutionContext
     {
         return RequestContextResolver::getExecutionContext();
     }
@@ -57,11 +57,11 @@ class DataAccessServiceProvider extends ServiceProvider
      */
     protected function createLocalImplementation(?string $class)
     {
-        if (!$class) {
+        if (! $class) {
             throw new \RuntimeException('Local implementation not found');
         }
 
-        return new $class();
+        return new $class;
     }
 
     /**
@@ -70,7 +70,7 @@ class DataAccessServiceProvider extends ServiceProvider
      */
     protected function createRemoteImplementation($app, ?string $class)
     {
-        if (!$class) {
+        if (! $class) {
             throw new \RuntimeException('Remote implementation not found');
         }
 
@@ -88,4 +88,3 @@ class DataAccessServiceProvider extends ServiceProvider
         //
     }
 }
-

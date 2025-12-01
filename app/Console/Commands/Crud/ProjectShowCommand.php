@@ -25,7 +25,7 @@ class ProjectShowCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['id'])) {
+        if (! $this->validateArguments(['id'])) {
             return self::FAILURE;
         }
 
@@ -45,8 +45,9 @@ class ProjectShowCommand extends BaseTenantAwareCrudCommand
 
         $project = $query->find($id);
 
-        if (!$project) {
+        if (! $project) {
             $this->error("❌ Project with ID {$id} not found.");
+
             return self::FAILURE;
         }
 

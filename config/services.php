@@ -19,6 +19,12 @@ return [
         'redirect' => env('GITHUB_REDIRECT_URI'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -58,7 +64,6 @@ return [
         'default_user' => env('WORKOS_DEFAULT_USER'),
     ],
 
-    
     'n8n' => [
         'webhook_url' => env('AI_N8N_WEBHOOK_URL', 'http://host.docker.internal:5678/webhook/4ffc04bd-d7c9-46b7-be49-1245185ae742'),
         'assistant_webhook_url' => env('AI_N8N_ASSISTANT_WEBHOOK_URL'),

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProjectType;
 use App\Enums\ProjectStatus;
+use App\Enums\ProjectType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProjectRequest extends FormRequest

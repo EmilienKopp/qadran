@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateMcpTokenRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class McpTokenController extends Controller
 {
@@ -39,18 +37,18 @@ class McpTokenController extends Controller
      */
     public function store(CreateMcpTokenRequest $request)
     {
-        $tokenName = 'MCP: ' . $request->validated('name');
-        
+        $tokenName = 'MCP: '.$request->validated('name');
+
         // Create token with MCP-specific abilities and rate limiting
         $token = $request->user()->createToken($tokenName, [
             'mcp:use',
             'mcp:tools',
-            'mcp:resources', 
-            'mcp:prompts'
+            'mcp:resources',
+            'mcp:prompts',
         ], $request->validated('expires_at') ? now()->parse($request->validated('expires_at')) : null);
 
         $tenant = \App\Models\Landlord\Tenant::current();
-    
+
         return Inertia::render('Profile/Edit', [
             'newMcpToken' => [
                 'token' => $token->plainTextToken,
@@ -59,7 +57,7 @@ class McpTokenController extends Controller
                 'formatted_token' => $tenant ? "tenant:{$tenant->host}:{$token->plainTextToken}" : $token->plainTextToken,
                 'expires_at' => $token->accessToken->expires_at?->format('Y-m-d H:i:s'),
                 'created_at' => $token->accessToken->created_at->format('Y-m-d H:i:s'),
-            ]
+            ],
         ]);
     }
 
@@ -73,14 +71,14 @@ class McpTokenController extends Controller
             ->where('name', 'like', 'MCP:%')
             ->first();
 
-        if (!$token) {
+        if (! $token) {
             return Inertia::render('Profile/Edit', [
-                'error' => 'Token not found.'
+                'error' => 'Token not found.',
             ]);
         }
 
         $tokenName = $token->name;
-        
+
         // Log token deletion for security audit
         \Log::info('MCP token deleted', [
             'user_id' => $request->user()->id,
@@ -90,11 +88,11 @@ class McpTokenController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
-        
+
         $token->delete();
 
         return Inertia::render('Profile/Edit', [
-            'message' => "Token '{$tokenName}' has been deleted successfully."
+            'message' => "Token '{$tokenName}' has been deleted successfully.",
         ]);
     }
 
@@ -104,22 +102,22 @@ class McpTokenController extends Controller
     public function connectionInfo()
     {
         $tenant = \App\Models\Landlord\Tenant::current();
-        
-        if (!$tenant) {
+
+        if (! $tenant) {
             return Inertia::render('Profile/Edit', [
-                'error' => 'No tenant context found.'
+                'error' => 'No tenant context found.',
             ]);
         }
 
         // Determine the correct URL based on environment
         $baseUrl = config('app.url');
-        
+
         if (app()->environment('staging')) {
             $mcpUrl = "{$baseUrl}/mcp/qadran";
         } elseif (app()->isProduction()) {
-            $mcpUrl = "https://qadran.io/mcp/qadran";
+            $mcpUrl = 'https://qadran.io/mcp/qadran';
         } else {
-            $mcpUrl = "http://localhost:8000/mcp/qadran";
+            $mcpUrl = 'http://localhost:8000/mcp/qadran';
         }
 
         return Inertia::render('Profile/Edit', [
@@ -127,7 +125,7 @@ class McpTokenController extends Controller
                 'tenant_host' => $tenant->host,
                 'tenant_name' => $tenant->name,
                 'mcp_url' => $mcpUrl,
-                'auth_format' => 'tenant:' . $tenant->host . ':YOUR_TOKEN',
+                'auth_format' => 'tenant:'.$tenant->host.':YOUR_TOKEN',
                 'example_config' => [
                     'curl' => [
                         'command' => 'curl',
@@ -135,8 +133,8 @@ class McpTokenController extends Controller
                             '-X', 'POST',
                             $mcpUrl,
                             '-H', 'Content-Type: application/json',
-                            '-H', 'Authorization: Bearer tenant:' . $tenant->host . ':YOUR_TOKEN'
-                        ]
+                            '-H', 'Authorization: Bearer tenant:'.$tenant->host.':YOUR_TOKEN',
+                        ],
                     ],
                     'vscode' => [
                         'mcpServers' => [
@@ -145,15 +143,15 @@ class McpTokenController extends Controller
                                 'args' => [
                                     '-X', 'POST',
                                     $mcpUrl,
-                                    '-H', 'Content-Type: application/json', 
-                                    '-H', 'Authorization: Bearer tenant:' . $tenant->host . ':YOUR_TOKEN',
-                                    '-d', '@-'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    '-H', 'Content-Type: application/json',
+                                    '-H', 'Authorization: Bearer tenant:'.$tenant->host.':YOUR_TOKEN',
+                                    '-d', '@-',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 }

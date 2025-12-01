@@ -38,6 +38,7 @@ class OrganizationListCommand extends BaseTenantAwareCrudCommand
 
         if ($organizations->isEmpty()) {
             $this->warn('📭 No organizations found.');
+
             return self::SUCCESS;
         }
 

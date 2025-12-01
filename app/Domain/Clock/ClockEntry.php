@@ -4,23 +4,29 @@ namespace App\Domain\Clock;
 
 use App\DTOs\ClockEntryDTO;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-
 
 class ClockEntry
 {
     public ?int $id;
+
     public int $userId;
+
     public ?int $projectId;
+
     public ?Carbon $in;
+
     public ?Carbon $out;
+
     public ?string $note;
+
     public ?string $timezone;
+
     public ?Carbon $createdAt;
+
     public ?Carbon $updatedAt;
 
     public function __construct(
-      ClockEntryDTO|array $data
+        ClockEntryDTO|array $data
     ) {
         if (is_array($data)) {
             $data = new ClockEntryDTO(...$data);
@@ -44,7 +50,7 @@ class ClockEntry
 
     public function isClockedIn(): bool
     {
-        return !$this->isClockedOut() && !empty($this->in);
+        return ! $this->isClockedOut() && ! empty($this->in);
     }
 
     public function clockIn(Carbon $time): void
@@ -64,6 +70,7 @@ class ClockEntry
         if ($this->in->isSameDay($now) === false) {
             $this->in = null;
             $this->out = null;
+
             return;
         }
         if ($this->isClockedIn()) {
@@ -92,5 +99,4 @@ class ClockEntry
             updatedAt: $this->updatedAt,
         );
     }
-
 }

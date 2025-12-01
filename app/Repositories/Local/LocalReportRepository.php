@@ -31,19 +31,21 @@ class LocalReportRepository implements ReportRepositoryInterface
     public function update(int $id, array $data): ?Report
     {
         $report = Report::find($id);
-        if (!$report) {
+        if (! $report) {
             return null;
         }
         $report->update($data);
+
         return $report->fresh();
     }
 
     public function delete(int $id): bool
     {
         $report = Report::find($id);
-        if (!$report) {
+        if (! $report) {
             return false;
         }
+
         return $report->delete();
     }
 }

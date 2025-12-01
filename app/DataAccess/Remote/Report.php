@@ -2,7 +2,7 @@
 
 namespace App\DataAccess\Remote;
 
-use App\DataAccess\{ReportDataAccess};
+use App\DataAccess\ReportDataAccess;
 
 class Report extends BaseRemoteAccess implements ReportDataAccess
 {

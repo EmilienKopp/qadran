@@ -12,7 +12,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasGitHubConnection, UsesLandlordConnection;
+    use HasFactory, HasGitHubConnection, Notifiable, UsesLandlordConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -59,7 +59,7 @@ class User extends Authenticatable
     public static function booted()
     {
         static::creating(function ($user) {
-            if(!$user->handle) {
+            if (! $user->handle) {
                 $user->handle = $user->email;
             }
         });

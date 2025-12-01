@@ -16,14 +16,16 @@ class MakeDataAccessCommand extends Command
     protected $description = 'Generate DataAccess interface, Local/Remote implementations, and Facade';
 
     protected string $modelName;
+
     protected string $dataAccessInterface;
+
     protected string $endpoint;
 
     public function handle(): int
     {
         $this->modelName = $this->argument('model');
         $this->dataAccessInterface = "{$this->modelName}DataAccess";
-        $this->endpoint = $this->option('endpoint') ?? 'api/' . Str::plural(Str::lower($this->modelName));
+        $this->endpoint = $this->option('endpoint') ?? 'api/'.Str::plural(Str::lower($this->modelName));
 
         $this->info("Generating DataAccess for: {$this->modelName}");
         $this->newLine();
@@ -33,7 +35,7 @@ class MakeDataAccessCommand extends Command
         $this->createLocalImplementation();
         $this->createRemoteImplementation();
 
-        if (!$this->option('no-facade')) {
+        if (! $this->option('no-facade')) {
             $this->createFacade();
         }
 
@@ -42,7 +44,7 @@ class MakeDataAccessCommand extends Command
         $this->newLine();
 
         $this->comment('Usage example:');
-        if (!$this->option('no-facade')) {
+        if (! $this->option('no-facade')) {
             $this->line("  \\App\\DataAccess\\Facades\\{$this->modelName}::find(1);");
         } else {
             $this->line("  app(\\App\\DataAccess\\{$this->dataAccessInterface}::class)->find(1);");
@@ -55,8 +57,9 @@ class MakeDataAccessCommand extends Command
     {
         $path = app_path("DataAccess/{$this->dataAccessInterface}.php");
 
-        if (file_exists($path) && !$this->option('force')) {
+        if (file_exists($path) && ! $this->option('force')) {
             $this->warn("Interface already exists: {$this->dataAccessInterface}");
+
             return;
         }
 
@@ -71,8 +74,9 @@ class MakeDataAccessCommand extends Command
     {
         $path = app_path("DataAccess/Local/{$this->modelName}.php");
 
-        if (file_exists($path) && !$this->option('force')) {
+        if (file_exists($path) && ! $this->option('force')) {
             $this->warn("Local implementation already exists: Local\\{$this->modelName}");
+
             return;
         }
 
@@ -87,8 +91,9 @@ class MakeDataAccessCommand extends Command
     {
         $path = app_path("DataAccess/Remote/{$this->modelName}.php");
 
-        if (file_exists($path) && !$this->option('force')) {
+        if (file_exists($path) && ! $this->option('force')) {
             $this->warn("Remote implementation already exists: Remote\\{$this->modelName}");
+
             return;
         }
 
@@ -103,8 +108,9 @@ class MakeDataAccessCommand extends Command
     {
         $path = app_path("DataAccess/Facades/{$this->modelName}.php");
 
-        if (file_exists($path) && !$this->option('force')) {
+        if (file_exists($path) && ! $this->option('force')) {
             $this->warn("Facade already exists: Facades\\{$this->modelName}");
+
             return;
         }
 
@@ -117,7 +123,7 @@ class MakeDataAccessCommand extends Command
 
     protected function ensureDirectoryExists(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             mkdir($path, 0755, true);
         }
     }
@@ -144,7 +150,7 @@ PHP;
         $modelClass = $this->guessModelClass();
         $modelAlias = "{$this->modelName}Model";
         $useStatement = $modelClass ? "use {$modelClass} as {$modelAlias};" : "// use App\\Models\\{$this->modelName} as {$modelAlias};";
-        $modelProperty = $modelClass ? class_basename($modelClass) . '::class' : "{$modelAlias}::class";
+        $modelProperty = $modelClass ? class_basename($modelClass).'::class' : "{$modelAlias}::class";
 
         return <<<PHP
 <?php

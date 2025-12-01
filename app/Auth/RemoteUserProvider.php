@@ -2,10 +2,10 @@
 
 namespace App\Auth;
 
-use App\Repositories\UserRepositoryInterface;
-use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Auth\Authenticatable;
 use App\Models\User;
+use App\Repositories\UserRepositoryInterface;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\UserProvider;
 use Native\Desktop\Facades\Settings;
 
 class RemoteUserProvider implements UserProvider
@@ -20,21 +20,24 @@ class RemoteUserProvider implements UserProvider
         try {
             $fromSettings = Settings::get('authenticated_user');
             if ($fromSettings && isset($fromSettings['id']) && $fromSettings['id'] == $identifier) {
-                $user = new User();
+                $user = new User;
                 $user->forceFill($fromSettings);
                 $user->exists = true;
+
                 return $user;
             } else {
                 $user = app(UserRepositoryInterface::class)->find($identifier);
                 Settings::set('authenticated_user', $user ? $user->toArray() : null);
+
                 return $user;
             }
-            
+
         } catch (\Exception $e) {
             \Log::error('RemoteUserProvider::retrieveById failed', [
                 'identifier' => $identifier,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -72,8 +75,9 @@ class RemoteUserProvider implements UserProvider
             } catch (\Exception $e) {
                 \Log::error('RemoteUserProvider::retrieveByCredentials failed', [
                     'email' => $credentials['email'] ?? 'unknown',
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
+
                 return null;
             }
         }

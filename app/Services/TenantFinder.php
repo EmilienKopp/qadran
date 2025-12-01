@@ -19,7 +19,7 @@ class TenantFinder extends BaseTenantFinder
         $context = RequestContextResolver::getExecutionContext();
 
         $isLocal = ! app()->isProduction() && ($host === 'localhost' || str($host)->contains('127.0.0.1'));
-        
+
         return match ($context) {
             ExecutionContext::DESKTOP => $this->findDesktopTenant(),
             ExecutionContext::WEB, => $this->findWebTenant($host, $isLocal),
@@ -42,6 +42,7 @@ class TenantFinder extends BaseTenantFinder
     {
         if ($isLocal) {
             $tenant = TenantFacade::firstWhere('domain', 'qadranio.com');
+
             return $tenant;
         }
 

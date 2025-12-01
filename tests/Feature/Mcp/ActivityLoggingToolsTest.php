@@ -22,7 +22,7 @@ class ActivityLoggingToolsTest extends TestCase
         $reflection = new \ReflectionClass($server);
         $toolsProperty = $reflection->getProperty('tools');
         $toolsProperty->setAccessible(true);
-        
+
         return $toolsProperty->getValue($server);
     }
 

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Services\AIService;
 use App\Services\GitHubService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
-use App\Services\AIService;
 
 class ReportController extends Controller
 {
@@ -16,6 +17,7 @@ class ReportController extends Controller
     {
         $this->aiService = $aiService;
     }
+
     public function generate(Request $request)
     {
         try {
@@ -24,14 +26,15 @@ class ReportController extends Controller
                 'user_id' => auth()->id(),
                 'content' => $content,
             ]);
+
             return Inertia::render('Report/Create', [
                 'content' => $content,
             ]);
         } catch (\Exception $e) {
             return Inertia::render('Report/Create', [
                 'errors' => [
-                    'content' => 'Failed to generate report: ' . $e->getMessage(),
-                ]
+                    'content' => 'Failed to generate report: '.$e->getMessage(),
+                ],
             ]);
         }
     }
@@ -45,6 +48,7 @@ class ReportController extends Controller
             ->with('user')
             ->latest()
             ->paginate(10);
+
         return Inertia::render('Report/Index', [
             'reports' => $reports,
         ]);
@@ -120,7 +124,7 @@ class ReportController extends Controller
         $logs = $gh->getGitLogs($logRequest);
 
         return Inertia::render('Report/Create', [
-            'logs' => $logs
+            'logs' => $logs,
         ]);
     }
 
@@ -156,5 +160,12 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         //
+    }
+
+    public function bustCache()
+    {
+        GitHubService::forUser(auth()->id())->clearCache();
+
+        return response()->json(['message' => 'Report cache busted successfully.']);
     }
 }

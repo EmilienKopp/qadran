@@ -2,9 +2,6 @@
 
 namespace App\DTOs;
 
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-
 class FileDiff
 {
     public function __construct(

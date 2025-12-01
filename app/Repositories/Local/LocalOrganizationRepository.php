@@ -33,19 +33,21 @@ class LocalOrganizationRepository implements OrganizationRepositoryInterface
     public function update(int $id, array $data): ?Organization
     {
         $org = Organization::find($id);
-        if (!$org) {
+        if (! $org) {
             return null;
         }
         $org->update($data);
+
         return $org->fresh();
     }
 
     public function delete(int $id): bool
     {
         $org = Organization::find($id);
-        if (!$org) {
+        if (! $org) {
             return false;
         }
+
         return $org->delete();
     }
 }

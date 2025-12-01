@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organization;
+use App\Enums\OrganizationType;
 use App\Http\Requests\StoreOrganizationRequest;
 use App\Http\Requests\UpdateOrganizationRequest;
+use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Enums\OrganizationType;
 
 class OrganizationController extends Controller
 {
@@ -17,6 +17,7 @@ class OrganizationController extends Controller
     public function index()
     {
         $organizations = Auth::user()->organizations;
+
         return Inertia::render('Organization/Index', [
             'organizations' => $organizations,
         ]);
@@ -37,9 +38,10 @@ class OrganizationController extends Controller
      */
     public function store(StoreOrganizationRequest $request)
     {
-        
+
         $validated = $request->validated();
         Auth::user()->organizations()->create($validated);
+
         return redirect()->route('organization.index')
             ->with('success', 'Organization created.');
     }
@@ -70,6 +72,7 @@ class OrganizationController extends Controller
     {
         $validated = $request->validated();
         $organization->update($validated);
+
         return redirect()->route('organization.index')->with('success', 'Organization updated.');
     }
 
@@ -80,6 +83,7 @@ class OrganizationController extends Controller
     {
         try {
             $organization->delete();
+
             return redirect()->route('organization.index')->with('success', 'Organization deleted.');
         } catch (\Exception $e) {
             return redirect()->route('organization.index')->with('error', 'Organization cannot be deleted.');

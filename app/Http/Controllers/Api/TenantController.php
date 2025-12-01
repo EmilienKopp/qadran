@@ -16,6 +16,7 @@ class TenantController extends Controller
     public function show(int $id)
     {
         $tenant = Tenant::find($id);
+
         return response()->json($tenant);
     }
 
@@ -23,6 +24,7 @@ class TenantController extends Controller
     {
         $domain = $request->query('domain');
         $tenant = Tenant::where('domain', $domain)->first();
+
         return response()->json($tenant);
     }
 
@@ -34,33 +36,36 @@ class TenantController extends Controller
         ]);
 
         $tenant = Tenant::create($validated);
+
         return response()->json($tenant, 201);
     }
 
     public function update(Request $request, int $id)
     {
         $tenant = Tenant::find($id);
-        if (!$tenant) {
+        if (! $tenant) {
             return response()->json(['error' => 'Tenant not found'], 404);
         }
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'domain' => 'sometimes|string|unique:tenants,domain,' . $id,
+            'domain' => 'sometimes|string|unique:tenants,domain,'.$id,
         ]);
 
         $tenant->update($validated);
+
         return response()->json($tenant);
     }
 
     public function destroy(int $id)
     {
         $tenant = Tenant::find($id);
-        if (!$tenant) {
+        if (! $tenant) {
             return response()->json(['error' => 'Tenant not found'], 404);
         }
 
         $tenant->delete();
+
         return response()->json(['message' => 'Tenant deleted'], 200);
     }
 }

@@ -22,7 +22,7 @@ class CommandParameter implements JsonSerializable
             'value' => $this->value,
             'optional' => $this->optional,
             'description' => $this->description,
-        ], fn($value) => $value !== null || $value !== false);
+        ], fn ($value) => $value !== null || $value !== false);
     }
 
     public static function fromArray(array $data): self
@@ -41,7 +41,7 @@ class CommandParameter implements JsonSerializable
      */
     public function getTypedValue(): mixed
     {
-        return match($this->type) {
+        return match ($this->type) {
             'string' => (string) $this->value,
             'number' => is_numeric($this->value) ? (float) $this->value : $this->value,
             'boolean' => filter_var($this->value, FILTER_VALIDATE_BOOLEAN),

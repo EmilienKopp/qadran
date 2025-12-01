@@ -8,15 +8,17 @@ use Illuminate\Console\Command;
 class DataAccessListCommand extends Command
 {
     protected $signature = 'data-access:list';
+
     protected $description = 'List all discovered DataAccess interfaces and their implementations';
 
     public function handle(): int
     {
-        $discovery = new DataAccessDiscovery();
+        $discovery = new DataAccessDiscovery;
         $bindings = $discovery->getBindings();
 
         if (empty($bindings)) {
             $this->warn('No DataAccess interfaces found.');
+
             return self::SUCCESS;
         }
 
@@ -28,8 +30,8 @@ class DataAccessListCommand extends Command
             $tableData[] = [
                 'Interface' => class_basename($interface),
                 'FQCN' => $interface,
-                'Local' => $implementations['local'] ? '✓ ' . class_basename($implementations['local']) : '✗',
-                'Remote' => $implementations['remote'] ? '✓ ' . class_basename($implementations['remote']) : '✗',
+                'Local' => $implementations['local'] ? '✓ '.class_basename($implementations['local']) : '✗',
+                'Remote' => $implementations['remote'] ? '✓ '.class_basename($implementations['remote']) : '✗',
             ];
         }
 
@@ -39,7 +41,7 @@ class DataAccessListCommand extends Command
         );
 
         $this->newLine();
-        $this->info('Current context: ' . config('app.data_access_mode', 'local'));
+        $this->info('Current context: '.config('app.data_access_mode', 'local'));
 
         return self::SUCCESS;
     }

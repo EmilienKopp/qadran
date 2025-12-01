@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Project\ProjectCost;
 use App\Domain\Project\ProjectActivitySummary;
+use App\Domain\Project\ProjectCost;
 use App\Enums\ProjectStatus;
-use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Project;
 use App\Repositories\ProjectRepository;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -23,7 +23,7 @@ class ProjectController extends HybridController
 
         return $this->respond($projects, function ($projects) {
             return Inertia::render('Project/Index', [
-                'projects' => Inertia::always($projects)
+                'projects' => Inertia::always($projects),
             ]);
         });
     }
@@ -43,6 +43,7 @@ class ProjectController extends HybridController
     {
         $validated = $request->validated();
         Auth::user()->projects()->create($validated);
+
         return redirect()->route('project.index');
     }
 
@@ -52,7 +53,7 @@ class ProjectController extends HybridController
     public function show(Project $project)
     {
         return inertia('Project/Show', [
-            'project' => Inertia::always($project)
+            'project' => Inertia::always($project),
         ]);
     }
 
@@ -86,6 +87,7 @@ class ProjectController extends HybridController
     public function destroy(Project $project)
     {
         $project->delete();
+
         return to_route('project.index');
     }
 }

@@ -20,12 +20,14 @@ class ProjectController extends Controller
     public function show(int $id)
     {
         $project = $this->projectRepository->find($id);
+
         return response()->json($project);
     }
 
     public function byOrganization(int $organizationId)
     {
         $projects = $this->projectRepository->findByOrganization($organizationId);
+
         return response()->json($projects);
     }
 
@@ -37,6 +39,7 @@ class ProjectController extends Controller
         ]);
 
         $project = $this->projectRepository->create($validated);
+
         return response()->json($project, 201);
     }
 
@@ -48,18 +51,20 @@ class ProjectController extends Controller
         ]);
 
         $project = $this->projectRepository->update($id, $validated);
-        if (!$project) {
+        if (! $project) {
             return response()->json(['error' => 'Project not found'], 404);
         }
+
         return response()->json($project);
     }
 
     public function destroy(int $id)
     {
         $deleted = $this->projectRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['error' => 'Project not found'], 404);
         }
+
         return response()->json(['message' => 'Project deleted'], 200);
     }
 }

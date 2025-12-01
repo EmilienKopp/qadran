@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\GitHubConnection;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -14,8 +13,8 @@ class GitHubAccountService
     public function hasValidConnection(User $user): bool
     {
         $connection = $user->gitHubConnection;
-        
-        if (!$connection) {
+
+        if (! $connection) {
             return false;
         }
 
@@ -25,6 +24,7 @@ class GitHubAccountService
 
         // Test the connection
         $service = new GitHubService($connection);
+
         return $service->testConnection();
     }
 
@@ -34,12 +34,12 @@ class GitHubAccountService
     public function getConnectionStatus(User $user): array
     {
         $connection = $user->gitHubConnection;
-        
-        if (!$connection) {
+
+        if (! $connection) {
             return [
                 'connected' => false,
                 'status' => 'not_connected',
-                'message' => 'No GitHub account connected'
+                'message' => 'No GitHub account connected',
             ];
         }
 
@@ -49,7 +49,7 @@ class GitHubAccountService
                 'status' => 'token_expired',
                 'message' => 'GitHub token has expired',
                 'username' => $connection->username,
-                'connected_at' => $connection->created_at
+                'connected_at' => $connection->created_at,
             ];
         }
 
@@ -62,7 +62,7 @@ class GitHubAccountService
             'message' => $isValid ? 'Connected successfully' : 'Invalid or revoked token',
             'username' => $connection->username,
             'connected_at' => $connection->created_at,
-            'repositories_count' => $isValid ? $service->getRepositories()->count() : 0
+            'repositories_count' => $isValid ? $service->getRepositories()->count() : 0,
         ];
     }
 
@@ -72,8 +72,8 @@ class GitHubAccountService
     public function refreshConnection(User $user): bool
     {
         $connection = $user->gitHubConnection;
-        
-        if (!$connection || !$connection->refresh_token) {
+
+        if (! $connection || ! $connection->refresh_token) {
             return false;
         }
 
@@ -82,6 +82,7 @@ class GitHubAccountService
             // You might need to implement token refresh logic here
             // For now, we'll just test the existing token
             $service = new GitHubService($connection);
+
             return $service->testConnection();
         } catch (\Exception $e) {
             return false;
@@ -93,38 +94,39 @@ class GitHubAccountService
      */
     public function getRepositoriesWithSettings(User $user): Collection
     {
-        if (!$this->hasValidConnection($user)) {
+        if (! $this->hasValidConnection($user)) {
             return collect();
         }
 
         $service = GitHubService::forUser($user->id);
         $repositories = $service->getRepositories();
-        
+
         // Attach settings for each repository
         return $repositories->map(function ($repo) use ($service) {
             $settings = collect();
-            
+
             // Get branches and their settings
             try {
                 $branches = $service->getBranches($repo['full_name']);
                 $branches->each(function ($branch) use ($service, $repo, &$settings) {
                     $branchSettings = $service->getRepositorySettings(
-                        $repo['full_name'], 
+                        $repo['full_name'],
                         $branch['name']
                     );
-                    
+
                     if ($branchSettings) {
                         $settings->push([
                             'branch' => $branch['name'],
-                            'settings' => $branchSettings
+                            'settings' => $branchSettings,
                         ]);
                     }
                 });
             } catch (\Exception $e) {
                 // Handle API errors gracefully
             }
-            
+
             $repo['configured_branches'] = $settings;
+
             return $repo;
         });
     }

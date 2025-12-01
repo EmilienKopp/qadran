@@ -50,6 +50,7 @@ class TaskListCommand extends BaseTenantAwareCrudCommand
 
         if ($tasks->isEmpty()) {
             $this->warn('📭 No tasks found.');
+
             return self::SUCCESS;
         }
 
@@ -58,7 +59,7 @@ class TaskListCommand extends BaseTenantAwareCrudCommand
         $tableData = $tasks->map(function ($task) {
             return [
                 'ID' => $task->id,
-                'Title' => substr($task->title ?? 'N/A', 0, 30) . (strlen($task->title ?? '') > 30 ? '...' : ''),
+                'Title' => substr($task->title ?? 'N/A', 0, 30).(strlen($task->title ?? '') > 30 ? '...' : ''),
                 'Priority' => $task->priority ?? 'N/A',
                 'Status' => $task->status ?? 'N/A',
                 'Project' => $task->project?->name ?? 'N/A',

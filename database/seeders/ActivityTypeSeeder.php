@@ -140,7 +140,7 @@ class ActivityTypeSeeder extends Seeder
             'description' => 'Administrative tasks',
             'color' => '#9E9E9E',
             'icon' => 'file',
-        ]
+        ],
     ];
 
     public function run(): void

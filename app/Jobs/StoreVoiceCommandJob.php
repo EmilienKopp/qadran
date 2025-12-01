@@ -45,6 +45,6 @@ class StoreVoiceCommandJob implements ShouldQueue, TenantAware
      */
     public function tags(): array
     {
-        return ['voice-command', 'user:' . $this->userId];
+        return ['voice-command', 'user:'.$this->userId];
     }
 }

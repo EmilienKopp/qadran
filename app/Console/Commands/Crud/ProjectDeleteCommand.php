@@ -24,7 +24,7 @@ class ProjectDeleteCommand extends BaseTenantAwareCrudCommand
      */
     protected function executeCommand(): int
     {
-        if (!$this->validateArguments(['id'])) {
+        if (! $this->validateArguments(['id'])) {
             return self::FAILURE;
         }
 
@@ -33,21 +33,23 @@ class ProjectDeleteCommand extends BaseTenantAwareCrudCommand
 
         $project = Project::find($id);
 
-        if (!$project) {
+        if (! $project) {
             $this->error("❌ Project with ID {$id} not found.");
+
             return self::FAILURE;
         }
 
         $this->warn("⚠️  About to delete project: {$project->name}");
-        
+
         if ($force) {
-            $this->warn("🔥 FORCE DELETE: This will permanently remove the project and cannot be undone!");
+            $this->warn('🔥 FORCE DELETE: This will permanently remove the project and cannot be undone!');
         } else {
-            $this->info("ℹ️  This will be a soft delete. The project can be restored later.");
+            $this->info('ℹ️  This will be a soft delete. The project can be restored later.');
         }
 
-        if (!$this->confirm('Are you sure you want to proceed?')) {
+        if (! $this->confirm('Are you sure you want to proceed?')) {
             $this->info('❌ Operation cancelled.');
+
             return self::SUCCESS;
         }
 
@@ -60,10 +62,11 @@ class ProjectDeleteCommand extends BaseTenantAwareCrudCommand
                 $this->info("🗑️  Project soft deleted: {$project->name}");
                 $this->info("💡 Use 'project:restore {$id}' to restore it later.");
             }
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error("❌ Failed to delete project: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

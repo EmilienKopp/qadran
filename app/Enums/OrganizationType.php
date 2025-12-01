@@ -3,7 +3,6 @@
 namespace App\Enums;
 
 use Splitstack\EnumFriendly\Traits\ExtendedEnum;
-use Illuminate\Support\Traits\EnumeratesValues;
 
 enum OrganizationType: string
 {
@@ -15,5 +14,4 @@ enum OrganizationType: string
     case Educational = 'educational';
     case Other = 'other';
 
-    
 }

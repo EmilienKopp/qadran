@@ -62,7 +62,7 @@ class N8nAIAction implements AIActionInterface
         ]);
         try {
             $client = new \GuzzleHttp\Client;
-            $tenantId = hash('sha256', \App\Models\Landlord\Tenant::current()?->id . env('APP_KEY'));
+            $tenantId = hash('sha256', \App\Models\Landlord\Tenant::current()?->id.env('APP_KEY'));
             $response = $client->post($url, [
                 'json' => [
                     'timestamp' => now()->toIso8601String(),
@@ -84,6 +84,7 @@ class N8nAIAction implements AIActionInterface
 
             [$data] = json_decode($response->getBody()->getContents(), true);
             \Log::info('n8n webhook response:', $data ?? []);
+
             return $data['output'] ?? [];
 
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {

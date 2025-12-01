@@ -13,6 +13,7 @@ class RemoteTenantRepository extends BaseRemoteRepository implements TenantRepos
     {
         try {
             $data = $this->get("{$this->resourceEndpoint}/{$id}");
+
             return $this->hydrate($data);
         } catch (\Exception $e) {
             return null;
@@ -24,9 +25,10 @@ class RemoteTenantRepository extends BaseRemoteRepository implements TenantRepos
         try {
             $data = $this->get($this->resourceEndpoint, ['domain' => $domain]);
             // Assuming the API returns a single tenant or array with one tenant
-            if (is_array($data) && !empty($data)) {
+            if (is_array($data) && ! empty($data)) {
                 return $this->hydrate(is_array($data[0]) ? $data[0] : $data);
             }
+
             return $this->hydrate($data);
         } catch (\Exception $e) {
             return null;
@@ -36,12 +38,14 @@ class RemoteTenantRepository extends BaseRemoteRepository implements TenantRepos
     public function all(): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint);
+
         return $this->hydrateCollection($data);
     }
 
     public function create(array $data): Tenant
     {
         $responseData = $this->post($this->resourceEndpoint, $data);
+
         return $this->hydrate($responseData);
     }
 
@@ -49,6 +53,7 @@ class RemoteTenantRepository extends BaseRemoteRepository implements TenantRepos
     {
         try {
             $responseData = $this->put("{$this->resourceEndpoint}/{$id}", $data);
+
             return $this->hydrate($responseData);
         } catch (\Exception $e) {
             return null;

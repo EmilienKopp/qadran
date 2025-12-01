@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class TagFactory extends Factory
 {
     public $timestamps = false;
-    
+
     /**
      * Define the model's default state.
      *

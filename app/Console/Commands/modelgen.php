@@ -3,27 +3,30 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Laravel\Prompts\Prompt;
 
 use function Laravel\Prompts\multiselect;
-use function Laravel\Prompts\select;
-use function Laravel\Prompts\confirm;
 
 class ModelGen extends Command
 {
     protected $signature = 'split:modelgen {--types-only : Generate only TypeScript interfaces}';
+
     protected $description = 'Generate TypeScript models and interfaces from Laravel models';
 
     protected $outputDir;
+
     protected $typesOutputPath;
+
     protected $models;
+
     protected Collection $selectedModels;
 
     private $connection = 'tenant';
+
     private $driver;
+
     private $database = 'qadran_db';
 
     public function __construct()
@@ -35,7 +38,7 @@ class ModelGen extends Command
 
     public function handle()
     {
-        if (!$this->validateEnvironment()) {
+        if (! $this->validateEnvironment()) {
             return;
         }
 
@@ -50,6 +53,7 @@ class ModelGen extends Command
 
         if ($this->selectedModels->isEmpty()) {
             $this->error('No models selected.');
+
             return;
         }
 
@@ -67,19 +71,20 @@ class ModelGen extends Command
     {
         if (config('database.default') !== 'pgsql') {
             $this->error('Only PostgreSQL is supported at the moment.');
+
             return false;
         }
 
         $this->info('Using PostgreSQL database driver.');
 
-        if (!$this->option('types-only')) {
-            if (!is_dir($this->outputDir)) {
+        if (! $this->option('types-only')) {
+            if (! is_dir($this->outputDir)) {
                 mkdir($this->outputDir, 0755, true);
             }
         }
 
         $typesDir = dirname($this->typesOutputPath);
-        if (!is_dir($typesDir)) {
+        if (! is_dir($typesDir)) {
             mkdir($typesDir, 0755, true);
         }
 
@@ -108,6 +113,7 @@ class ModelGen extends Command
     protected function shouldUseAllModels(): bool
     {
         $configModels = config('typegen.models', ['include' => []]);
+
         return isset($configModels['include'][0]) && $configModels['include'][0] === '*';
     }
 
@@ -117,27 +123,29 @@ class ModelGen extends Command
             $this->info('Including all models...');
             $viewModels = collect(app('files')->files(app_path('Models/Views')))
                 ->map(
-                    fn($file) => app()->getNamespace() . 'Models\\Views\\' .
+                    fn ($file) => app()->getNamespace().'Models\\Views\\'.
                         Str::replaceLast('.php', '', str_replace('/', '\\', $file->getRelativePathname()))
                 )
                 ->filter(function ($modelClass) {
-                    if (!class_exists($modelClass)) {
+                    if (! class_exists($modelClass)) {
                         return false;
                     }
                     $reflection = new \ReflectionClass($modelClass);
-                    return !$reflection->isAbstract();
+
+                    return ! $reflection->isAbstract();
                 });
             $this->models = collect(app('files')->files(app_path('Models')))
                 ->map(
-                    fn($file) => app()->getNamespace() . 'Models\\' .
+                    fn ($file) => app()->getNamespace().'Models\\'.
                         Str::replaceLast('.php', '', str_replace('/', '\\', $file->getRelativePathname()))
                 )
                 ->filter(function ($modelClass) {
-                    if (!class_exists($modelClass)) {
+                    if (! class_exists($modelClass)) {
                         return false;
                     }
                     $reflection = new \ReflectionClass($modelClass);
-                    return !$reflection->isAbstract();
+
+                    return ! $reflection->isAbstract();
                 })
                 ->merge($viewModels);
         } else {
@@ -149,16 +157,18 @@ class ModelGen extends Command
 
     protected function getSelectedModels(): Collection
     {
-        $modelNames = $this->models->map(fn($model) => class_basename($model))->toArray();
+        $modelNames = $this->models->map(fn ($model) => class_basename($model))->toArray();
         $selectedNames = multiselect('Select the models to generate:', $modelNames);
 
         $this->line('Selected models:');
+
         return $this->models->filter(function ($model) use ($selectedNames) {
             $className = class_basename($model);
             $selected = in_array($className, $selectedNames);
             if ($selected) {
                 $this->line("    $className");
             }
+
             return $selected;
         });
     }
@@ -217,13 +227,14 @@ class ModelGen extends Command
             }
 
             $this->line("    Inserting type: $typeEntry from $db_type");
+
             return $typeEntry;
         })->implode("\n");
 
         // Add hasMany and other relationship methods
         $relationshipProperties = $this->getRelationshipProperties($model);
         if ($relationshipProperties) {
-            $properties .= "\n" . $relationshipProperties;
+            $properties .= "\n".$relationshipProperties;
         }
 
         return $properties;
@@ -238,7 +249,7 @@ class ModelGen extends Command
             // Check for ExportRelationship attribute
             $attributes = $method->getAttributes(\App\Attributes\ExportRelationship::class);
 
-            if (!empty($attributes)) {
+            if (! empty($attributes)) {
                 $attribute = $attributes[0]->newInstance();
                 $relationName = $method->name;
                 $relatedType = class_basename($attribute->relatedModel);
@@ -276,7 +287,7 @@ class ModelGen extends Command
 
     protected function generateImports(Collection $columns, string $className): string
     {
-        $imports = "import { ";
+        $imports = 'import { ';
         $columns->each(function ($column) use (&$imports) {
             if (Str::endsWith($column->column_name, '_id')) {
                 $relationship = Str::beforeLast($column->column_name, '_id');
@@ -289,6 +300,7 @@ class ModelGen extends Command
             }
         });
         $imports .= "$className } from '\$models';";
+
         return $imports;
     }
 

@@ -20,18 +20,21 @@ class ClockEntryController extends Controller
     public function show(int $id)
     {
         $entry = $this->clockEntryRepository->find($id);
+
         return response()->json($entry);
     }
 
     public function byUser(int $userId)
     {
         $entries = $this->clockEntryRepository->findByUser($userId);
+
         return response()->json($entries);
     }
 
     public function activeByUser(int $userId)
     {
         $entry = $this->clockEntryRepository->findActiveByUser($userId);
+
         return response()->json($entry);
     }
 
@@ -44,6 +47,7 @@ class ClockEntryController extends Controller
         ]);
 
         $entry = $this->clockEntryRepository->create($validated);
+
         return response()->json($entry, 201);
     }
 
@@ -55,18 +59,20 @@ class ClockEntryController extends Controller
         ]);
 
         $entry = $this->clockEntryRepository->update($id, $validated);
-        if (!$entry) {
+        if (! $entry) {
             return response()->json(['error' => 'Clock entry not found'], 404);
         }
+
         return response()->json($entry);
     }
 
     public function destroy(int $id)
     {
         $deleted = $this->clockEntryRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['error' => 'Clock entry not found'], 404);
         }
+
         return response()->json(['message' => 'Clock entry deleted'], 200);
     }
 }

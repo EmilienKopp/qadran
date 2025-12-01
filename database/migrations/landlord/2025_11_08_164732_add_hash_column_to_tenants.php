@@ -18,7 +18,7 @@ return new class extends Migration
 
         $tenants = \App\Models\Landlord\Tenant::all();
         foreach ($tenants as $tenant) {
-            $hash = hash('sha256', $tenant->id . env('APP_KEY'));
+            $hash = hash('sha256', $tenant->id.env('APP_KEY'));
             $tenant->hash = $hash;
             $tenant->save();
         }

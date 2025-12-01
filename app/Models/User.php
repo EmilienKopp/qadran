@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Attributes\ExportRelationship;
 use App\Casts\N8nConfigCast;
 use App\Traits\HasGitHubConnection;
+use App\Traits\HasGoogleConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, HasGitHubConnection, HasRoles, Notifiable, UsesTenantConnection;
+    use HasApiTokens, HasFactory, HasGitHubConnection, HasGoogleConnection, HasRoles, Notifiable, UsesTenantConnection;
 
     /**
      * The attributes that are mass assignable.
@@ -68,7 +69,7 @@ class User extends Authenticatable
             if (! $user->handle) {
                 $user->handle = $user->email;
             }
-            $user->assignRole('user');
+            $user->assignRole('user', 'web');
         });
     }
 

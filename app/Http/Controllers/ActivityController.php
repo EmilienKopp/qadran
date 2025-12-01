@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
-use App\Models\ActivityLog;
 use App\Models\ActivityType;
 use App\Models\ClockEntry;
 use App\Models\Task;
@@ -27,8 +26,7 @@ class ActivityController extends Controller
         public UserRepositoryInterface $userRepository,
         public ProjectRepositoryInterface $projectRepository,
         public ActivityLogRepositoryInterface $activityLogRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -93,21 +91,21 @@ class ActivityController extends Controller
             ->map(function ($item) {
                 return [
                     ...$item->toArray(),
-                    'title' => $item->entry_count . " " . Str::plural('entry', $item->entry_count) . " on " . Carbon::parse($item->date)->format('F j, Y'),
+                    'title' => $item->entry_count.' '.Str::plural('entry', $item->entry_count).' on '.Carbon::parse($item->date)->format('F j, Y'),
                 ];
             })
             ->toArray();
 
         return inertia('Activity/Daily/Show', compact(
-            'activities', 
+            'activities',
             'projects',
-             'dailyLogs', 
-             'taskCategories',
-              'activityTypes', 
-              'tasks',
-               'date', 
-               'daysWithEntries'
-            ));
+            'dailyLogs',
+            'taskCategories',
+            'activityTypes',
+            'tasks',
+            'date',
+            'daysWithEntries'
+        ));
     }
 
     /**
@@ -139,7 +137,7 @@ class ActivityController extends Controller
         try {
             $success = ClockEntryRepository::delete($clockEntry);
 
-            if (!$success) {
+            if (! $success) {
                 throw new \Exception('Could not delete the clock entry.');
             }
         } catch (\Exception $e) {

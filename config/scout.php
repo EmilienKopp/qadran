@@ -220,7 +220,7 @@ return [
                     'query_by' => 'title,organization.name,location_name,description',
                     'min_len_1typo' => 1,     // Allow typos for single characters
                     'typo_tokens_threshold' => 1,
-                    'max_candidates' => 10     // Increase candidates for better prefix matching
+                    'max_candidates' => 10,     // Increase candidates for better prefix matching
                 ],
                 'use-cache' => true,
             ],

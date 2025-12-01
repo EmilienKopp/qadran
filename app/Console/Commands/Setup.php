@@ -2,41 +2,33 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\RoleEnum;
 use App\Enums\OrganizationType;
 use App\Models\Landlord\Tenant;
 use App\Models\Organization;
 use App\Models\User;
-use App\Models\OrganizationUser;
 use App\Services\OrganizationSetupService;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use Spatie\Permission\Models\Role;
-use WorkOS\WorkOS;
-use WorkOS\Organizations;
-use WorkOS\UserManagement;
 use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use WorkOS\Organizations;
+use WorkOS\WorkOS;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\text;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\info;
+use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
-use function Laravel\Prompts\error;
-use function Laravel\Prompts\spin;
 
 /**
  * Setup Command for Qadran Application
- * 
+ *
  * This command sets up the complete Qadran multi-tenant application from scratch.
  * It's designed to be safe for both development and production environments.
- * 
+ *
  * Features:
  * - Creates landlord and tenant template databases
  * - Runs all necessary migrations
@@ -44,14 +36,13 @@ use function Laravel\Prompts\spin;
  * - Sets up roles and permissions
  * - Gracefully handles existing data
  * - Includes safety checks for production use
- * 
+ *
  * Usage Examples:
  * - Development: php artisan app:setup
  * - Production: php artisan app:setup --force
  * - Automated: php artisan app:setup --skip-prompts --org-name="My Org" --admin-email="admin@example.com" --admin-password="secure123"
  * - Preview: php artisan app:setup --dry-run
  */
-
 class Setup extends Command
 {
     /**
@@ -67,6 +58,7 @@ class Setup extends Command
         parent::__construct();
         $this->setupService = $setupService;
     }
+
     /**
      * The name and signature of the console command.
      *
@@ -100,12 +92,12 @@ class Setup extends Command
         info('🚀 Starting Qadran Application Setup...');
 
         // Environment safety check
-        if (!$this->environmentCheck()) {
+        if (! $this->environmentCheck()) {
             return Command::FAILURE;
         }
 
         // Check WorkOS configuration
-        if (!$this->checkWorkOSConfiguration()) {
+        if (! $this->checkWorkOSConfiguration()) {
             return Command::FAILURE;
         }
 
@@ -122,7 +114,7 @@ class Setup extends Command
             $this->runMigrations();
 
             // Step 3: Create organization and user (optional)
-            if (!$this->option('skip-org') && confirm('Do you want to create the first organization and admin user now?', true)) {
+            if (! $this->option('skip-org') && confirm('Do you want to create the first organization and admin user now?', true)) {
                 $this->createOrganizationAndUser();
             } else {
                 info('⏭️  Skipping organization and user creation');
@@ -131,12 +123,13 @@ class Setup extends Command
             info('');
             info('✅ Setup completed successfully!');
             info('🎉 Your Qadran application is ready to use.');
-            
+
             return Command::SUCCESS;
 
         } catch (Exception $e) {
-            error('❌ Setup failed: ' . $e->getMessage());
+            error('❌ Setup failed: '.$e->getMessage());
             info('Please check the logs and try again.');
+
             return Command::FAILURE;
         }
     }
@@ -149,24 +142,28 @@ class Setup extends Command
         $apiKey = config('workos.api_key');
         $clientId = config('workos.client_id');
 
-        if (!$apiKey || !$clientId) {
+        if (! $apiKey || ! $clientId) {
             error('❌ WorkOS is not properly configured');
             info('Please set WORKOS_API_KEY and WORKOS_CLIENT_ID in your .env file');
+
             return false;
         }
 
         try {
             // Test WorkOS connection
             WorkOS::setApiKey($apiKey);
-            $organizations = new Organizations();
-            $organizations->listOrganizations(limit:1);
+            $organizations = new Organizations;
+            $organizations->listOrganizations(limit: 1);
             info('✅ WorkOS connection successful');
+
             return true;
         } catch (Exception $e) {
-            error('❌ WorkOS connection failed: ' . $e->getMessage());
+            error('❌ WorkOS connection failed: '.$e->getMessage());
+
             return false;
         }
     }
+
     private function dryRun(): int
     {
         info('🔍 DRY RUN MODE - Showing what would be done:');
@@ -175,40 +172,40 @@ class Setup extends Command
         $landlordDb = env('DB_DATABASE', 'qadran_landlord');
         $templateDb = 'tenant_template';
 
-        info("📊 Database Setup:");
+        info('📊 Database Setup:');
         info("  - Create landlord database: {$landlordDb}");
         info("  - Create tenant template database: {$templateDb}");
-        info("  - Run landlord migrations");
-        info("  - Run tenant template migrations");
+        info('  - Run landlord migrations');
+        info('  - Run tenant template migrations');
         info('');
 
-        if (!$this->option('skip-org')) {
+        if (! $this->option('skip-org')) {
             $orgData = $this->getOrganizationDetails();
             $userData = $this->getUserDetails();
 
-            info("👥 Organization & User Setup:");
+            info('👥 Organization & User Setup:');
             info("  - Create organization: {$orgData['name']} ({$orgData['type']->value})");
             if (isset($orgData['workos_id'])) {
                 info("  - Use existing WorkOS org: {$orgData['workos_id']}");
             } else {
-                info("  - Create new WorkOS organization");
+                info('  - Create new WorkOS organization');
             }
-            info("  - Create tenant database: qadran_" . Str::slug($orgData['name'], '_'));
+            info('  - Create tenant database: qadran_'.Str::slug($orgData['name'], '_'));
             info("  - Create admin user: {$userData['email']}");
             if (isset($userData['workos_id'])) {
                 info("  - Use existing WorkOS user: {$userData['workos_id']}");
             } else {
-                info("  - Create new WorkOS user");
+                info('  - Create new WorkOS user');
             }
-            info("  - Assign roles: Admin, Business Owner");
+            info('  - Assign roles: Admin, Business Owner');
         } else {
-            info("👥 Organization & User Setup:");
-            info("  - ⏭️  Skipping organization and user creation");
+            info('👥 Organization & User Setup:');
+            info('  - ⏭️  Skipping organization and user creation');
         }
         info('');
 
         warning('⚠️  This was a dry run. Remove --dry-run to execute the setup.');
-        
+
         return Command::SUCCESS;
     }
 
@@ -220,10 +217,11 @@ class Setup extends Command
         $env = app()->environment();
         info("Environment: {$env}");
 
-        if ($env === 'production' && !$this->option('force')) {
+        if ($env === 'production' && ! $this->option('force')) {
             warning('⚠️  Running setup in PRODUCTION environment!');
-            if (!confirm('Are you sure you want to continue?')) {
+            if (! confirm('Are you sure you want to continue?')) {
                 info('Setup cancelled for safety.');
+
                 return false;
             }
         }
@@ -233,18 +231,19 @@ class Setup extends Command
         $missing = [];
 
         foreach ($required as $var) {
-            if (!env($var)) {
+            if (! env($var)) {
                 $missing[] = $var;
             }
         }
 
-        if (!empty($missing)) {
-            error('Missing required environment variables: ' . implode(', ', $missing));
+        if (! empty($missing)) {
+            error('Missing required environment variables: '.implode(', ', $missing));
+
             return false;
         }
 
         // Test database connection
-        if (!$this->testDatabaseConnection()) {
+        if (! $this->testDatabaseConnection()) {
             return false;
         }
 
@@ -258,15 +257,17 @@ class Setup extends Command
     {
         try {
             $pdo = new \PDO(
-                "pgsql:host=" . env('DB_HOST') . ";port=" . env('DB_PORT', 5432),
+                'pgsql:host='.env('DB_HOST').';port='.env('DB_PORT', 5432),
                 env('DB_USERNAME'),
                 env('DB_PASSWORD')
             );
             info('✅ Database connection successful');
+
             return true;
         } catch (Exception $e) {
-            error('❌ Database connection failed: ' . $e->getMessage());
+            error('❌ Database connection failed: '.$e->getMessage());
             info('Please check your database configuration in .env file');
+
             return false;
         }
     }
@@ -291,19 +292,19 @@ class Setup extends Command
     private function setupLandlordDatabase(): void
     {
         $landlordDb = env('DB_DATABASE', 'qadran_landlord');
-        
+
         info("Creating landlord database: {$landlordDb}");
 
         try {
             // Connect to postgres without database to create it
             $pdo = new \PDO(
-                "pgsql:host=" . env('DB_HOST') . ";port=" . env('DB_PORT', 5432),
+                'pgsql:host='.env('DB_HOST').';port='.env('DB_PORT', 5432),
                 env('DB_USERNAME'),
                 env('DB_PASSWORD')
             );
 
             // Check if database exists
-            $stmt = $pdo->prepare("SELECT 1 FROM pg_database WHERE datname = ?");
+            $stmt = $pdo->prepare('SELECT 1 FROM pg_database WHERE datname = ?');
             $stmt->execute([$landlordDb]);
 
             if ($stmt->fetch()) {
@@ -314,7 +315,7 @@ class Setup extends Command
             }
 
         } catch (Exception $e) {
-            $this->error("  ❌ Failed to create landlord database: " . $e->getMessage());
+            $this->error('  ❌ Failed to create landlord database: '.$e->getMessage());
             throw $e;
         }
     }
@@ -325,18 +326,18 @@ class Setup extends Command
     private function setupTenantTemplateDatabase(): void
     {
         $templateDb = 'tenant_template';
-        
+
         info("Creating tenant template database: {$templateDb}");
 
         try {
             $pdo = new \PDO(
-                "pgsql:host=" . env('DB_HOST') . ";port=" . env('DB_PORT', 5432),
+                'pgsql:host='.env('DB_HOST').';port='.env('DB_PORT', 5432),
                 env('DB_USERNAME'),
                 env('DB_PASSWORD')
             );
 
             // Check if database exists
-            $stmt = $pdo->prepare("SELECT 1 FROM pg_database WHERE datname = ?");
+            $stmt = $pdo->prepare('SELECT 1 FROM pg_database WHERE datname = ?');
             $stmt->execute([$templateDb]);
 
             if ($stmt->fetch()) {
@@ -347,7 +348,7 @@ class Setup extends Command
             }
 
         } catch (Exception $e) {
-            $this->error("  ❌ Failed to create template database: " . $e->getMessage());
+            $this->error('  ❌ Failed to create template database: '.$e->getMessage());
             throw $e;
         }
     }
@@ -365,32 +366,31 @@ class Setup extends Command
             Artisan::call('migrate', [
                 '--path' => 'database/migrations/landlord',
                 '--database' => 'landlord',
-                '--force' => true
+                '--force' => true,
             ], $this->getOutput());
-            
+
             info('  ✅ Landlord migrations completed');
         } catch (Exception $e) {
-            error('  ❌ Landlord migrations failed: ' . $e->getMessage());
+            error('  ❌ Landlord migrations failed: '.$e->getMessage());
             throw $e;
         }
-
 
         // Run tenant template migrations
         info('  Running tenant template migrations...');
         try {
-            $templateDb = env('DB_DATABASE', 'qadran_landlord') . '_template';
-            
+            $templateDb = env('DB_DATABASE', 'qadran_landlord').'_template';
+
             // Temporarily set tenant connection to template database
             config(['database.connections.tenant.database' => $templateDb]);
             DB::purge('tenant');
 
             Artisan::call('migrate', [
                 '--database' => 'tenant',
-                '--force' => true
+                '--force' => true,
             ], $this->getOutput());
             info('  ✅ Tenant template migrations completed');
         } catch (Exception $e) {
-            error('  ❌ Tenant template migrations failed: ' . $e->getMessage());
+            error('  ❌ Tenant template migrations failed: '.$e->getMessage());
             throw $e;
         }
     }
@@ -404,14 +404,14 @@ class Setup extends Command
 
         // Get organization details
         $orgData = $this->getOrganizationDetails();
-        
+
         // Get user details
         $userData = $this->getUserDetails();
 
         // Use the service to create organization and user
         $result = $this->setupService->createOrganizationAndUser($orgData, $userData);
 
-        info("  ✅ Organization setup complete!");
+        info('  ✅ Organization setup complete!');
         info("  🏢 Organization: {$result['organization']->name}");
         info("  👤 Admin User: {$result['user']->email}");
         info("  🏠 Tenant Database: {$result['tenant']->database}");
@@ -428,7 +428,7 @@ class Setup extends Command
                 'name' => $this->option('org-name'),
                 'type' => OrganizationType::from($this->option('org-type')),
                 'workos_choice' => $this->option('workos-org-id') ? 'existing' : 'skip',
-                'workos_id' => $this->option('workos-org-id')
+                'workos_id' => $this->option('workos-org-id'),
             ];
 
             return $orgData;
@@ -440,7 +440,7 @@ class Setup extends Command
                 'name' => 'Default Organization',
                 'type' => OrganizationType::Corporation,
                 'workos_choice' => 'skip',
-                'workos_id' => null
+                'workos_id' => null,
             ];
         }
 
@@ -460,7 +460,7 @@ class Setup extends Command
                 'email' => $this->option('admin-email'),
                 'password' => $this->option('admin-password'),
                 'workos_choice' => $this->option('workos-user-id') ? 'existing' : 'skip',
-                'workos_id' => $this->option('workos-user-id')
+                'workos_id' => $this->option('workos-user-id'),
             ];
 
             return $userData;
@@ -473,7 +473,7 @@ class Setup extends Command
                 'email' => 'admin@example.com',
                 'password' => 'password',
                 'workos_choice' => 'skip',
-                'workos_id' => null
+                'workos_id' => null,
             ];
         }
 
@@ -486,8 +486,8 @@ class Setup extends Command
      */
     private function promptForOrganizationData(): array
     {
-        info("📋 Organization Setup");
-        
+        info('📋 Organization Setup');
+
         $name = text(
             label: 'Organization Name',
             placeholder: 'Enter organization name...',
@@ -510,7 +510,7 @@ class Setup extends Command
             options: [
                 'create' => 'Create new organization in WorkOS',
                 'existing' => 'Use existing WorkOS organization',
-                'skip' => 'Skip WorkOS integration (manual setup)'
+                'skip' => 'Skip WorkOS integration (manual setup)',
             ],
             default: 'create'
         );
@@ -522,7 +522,7 @@ class Setup extends Command
                 placeholder: 'org_...',
                 required: true,
                 validate: fn (string $value) => match (true) {
-                    !str_starts_with($value, 'org_') => 'WorkOS organization ID must start with "org_"',
+                    ! str_starts_with($value, 'org_') => 'WorkOS organization ID must start with "org_"',
                     default => null
                 }
             );
@@ -532,7 +532,7 @@ class Setup extends Command
             'name' => $name,
             'type' => OrganizationType::from($type),
             'workos_choice' => $workosChoice,
-            'workos_id' => $workosId
+            'workos_id' => $workosId,
         ];
     }
 
@@ -541,8 +541,8 @@ class Setup extends Command
      */
     private function promptForUserData(): array
     {
-        info("👤 Admin User Setup");
-        
+        info('👤 Admin User Setup');
+
         $name = text(
             label: 'Full Name',
             placeholder: 'Enter your full name...',
@@ -558,7 +558,7 @@ class Setup extends Command
             placeholder: 'Enter your email...',
             required: true,
             validate: fn (string $value) => match (true) {
-                !filter_var($value, FILTER_VALIDATE_EMAIL) => 'Please enter a valid email address.',
+                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'Please enter a valid email address.',
                 default => null
             }
         );
@@ -578,7 +578,7 @@ class Setup extends Command
             options: [
                 'create' => 'Create new user in WorkOS',
                 'existing' => 'Use existing WorkOS user',
-                'skip' => 'Skip WorkOS integration'
+                'skip' => 'Skip WorkOS integration',
             ],
             default: 'create'
         );
@@ -590,7 +590,7 @@ class Setup extends Command
                 placeholder: 'user_...',
                 required: true,
                 validate: fn (string $value) => match (true) {
-                    !str_starts_with($value, 'user_') => 'WorkOS user ID must start with "user_"',
+                    ! str_starts_with($value, 'user_') => 'WorkOS user ID must start with "user_"',
                     default => null
                 }
             );
@@ -601,7 +601,7 @@ class Setup extends Command
             'email' => $email,
             'password' => $password,
             'workos_choice' => $workosChoice,
-            'workos_id' => $workosId
+            'workos_id' => $workosId,
         ];
     }
 
@@ -611,8 +611,8 @@ class Setup extends Command
     private function cleanup(string $step, Exception $error): void
     {
         error("Setup failed at step: {$step}");
-        error("Error: " . $error->getMessage());
-        
+        error('Error: '.$error->getMessage());
+
         if (confirm('Would you like to attempt cleanup of partial setup?')) {
             info('Performing cleanup...');
             // Add cleanup logic here if needed

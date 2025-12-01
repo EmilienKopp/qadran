@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 trait Aliasable
 {
     protected array $scopesCache = [];
+
     protected int $cacheTTL = 300; // 5 minutes
 
     /**
@@ -21,7 +22,7 @@ trait Aliasable
         return Cache::remember(
             $this->buildCacheKey($scopes),
             now()->addSeconds($this->cacheTTL),
-            fn() => $this->resolveAlias($scopes)
+            fn () => $this->resolveAlias($scopes)
         ) ?? $this->{$this->getAliasableField()};
     }
 
@@ -54,7 +55,7 @@ trait Aliasable
      */
     protected function getAliasTable(): string
     {
-        return $this->aliasTable ?? $this->getTable() . '_aliases';
+        return $this->aliasTable ?? $this->getTable().'_aliases';
     }
 
     /**
@@ -62,7 +63,7 @@ trait Aliasable
      */
     protected function getAliasForeignKey(): string
     {
-        return Str::singular($this->getTable()) . '_id';
+        return Str::singular($this->getTable()).'_id';
     }
 
     /**
@@ -81,7 +82,7 @@ trait Aliasable
         $relatedModel = Str::studly(Str::singular($this->getTable()));
         $modelClass = "App\\Models\\{$relatedModel}Alias";
 
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             throw new \Exception("Alias model does not exist: {$modelClass}");
         }
 
@@ -102,7 +103,7 @@ trait Aliasable
         );
 
         return collect($scopes)
-            ->map(fn($value, $key) => "{$key}.{$value}")
+            ->map(fn ($value, $key) => "{$key}.{$value}")
             ->prepend($baseKey)
             ->join('.');
     }

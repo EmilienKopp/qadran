@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\GitHubOAuthController;
+use App\Http\Controllers\GoogleOAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -18,9 +19,18 @@ Route::middleware('guest')->group(function () {
 
     Route::post('welcome/register', [RegisteredUserController::class, 'store']);
 
-    Route::get('welcome/login', [AuthenticatedSessionController::class, 'create'])
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
+    // Primary authentication: GitHub OAuth
+    Route::get('github/login', [GitHubOAuthController::class, 'redirect'])
+        ->name('github.login');
+
+    // Primary authentication: Google OAuth
+    Route::get('google/login', [GoogleOAuthController::class, 'redirect'])
+        ->name('google.login');
+
+    // Fallback: password-based login (keeping for backward compatibility)
     Route::post('welcome/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('welcome/forgot-password', [PasswordResetLinkController::class, 'create'])
@@ -36,8 +46,18 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
 });
-Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
-    ->name('authenticate');
+
+// GitHub OAuth callback (handles both login and linking)
+Route::get('auth/github/callback', [GitHubOAuthController::class, 'callback'])
+    ->name('github.callback');
+
+// Google OAuth callback (handles both login and linking)
+Route::get('auth/google/callback', [GoogleOAuthController::class, 'callback'])
+    ->name('google.callback');
+
+// WorkOS authentication (commented out - available for rollback)
+// Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
+//     ->name('authenticate');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

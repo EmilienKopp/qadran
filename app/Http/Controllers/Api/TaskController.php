@@ -20,12 +20,14 @@ class TaskController extends Controller
     public function show(int $id)
     {
         $task = $this->taskRepository->find($id);
+
         return response()->json($task);
     }
 
     public function byProject(int $projectId)
     {
         $tasks = $this->taskRepository->findByProject($projectId);
+
         return response()->json($tasks);
     }
 
@@ -37,6 +39,7 @@ class TaskController extends Controller
         ]);
 
         $task = $this->taskRepository->create($validated);
+
         return response()->json($task, 201);
     }
 
@@ -48,18 +51,20 @@ class TaskController extends Controller
         ]);
 
         $task = $this->taskRepository->update($id, $validated);
-        if (!$task) {
+        if (! $task) {
             return response()->json(['error' => 'Task not found'], 404);
         }
+
         return response()->json($task);
     }
 
     public function destroy(int $id)
     {
         $deleted = $this->taskRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['error' => 'Task not found'], 404);
         }
+
         return response()->json(['message' => 'Task deleted'], 200);
     }
 }

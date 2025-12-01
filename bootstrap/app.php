@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(prepend: [
             \App\Http\Middleware\SetTenantUrlDefaults::class,
+            \App\Http\Middleware\PreventPlusAddressing::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Utils;
 
@@ -8,9 +8,9 @@ class InertiaHelper
 {
     public static function fail(string $message, array $errors = [])
     {
-      throw ValidationException::withMessages([
-        'error' => [$message],
-        ...$errors,
-      ]);
+        throw ValidationException::withMessages([
+            'error' => [$message],
+            ...$errors,
+        ]);
     }
 }

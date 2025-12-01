@@ -3,13 +3,13 @@
 namespace App\Console\Commands\Crud;
 
 use Illuminate\Console\Command;
-use Spatie\Multitenancy\Models\Tenant;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Spatie\Multitenancy\Models\Tenant;
 
 abstract class BaseTenantAwareCrudCommand extends Command
 {
     use TenantAware;
+
     /**
      * Execute the console command with tenant context.
      */
@@ -25,7 +25,7 @@ abstract class BaseTenantAwareCrudCommand extends Command
             }
             $this->newLine();
         }
-        
+
         return $this->executeCommand();
     }
 
@@ -40,11 +40,13 @@ abstract class BaseTenantAwareCrudCommand extends Command
     protected function validateArguments(array $required): bool
     {
         foreach ($required as $arg) {
-            if (!$this->argument($arg)) {
+            if (! $this->argument($arg)) {
                 $this->error("❌ Missing required argument: {$arg}");
+
                 return false;
             }
         }
+
         return true;
     }
 
@@ -56,7 +58,7 @@ abstract class BaseTenantAwareCrudCommand extends Command
         $this->info("✅ {$title}:");
         $this->table(
             ['Field', 'Value'],
-            collect($model->toArray())->map(fn($value, $key) => [$key, $this->formatValue($value)])->toArray()
+            collect($model->toArray())->map(fn ($value, $key) => [$key, $this->formatValue($value)])->toArray()
         );
     }
 
@@ -68,15 +70,15 @@ abstract class BaseTenantAwareCrudCommand extends Command
         if (is_null($value)) {
             return '<null>';
         }
-        
+
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
         }
-        
+
         if (is_array($value)) {
             return json_encode($value);
         }
-        
+
         return (string) $value;
     }
 

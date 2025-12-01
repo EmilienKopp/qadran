@@ -3,7 +3,6 @@
 namespace App\Features;
 
 use App\Enums\VoiceAssistanPlan;
-use Illuminate\Support\Lottery;
 
 class VoiceAssistant
 {

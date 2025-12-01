@@ -31,29 +31,32 @@ class LocalProjectRepository implements ProjectRepositoryInterface
     public function update(int $id, array $data): ?Project
     {
         $project = Project::find($id);
-        if (!$project) {
+        if (! $project) {
             return null;
         }
         $project->update($data);
+
         return $project->fresh();
     }
 
     public function delete(int $id): bool
     {
         $project = Project::find($id);
-        if (!$project) {
+        if (! $project) {
             return false;
         }
+
         return $project->delete();
     }
 
     public function findForUser(\App\Models\User|string $user)
     {
-        if($user instanceof \App\Models\User) {
+        if ($user instanceof \App\Models\User) {
             $userId = $user->id;
         } else {
             $userId = $user;
         }
+
         return Project::whereHas('users', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })->get();

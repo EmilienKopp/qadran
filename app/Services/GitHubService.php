@@ -2,20 +2,21 @@
 
 namespace App\Services;
 
-use App\Models\GitHubConnection;
-use App\Models\RepositorySettings;
-use App\DTOs\GitLogRequest;
-use App\DTOs\GitLogResponse;
 use App\DTOs\CommitData;
 use App\DTOs\FileDiff;
+use App\DTOs\GitLogRequest;
+use App\DTOs\GitLogResponse;
+use App\Models\GitHubConnection;
+use App\Models\RepositorySettings;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class GitHubService
 {
     private const GITHUB_API_BASE = 'https://api.github.com';
+
     private const CACHE_TTL = 300; // 5 minutes
 
     public function __construct(
@@ -28,6 +29,7 @@ class GitHubService
     public static function forUser(int $userId): self
     {
         $connection = GitHubConnection::where('user_id', $userId)->firstOrFail();
+
         return new self($connection);
     }
 
@@ -37,9 +39,9 @@ class GitHubService
     public function getGitLogs(GitLogRequest $request): GitLogResponse
     {
         // $settings = $this->getRepositorySettings($request->repository, $request->branch);
-        
+
         $commits = $this->fetchCommits($request);
-        
+
         // if ($request->includeDiff) {
         //     $commits = $this->enrichCommitsWithDiffs($commits, $request, $settings);
         // }
@@ -97,6 +99,7 @@ class GitHubService
     {
         try {
             $response = $this->makeGitHubRequest('/user');
+
             return $response->successful();
         } catch (\Exception $e) {
             return false;
@@ -110,27 +113,27 @@ class GitHubService
     {
         $cacheKey = "github_repos_{$this->connection->id}";
         $owner = $this->connection->username;
-        
+
         // return Cache::remember($cacheKey, self::CACHE_TTL, function () use($owner) {
-            $response = $this->makeGitHubRequest("/users/{$owner}/repos", [
-                'sort' => 'updated',
-                'direction' => 'desc',
-                'per_page' => 100,
-            ]);
+        $response = $this->makeGitHubRequest("/users/{$owner}/repos", [
+            'sort' => 'updated',
+            'direction' => 'desc',
+            'per_page' => 100,
+        ]);
 
-            if (!$response->successful()) {
-                throw new \Exception('Failed to fetch repositories');
-            }
+        if (! $response->successful()) {
+            throw new \Exception('Failed to fetch repositories');
+        }
 
-            return collect($response->json())->map(function ($repo) {
-                return [
-                    'name' => $repo['name'],
-                    'full_name' => $repo['full_name'],
-                    'private' => $repo['private'],
-                    'default_branch' => $repo['default_branch'],
-                    'updated_at' => $repo['updated_at'],
-                ];
-            });
+        return collect($response->json())->map(function ($repo) {
+            return [
+                'name' => $repo['name'],
+                'full_name' => $repo['full_name'],
+                'private' => $repo['private'],
+                'default_branch' => $repo['default_branch'],
+                'updated_at' => $repo['updated_at'],
+            ];
+        });
         // });
     }
 
@@ -141,11 +144,11 @@ class GitHubService
     {
         $cacheKey = "github_branches_{$this->connection->id}_{$repository}";
         $owner = $this->connection->username;
-        
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($owner,$repository) {
+
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($owner, $repository) {
             $response = $this->makeGitHubRequest("/repos/{$owner}/{$repository}/branches");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 \Log::error('Failed to fetch branches', [
                     'repository' => $repository,
                     'status' => $response->status(),
@@ -185,17 +188,16 @@ class GitHubService
         $allCommits = collect();
         $page = 1;
 
-
         do {
             $params['page'] = $page;
             $response = $this->makeGitHubRequest("/repos/{$owner}/{$request->repository}/commits", $params);
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \Exception('Failed to fetch commits');
             }
 
             $commits = collect($response->json());
             $allCommits = $allCommits->merge($commits);
-            
+
             $page++;
         } while ($commits->count() === 100 && $page <= 10); // Limit to 1000 commits max
 
@@ -215,13 +217,14 @@ class GitHubService
      * Enrich commits with diff data
      */
     private function enrichCommitsWithDiffs(
-        Collection $commits, 
-        GitLogRequest $request, 
+        Collection $commits,
+        GitLogRequest $request,
         ?RepositorySettings $settings
     ): Collection {
         return $commits->map(function (CommitData $commit) use ($request, $settings) {
             $diff = $this->getCommitDiff($request->repository, $commit->sha, $settings);
             $commit->setDiff($diff);
+
             return $commit;
         });
     }
@@ -233,7 +236,7 @@ class GitHubService
     {
         $response = $this->makeGitHubRequest("/repos/{$repository}/commits/{$sha}");
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \Exception("Failed to fetch commit diff for {$sha}");
         }
 
@@ -265,10 +268,10 @@ class GitHubService
     {
         return $files->filter(function ($file) use ($settings) {
             $filename = $file['filename'];
-            
+
             // Check excluded folders
             foreach ($settings->excluded_folders as $folder) {
-                if (str_starts_with($filename, $folder . '/')) {
+                if (str_starts_with($filename, $folder.'/')) {
                     return false;
                 }
             }
@@ -289,9 +292,30 @@ class GitHubService
     private function makeGitHubRequest(string $endpoint, array $params = [])
     {
         return Http::withHeaders([
-            'Authorization' => 'token ' . $this->connection->access_token,
+            'Authorization' => 'token '.$this->connection->access_token,
             'Accept' => 'application/vnd.github.v3+json',
             'User-Agent' => config('app.name', 'Laravel'),
-        ])->get(self::GITHUB_API_BASE . $endpoint, $params);
+        ])->get(self::GITHUB_API_BASE.$endpoint, $params);
+    }
+
+
+    private function getBranchesCacheKey(string $repository): string
+    {
+        return "github_branches_{$this->connection->id}_{$repository}";
+    }
+
+    private function getRepositoriesCacheKey(): string
+    {
+        return "github_repos_{$this->connection->id}";
+    }
+
+    public function clearCache()
+    {
+        Cache::forget($this->getRepositoriesCacheKey());
+        $refetchedRepositories = $this->getRepositories();
+        foreach ($refetchedRepositories as $repo) {
+            Cache::forget($this->getBranchesCacheKey($repo['name']));
+        }
+        Cache::forget($this->getBranchesCacheKey('*'));
     }
 }
