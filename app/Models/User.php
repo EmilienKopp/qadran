@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Attributes\ExportRelationship;
 use App\Casts\N8nConfigCast;
+use App\Models\Landlord\Tenant;
 use App\Traits\HasGitHubConnection;
 use App\Traits\HasGoogleConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,6 +71,17 @@ class User extends Authenticatable
                 $user->handle = $user->email;
             }
             $user->assignRole('user', 'web');
+
+        });
+
+        static::created(function ($user) {
+            \DB::connection('landlord')->table('tenant_users')->insert([
+                'tenant_id' => Tenant::current()->id,
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         });
     }
 

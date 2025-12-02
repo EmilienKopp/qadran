@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GitHubConnection;
+use App\Models\Landlord\Tenant;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use App\Services\GitHubService;
@@ -10,7 +11,9 @@ use App\Support\RequestContextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Native\Laravel\Facades\Settings;
@@ -19,13 +22,22 @@ class GitHubOAuthController extends Controller
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Redirect to GitHub OAuth for authentication or account linking
      */
     public function redirect(): RedirectResponse
     {
+        $space = request()->query('space');
+        $validator = \Validator::make(
+            ['space' => $space],
+            ['space' => 'required|alpha_dash|max:50']
+        );
+        $validator->validate();
+        session(['space' => $space]);
+
         // No authentication check - supports both login and linking
         // Scopes can be configured in config/services.php
         return Socialite::driver('github')->redirect();
@@ -46,7 +58,7 @@ class GitHubOAuthController extends Controller
             if (Auth::check()) {
                 return $this->handleAccountLinking(Auth::user(), $githubUser, $token);
             }
-            
+
             return $this->handleAuthentication($githubUser, $token);
 
         } catch (InvalidStateException $e) {
@@ -63,12 +75,13 @@ class GitHubOAuthController extends Controller
                 \Log::error('GitHub OAuth callback error for authenticated user', [
                     'user_id' => Auth::id(),
                 ]);
+                \Log::error($e->getMessage());
                 return redirect()->route('settings.integrations')
-                    ->with('error', 'An error occurred during GitHub authentication.');
+                    ->with('error', 'An error occurred during GitHub authentication. ' . $e->getMessage());
             }
 
             return redirect('/login')
-                ->with('error', 'An error occurred during GitHub authentication.');
+                ->with('error', 'An error occurred during GitHub authentication. ' . $e->getMessage());
         }
     }
 
@@ -77,12 +90,28 @@ class GitHubOAuthController extends Controller
      */
     private function handleAuthentication($githubUser, string $token): RedirectResponse
     {
+        // Retrieve and validate space from session
+        $space = session('space');
+        if (!$space) {
+            return redirect('/login')
+                ->with('error', 'Organization context is missing. Please try logging in again.');
+        }
+        $tenant = Tenant::where('host', $space)->first();
+        if (!$tenant) {
+            return redirect('/login')
+                ->with('error', 'The specified organization does not exist.');
+        } else {
+            $tenant->makeCurrent();
+        }
+
+
+
         // Lookup user by GitHub ID
         $user = $this->userRepository->findByGitHubId($githubUser->getId())
             ?? $this->userRepository->findByEmail($githubUser->getEmail());
 
         // Create user if doesn't exist (web mode only)
-        if (! $user) {
+        if (!$user) {
             if (RequestContextResolver::isDesktop()) {
                 \Log::debug('GitHub user not found in desktop mode', [
                     'github_user_id' => $githubUser->getId(),
@@ -92,7 +121,7 @@ class GitHubOAuthController extends Controller
             }
 
             // Validate email is present
-            if (! $githubUser->getEmail()) {
+            if (!$githubUser->getEmail()) {
                 return redirect('/login')
                     ->with('error', 'Please make your GitHub email public to continue.');
             }
@@ -182,7 +211,7 @@ class GitHubOAuthController extends Controller
 
         // Test the connection
         $service = new GitHubService($connection);
-        if (! $service->testConnection()) {
+        if (!$service->testConnection()) {
             $connection->delete();
 
             return redirect()->route('settings.integrations')
@@ -228,7 +257,7 @@ class GitHubOAuthController extends Controller
 
             // Test the connection
             $service = new GitHubService($connection);
-            if (! $service->testConnection()) {
+            if (!$service->testConnection()) {
                 $connection->delete();
 
                 return redirect()->route('settings.integrations')
@@ -270,7 +299,7 @@ class GitHubOAuthController extends Controller
     {
         $connection = GitHubConnection::where('user_id', Auth::id())->first();
 
-        if (! $connection) {
+        if (!$connection) {
             return response()->json([
                 'connected' => false,
                 'status' => 'not_connected',
@@ -294,19 +323,28 @@ class GitHubOAuthController extends Controller
      */
     private function createOrUpdateConnection(User $user, $githubUser, string $token): GitHubConnection
     {
-        return GitHubConnection::updateOrCreate(
-            [
-                'user_id' => $user->id,
-            ],
-            [
-                'github_user_id' => $githubUser->getId(),
-                'username' => $githubUser->getNickname(),
-                'access_token' => $token,
-                'refresh_token' => $githubUser->refreshToken ?? null,
-                'token_expires_at' => $githubUser->expiresIn ?
-                    now()->addSeconds($githubUser->expiresIn) : null,
-            ]
-        );
+        return DB::transaction(function () use ($user, $githubUser, $token) {
+            $connection = GitHubConnection::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                ],
+                [
+                    'github_user_id' => $githubUser->getId(),
+                    'username' => $githubUser->getNickname(),
+                    'access_token' => $token,
+                    'refresh_token' => $githubUser->refreshToken ?? null,
+                    'token_expires_at' => $githubUser->expiresIn ?
+                        now()->addSeconds($githubUser->expiresIn) : null,
+                ]
+            );
+
+            DB::connection('landlord')->table('tenant_users')
+                ->where('tenant_id', Tenant::current()->id)
+                ->where('user_id', $user->id)
+                ->update(['github_user_id' => $githubUser->getId()]);
+                
+            return $connection;
+        });
     }
 
     /**
@@ -314,7 +352,7 @@ class GitHubOAuthController extends Controller
      */
     private function extractFirstName(?string $fullName): string
     {
-        if (! $fullName) {
+        if (!$fullName) {
             return 'GitHub';
         }
         $parts = explode(' ', $fullName, 2);
@@ -327,7 +365,7 @@ class GitHubOAuthController extends Controller
      */
     private function extractLastName(?string $fullName): ?string
     {
-        if (! $fullName) {
+        if (!$fullName) {
             return 'User';
         }
         $parts = explode(' ', $fullName, 2);

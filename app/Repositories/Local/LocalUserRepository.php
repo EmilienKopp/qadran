@@ -50,6 +50,12 @@ class LocalUserRepository implements UserRepositoryInterface
         return User::where('email', $email)->first();
     }
 
+    public function getGitHubUserId(int $userId): ?string
+    {
+        $user = User::find($userId);
+        return $user?->gitHubConnection?->github_user_id;
+    }
+
     public function all(): Collection
     {
         return User::all();
