@@ -71,7 +71,7 @@ class HandleInertiaRequests extends Middleware
             'features' => [
                 'voiceAssistant' => $tenant?->features()->value(VoiceAssistant::class) ?? false,
                 'voiceAssistantMode' => $tenant && $request->user()
-                    ? Feature::value(VoiceAssistantMode::class, $request->user())
+                    ? Feature::for($request->user())->value(VoiceAssistantMode::class)
                     : false,
             ],
         ];
