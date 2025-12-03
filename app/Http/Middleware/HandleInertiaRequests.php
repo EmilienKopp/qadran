@@ -7,6 +7,7 @@ use App\Features\VoiceAssistantMode;
 use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
 use Inertia\Middleware;
 use Laravel\Pennant\Feature;
 
@@ -36,11 +37,18 @@ class HandleInertiaRequests extends Middleware
     {
         $userId = $request->user()?->id;
         $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
-
+        
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
+            ],
+            'context' => [
+                'tenant' => Context::get('tenantId'),
+                'domain' => Context::get('domain'),
+                'executionContext' => Context::get('executionContext'),
+                'host' => Context::get('host'),
+                'availableTenants' => Context::get('availableTenants'),
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

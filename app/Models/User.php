@@ -38,6 +38,7 @@ class User extends Authenticatable
         'password',
         'workos_id',
         'n8n_config',
+        'preferences',
     ];
 
     /**
@@ -61,6 +62,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'n8n_config' => N8nConfigCast::class,
+            'preferences' => 'array',
         ];
     }
 

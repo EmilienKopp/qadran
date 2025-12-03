@@ -4,6 +4,7 @@ namespace App\Repositories\Local;
 
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
+use DateTimeImmutable;
 use Illuminate\Support\Collection;
 
 class LocalUserRepository implements UserRepositoryInterface
@@ -69,7 +70,7 @@ class LocalUserRepository implements UserRepositoryInterface
     public function update(int $id, array $data): ?User
     {
         $user = User::find($id);
-        if (! $user) {
+        if (!$user) {
             return null;
         }
         $user->update($data);
@@ -80,7 +81,7 @@ class LocalUserRepository implements UserRepositoryInterface
     public function delete(int $id): bool
     {
         $user = User::find($id);
-        if (! $user) {
+        if (!$user) {
             return false;
         }
 

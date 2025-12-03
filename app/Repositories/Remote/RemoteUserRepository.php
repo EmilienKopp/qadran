@@ -72,6 +72,12 @@ class RemoteUserRepository extends BaseRemoteRepository implements UserRepositor
         }
     }
 
+    public function getGitHubUserId(int $userId): ?string
+    {
+        $user = $this->find($userId, ['gitHubConnection']);
+        return $user?->gitHubConnection?->github_user_id;
+    }
+
     public function all(): \Illuminate\Support\Collection
     {
         $data = $this->get($this->resourceEndpoint);

@@ -1,6 +1,6 @@
 import { router, useForm } from '@inertiajs/svelte';
 import { get, Readable } from 'svelte/store';
-import type { InertiaForm, Page, RequestPayload, VisitHelperOptions } from './types';
+import type { Context, InertiaForm, Page, RequestPayload, VisitHelperOptions } from './types';
 import { page } from '@inertiajs/svelte';
 
 export type * from './types';
@@ -25,6 +25,11 @@ export function getPage(path?: keyof Page): any {
   }
   return p;
 }
+
+export function getSharedContext(): Context {
+  return get(page)?.props?.context;
+}
+
 
 /**
  * Wrapper around inertia router post with preserved state and scroll

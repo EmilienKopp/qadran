@@ -16,6 +16,10 @@ export const DATETIME_FORMAT = `${DATE_FORMAT} ${TIME_FORMAT}`;
 export const DURATION_FORMAT = 'HH[h]mm[mn]ss[s]';
 export const DURATION_FORMAT_SHORT = 'HH[h]mm[mn]';
 
+export function readable(str: string): string {
+  return capitalize(str.replaceAll(/[_-]/g, ' '));
+}
+
 export function date(date: Date | string | null, format?: string) {
   if (!date) return '';
   return dayjs(date).format(format ?? DATE_FORMAT);

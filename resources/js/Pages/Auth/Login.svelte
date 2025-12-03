@@ -2,26 +2,47 @@
   import Button from '$components/Actions/Button.svelte';
   import Checkbox from '$components/DataInput/Checkbox.svelte';
   import Input from '$components/DataInput/Input.svelte';
+  import Select from '$components/DataInput/Select.svelte';
   import GuestLayout from '$layouts/GuestLayout.svelte';
   import { getPage } from '$lib/inertia';
+  import { asSelectOptions } from '$lib/utils/formatting';
   import { Link, useForm } from '@inertiajs/svelte';
+  import dayjs from 'dayjs';
 
   interface Props {
     canResetPassword?: boolean;
     status?: string;
+    rememberedSpaces?: string[];
   }
 
-  let { canResetPassword = false, status = undefined }: Props = $props();
-  $inspect(getPage());
+  let {
+    canResetPassword = false,
+    status = undefined,
+    rememberedSpaces = [],
+  }: Props = $props();
+  let formElement: HTMLFormElement;
+  let inputNewSpace = $state(rememberedSpaces.length === 0);
+  const spaceOptions = $derived(
+    rememberedSpaces
+      .map((s: string) => {
+        const split = s.split('|');
+        return {
+          space: split[0],
+          last_accessed: split[1]
+        };
+      })
+      .sort((a, b) => dayjs(a.last_accessed).diff(dayjs(b.last_accessed))),
+  );
 
   const form = useForm({
-    space: '',
+    space: rememberedSpaces.length > 0 ? spaceOptions[0].space : '',
     email: '',
     password: '',
     remember: false,
   });
 
-  function submit() {
+  function submit(e: SubmitEvent) {
+    e.preventDefault();
     $form.post('/welcome/login', {
       onFinish: (event) => {
         $form.reset('password');
@@ -35,36 +56,53 @@
 </svelte:head>
 
 <GuestLayout>
-  <form
-    class="w-full max-w-md mx-auto"
-    onsubmit={(e) => {
-      e.preventDefault();
-      submit();
-    }}
-  >
+  <form bind:this={formElement} class="w-full max-w-md mx-auto">
     <h1 class="mb-8 text-center text-3xl font-bold">Welcome Back</h1>
-    <hr class="border-gray-300 dark:border-gray-600 my-4"/>
+    <hr class="border-gray-300 dark:border-gray-600 my-4" />
 
     <div>
-      <Input
-        label="Space"
-        id="space"
-        type="text"
-        name="space"
-        placeholder="e.g. acme"
-        class="mt-1 block w-full"
-        bind:value={$form.space}
-        required
-        autofocus
-        autocomplete="domain"
-        error={$form.errors?.space ?? getPage().props.errors?.space}
-      />
-      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        Your organization's space identifier
-      </p>
+      {#if rememberedSpaces.length > 0}
+        <label
+          for="space"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          Select your space
+        </label>
+        <Select
+          id="space-select"
+          class="mt-1 block w-full"
+          bind:value={$form.space}
+          options={asSelectOptions(spaceOptions, 'space', 'space')}
+        ></Select>
+        <button
+          type="button"
+          class="mt-2 text-sm text-blue-600 hover:underline"
+          onclick={() => (inputNewSpace = true)}
+        >
+          Enter a new space
+        </button>
+      {/if}
+      {#if !rememberedSpaces.length || inputNewSpace}
+        <Input
+          label="Space"
+          id="space"
+          type="text"
+          name="space"
+          placeholder="e.g. acme"
+          class="mt-1 block w-full"
+          bind:value={$form.space}
+          required
+          autofocus
+          autocomplete="organization"
+          error={$form.errors?.space ?? getPage().props.errors?.space}
+        />
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          Your organization's space identifier
+        </p>
+      {/if}
     </div>
 
-    <hr class="border-gray-300 dark:border-gray-600 my-4"/>
+    <hr class="border-gray-300 dark:border-gray-600 my-4" />
 
     {#if status}
       <div
@@ -98,7 +136,7 @@
 
       <!-- Google OAuth -->
       <a
-        href={route('google.login')}
+        href={route('google.login', { space: $form.space })}
         class="flex items-center justify-center gap-3 rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 w-full"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24">

@@ -7,6 +7,7 @@ use App\Models\Landlord\Tenant;
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use App\Services\GitHubService;
+use App\Services\SpaceService;
 use App\Support\RequestContextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,6 +37,7 @@ class GitHubOAuthController extends Controller
             ['space' => 'required|alpha_dash|max:50']
         );
         $validator->validate();
+
         session(['space' => $space]);
 
         // No authentication check - supports both login and linking
@@ -153,7 +155,7 @@ class GitHubOAuthController extends Controller
         }
 
         // Redirect based on tenant context
-        $tenant = \App\Models\Landlord\Tenant::current();
+        $tenant = Tenant::current();
 
         if ($tenant) {
             // On tenant subdomain - redirect to dashboard
@@ -161,6 +163,8 @@ class GitHubOAuthController extends Controller
             if (app()->environment('staging') || app()->isProduction()) {
                 $params['account'] = $tenant->host;
             }
+
+            SpaceService::registerSpaceCookie($tenant->host);
 
             return redirect()->route('dashboard', $params);
         }

@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\PreventPlusAddressing::class,
         ]);
         $middleware->web(append: [
+            \App\Http\Middleware\EnsureAvailableTenantsContext::class, // do not put AFTER HandleInertiaRequests
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);

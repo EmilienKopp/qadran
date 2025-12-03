@@ -47,6 +47,26 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
+    public function updateTimezone(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'timezone' => ['required', 'string', 'in:' . implode(',', timezone_identifiers_list())],
+        ]);
+
+        $user = $request->user();
+        $preferences = $user->preferences ?? [];
+        $preferences['timezone'] = $request->input('timezone');
+        $preferences['timezones'] = ($preferences['timezones'] ?? []);
+        if (!in_array($request->input('timezone'), $preferences['timezones'], true)) {
+            $preferences['timezones'][] = $request->input('timezone');
+        }
+        $user->preferences = $preferences;
+        $user->timezone = $request->input('timezone');
+        $user->save();
+
+        return Redirect::back()->with('success', 'Timezone updated successfully.');
+    }
+
     /**
      * Delete the user's account.
      */

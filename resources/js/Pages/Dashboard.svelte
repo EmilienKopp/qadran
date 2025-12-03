@@ -7,15 +7,17 @@
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { ClockEntry } from '$lib/domain/ClockEntry';
   import { User } from '$lib/domain/User/index.svelte';
-  import { superUseForm } from '$lib/inertia';
+  import { superUseForm, getPage } from '$lib/inertia';
   import { asSelectOptions } from '$lib/utils/formatting';
   import { getTimezone } from '$lib/utils/timezone';
   import type { Project } from '$models';
   import MiniButton from '$components/Buttons/MiniButton.svelte';
+  import { getContext } from 'svelte';
 
   interface Props {
     user: User;
   }
+
 
   let { user }: Props = $props();
   let latestEntry = $derived(user?.todays_entries?.[0]);
@@ -55,6 +57,9 @@
             <Select
               bind:value={$form.project_id}
               options={projectOptions}
+              name="project_id"
+              placeholder="Select Project"
+              class="w-44"
             />
             <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)}>
               {nextAction}

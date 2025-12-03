@@ -116,9 +116,12 @@ class AuthenticatedSessionController extends Controller
 
     public function create()
     {
+        $cookie = request()->cookie('_qadran_sp');
+        $rememberedSpaces = explode(',', $cookie ?? null);
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
+            'rememberedSpaces' => empty($cookie) ? [] : $rememberedSpaces,
         ]);
     }
 

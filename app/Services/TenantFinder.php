@@ -8,6 +8,8 @@ use App\Models\Landlord\Tenant;
 use App\Support\RequestContextResolver;
 use App\Utils\UrlTools;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\DB;
 use Native\Desktop\Facades\Settings;
 use Spatie\Multitenancy\TenantFinder\TenantFinder as BaseTenantFinder;
 
@@ -20,11 +22,16 @@ class TenantFinder extends BaseTenantFinder
 
         $isLocal = ! app()->isProduction() && ($host === 'localhost' || str($host)->contains('127.0.0.1'));
 
-        return match ($context) {
+        $tenant = match ($context) {
             ExecutionContext::DESKTOP => $this->findDesktopTenant(),
             ExecutionContext::WEB, => $this->findWebTenant($host, $isLocal),
             default => TenantFacade::firstWhere('host', explode('.', $host)[0]),
         };
+        Context::add('domain', $tenant?->domain);
+        Context::add('host', $tenant?->host);
+        Context::add('tenantId', $tenant?->id);
+        Context::add('executionContext', $context);
+        return $tenant;
     }
 
     private function findDesktopTenant(): ?Tenant

@@ -208,4 +208,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('Settings/Integrations', compact('githubStatus'));
         })->name('settings.integrations');
     });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::post('/timezone', [ProfileController::class, 'updateTimezone'])->name('user.timezone.update');
+    });
 });

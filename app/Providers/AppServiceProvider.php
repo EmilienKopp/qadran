@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Landlord\Tenant;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;

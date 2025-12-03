@@ -6,4 +6,5 @@ return [
     App\Providers\DataAccessServiceProvider::class,
     App\Providers\GitHubServiceProvider::class,
     App\Providers\RepositoryServiceProvider::class,
+    App\Providers\TelescopeServiceProvider::class,
 ];

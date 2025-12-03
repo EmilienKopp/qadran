@@ -27,3 +27,20 @@ export type RouterCallbacks = {
   onSuccess?: (event: any) => void;
   onError?: (event: any) => void;
 };
+
+export type Context = {
+  tenant: string;
+  host: string;
+  domain: string;
+  executionContext: 'local' | 'web' | 'cli' | 'api' | 'desktop';
+
+  availableTenants?: { 
+    domain: string;
+    github_user_id: string;
+    google_user_id: string;
+    host: string;
+    name: string;
+    tenant_id: string;
+    user_id: string;
+  }[];
+};
