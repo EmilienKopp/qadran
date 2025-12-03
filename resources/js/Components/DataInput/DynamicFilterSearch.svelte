@@ -3,15 +3,18 @@
   import Swap from '$components/Actions/Swap.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import { query } from '$lib/stores/global/query.svelte';
+  import { XOR } from '$lib/utils/assessing';
   import { onMount } from 'svelte';
 
   interface Props {
     searchHandler: (query: string) => void;
     clearHandler: () => void;
+    alwaysDynamic?: boolean;
+    alwaysStatic?: boolean;
     q: string;
   }
 
-  let { searchHandler, clearHandler, q = $bindable() }: Props = $props();
+  let { searchHandler, clearHandler, q = $bindable(), alwaysDynamic = false, alwaysStatic = false }: Props = $props();
 
   let prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   let dynamicEnabled = $state(!prefersReducedMotion);
@@ -45,7 +48,7 @@
 </script>
 
 <form class="flex items-center gap-2" onsubmit={(e: Event) => search(e)}>
-  {#if !prefersReducedMotion}
+  {#if !prefersReducedMotion && XOR(alwaysDynamic, alwaysStatic)}
   <Swap
     on="⚡️"
     off="🔄"

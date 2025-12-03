@@ -17,6 +17,8 @@
   import Timezone from '$components/UI/Timezone.svelte';
   import Button from '$components/Actions/Button.svelte';
   import { features } from '$lib/stores/global/features.svelte';
+  import { getSharedContext } from '$lib/inertia';
+  import { setContext } from 'svelte';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -27,8 +29,8 @@
 
   let showingNavigationDropdown = $state(false);
 
-  let context = $derived(new NavigationContext(RoleContext.selected));
-  let navigationElements = $derived(context.strategy.navigationElements());
+  let navigationContext = $derived(new NavigationContext(RoleContext.selected));
+  let navigationElements = $derived(navigationContext.strategy.navigationElements());
 
   const settingsDropdownActions: DropdownAction[] = [
     { text: 'Profile', href: route('profile.edit') },
@@ -78,10 +80,10 @@
           <div class="hidden sm:ms-6 sm:flex sm:items-center">
             <Timezone />
             <!-- Settings Dropdown -->
-            <div class="ms-3">
+            <div class="ms-1">
               <Dropdown actions={settingsDropdownActions}>
                 {#snippet trigger()}
-                  <span class="inline-flex rounded-md items-center">
+                  <span class="inline-flex rounded-md items-center text-sm whitespace-nowrap">
                     {appUser('shortName')}
                     <svg
                       class="-me-0.5 ms-2 h-4 w-4"

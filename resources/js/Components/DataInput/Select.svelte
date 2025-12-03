@@ -46,7 +46,7 @@
   );
 
   let classes = $derived(clsx(
-    'select select-bordered w-full',
+    'select select-bordered w-full text-xs',
     normalizedError && 'select-error',
     className,
   ))
@@ -72,8 +72,8 @@
     bind:value
     onchange={(e) => onchange?.(e)}
   >
-    {#if placeholder && !value}
-      <option value="" disabled selected>{placeholder}</option>
+    {#if placeholder}
+      <option disabled selected>{placeholder}</option>
     {/if}
     {#each options as option}
       <option value={option.value}>{option.name}</option>

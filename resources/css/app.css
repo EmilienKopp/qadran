@@ -105,6 +105,16 @@ input.pika-single {
     border-radius: 50%;
 }
 
+:root {
+    /* Svelecte theme */
+    --sv-control-bg: var(--color-base-300);
+    --sv-control-border: var(--color-base-100);
+    --sv-dropdown-bg: var(--color-base-200);
+    --sv-option-hover-bg: var(--color-base-100);
+    --sv-dropdown-active-bg: var(--color-primary);
+    --sv-dropdown-selected-bg: var(--color-primary);
+    --sv-item-selected-bg: var(--color-primary);
+}
 
 /* View transition styles */
 @keyframes fade-in {

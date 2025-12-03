@@ -9,6 +9,7 @@
         class?: string;
         onclick?: (e: MouseEvent) => void;
         children?: import('svelte').Snippet;
+        processing?: boolean;
         [key: string]: any;
     }
 
@@ -19,6 +20,7 @@
         class: className = "",
         onclick,
         children,
+        processing,
         ...rest
     }: Props = $props();
 
@@ -60,6 +62,9 @@
     <button {type} class={css} {onclick} {...rest}>
         {#if children}
             {@render children()}
+        {/if}
+        {#if processing}
+            <span class="loading loading-dots loading-xs"></span>
         {/if}
     </button>
 {:else}
