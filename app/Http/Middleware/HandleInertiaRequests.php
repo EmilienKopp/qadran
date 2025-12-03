@@ -35,15 +35,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $userId = $request->user()?->id;
-        $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
-        
+        // Only load user data if we have an active tenant context
+        // This prevents database errors during OAuth callbacks on the root domain
+        $tenant = Tenant::current();
+        $user = null;
+
+        if ($tenant) {
+            $userId = $request->user()?->id;
+            $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
             ],
-            'timezone' => $user?->timezone ?? $user->preferences['timezone'],
+            'timezone' => $user?->timezone ?? $user?->preferences['timezone'] ?? null,
             'context' => [
                 'tenant' => Context::get('tenantId'),
                 'domain' => Context::get('domain'),
@@ -62,8 +69,8 @@ class HandleInertiaRequests extends Middleware
                 'report_types' => \App\Enums\ReportTypes::toSelectOptions(),
             ],
             'features' => [
-                'voiceAssistant' => Tenant::current()?->features()->value(VoiceAssistant::class) ?? false,
-                'voiceAssistantMode' => $request->user()
+                'voiceAssistant' => $tenant?->features()->value(VoiceAssistant::class) ?? false,
+                'voiceAssistantMode' => $tenant && $request->user()
                     ? Feature::value(VoiceAssistantMode::class, $request->user())
                     : false,
             ],
