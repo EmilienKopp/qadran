@@ -26,6 +26,17 @@ export function getPage(path?: keyof Page): any {
   return p;
 }
 
+export function shared(path?: string): any {
+  const context = get(page)?.props;
+  if (path) {
+    return path
+      .toString()
+      .split('.')
+      .reduce((obj: any, key: string) => obj && obj[key], context);
+  }
+  return context;
+}
+
 export function getSharedContext(): Context {
   return get(page)?.props?.context;
 }

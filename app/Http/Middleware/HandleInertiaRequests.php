@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
+            'timezone' => $user?->timezone ?? $user->preferences['timezone'],
             'context' => [
                 'tenant' => Context::get('tenantId'),
                 'domain' => Context::get('domain'),

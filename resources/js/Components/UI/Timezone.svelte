@@ -1,14 +1,13 @@
 <script lang="ts">
   import { Globe } from '@lucide/svelte';
   import { listTimezones, getTimezone } from '$lib/utils/timezone';
-  import voiceCommands from '$lib/stores/global/voiceCommands.svelte';
-  import Select from '$components/DataInput/Select.svelte';
   import { Form } from '@inertiajs/svelte';
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import Svelecte from 'svelecte';
+  import { shared } from '$lib/inertia';
 
   let timezones: string[] = $state(listTimezones());
-  let selectedTimezone: string = $state(getTimezone());
+  let selectedTimezone: string = $state(shared('timezone') ?? getTimezone());
 </script>
 
 <Form method="post" action={route('user.timezone.update')}>
@@ -21,7 +20,7 @@
       </div>
       <div
         tabindex="-1"
-        class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm z-[999]"
+        class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm z-[999]"
       >
         <Svelecte
           bind:value={selectedTimezone}
