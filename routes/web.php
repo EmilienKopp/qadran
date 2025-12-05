@@ -22,11 +22,10 @@ Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])
     ->name('privacy-policy.index');
 
 Route::get('/', function () {
-
     return Inertia::render('Landing', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'authenticated' => Auth::check(),
+        'authenticated' => Auth::guard('web')->check(),
     ]);
 })->name('root');
 
