@@ -72,30 +72,39 @@ class GitHubOAuthController extends Controller
             // @phpstan-ignore-next-line
             $token = $githubUser->token ?? '';
 
-            
+            \Log::debug('GitHub OAuth callback', [
+                'github_user_id' => $githubUser->getId(),
+                'github_username' => $githubUser->getNickname(),
+                'tenant_id' => $tenant->id,
+            ]);
+
+
             // Check if user is authenticated - determines flow
-            if (Auth::guard('tenant')->check()) {
-                return $this->handleAccountLinking(Auth::user(), $githubUser, $token);
+            if (auth('tenant')->check()) {
+                return $this->handleAccountLinking(auth('tenant')->user(), $githubUser, $token);
             }
 
             return $this->handleAuthentication($githubUser, $token);
 
         } catch (InvalidStateException $e) {
-            if (Auth::check()) {
+            \Log::warning('GitHub OAuth callback invalid state', [
+                'error' => $e->getMessage(),
+            ]);
+            if (auth('tenant')->check()) {
 
-                return redirect()->route('settings.integrations')
+                return redirect($this->settingsRoute())
                     ->with('error', 'Invalid OAuth state. Please try again.');
             }
 
             return redirect('/')
                 ->with('error', 'Invalid OAuth state. Please try again.');
         } catch (\Exception $e) {
-            if (Auth::check()) {
+            if (auth('tenant')->check()) {
                 \Log::error('GitHub OAuth callback error for authenticated user', [
-                    'user_id' => Auth::id(),
+                    'user_id' => auth('tenant')->id(),
                 ]);
                 \Log::error($e->getMessage());
-                return redirect()->route('settings.integrations')
+                return redirect($this->settingsRoute())
                     ->with('error', 'An error occurred during GitHub authentication. ' . $e->getMessage());
             }
 
@@ -251,7 +260,7 @@ class GitHubOAuthController extends Controller
 
         try {
             $tempData = decrypt($request->temp_data);
-            $currentUser = Auth::user();
+            $currentUser = auth('tenant')->user();
 
             // Delete existing connection
             GitHubConnection::where('user_id', $currentUser->id)->delete();
@@ -383,5 +392,20 @@ class GitHubOAuthController extends Controller
         $parts = explode(' ', $fullName, 2);
 
         return $parts[1] ?? null;
+    }
+
+    /**
+     * Get settings integrations route with proper tenant context
+     */
+    private function settingsRoute(): string
+    {
+        $tenant = Tenant::current();
+        $params = [];
+        
+        if ($tenant && (app()->environment('staging') || app()->isProduction())) {
+            $params['account'] = $tenant->host;
+        }
+        
+        return route('settings.integrations', $params);
     }
 }
