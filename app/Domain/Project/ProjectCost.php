@@ -17,13 +17,13 @@ class ProjectCost
 {
     public Project $project;
 
-    public Organization $organization;
+    public ?Organization $organization;
 
-    public Collection $users;
+    public ?Collection $users;
 
     public Collection $entries;
 
-    public Collection $rates;
+    public ?Collection $rates;
 
     public int $currentCost;
 

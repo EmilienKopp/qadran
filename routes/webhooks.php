@@ -5,4 +5,4 @@ use Illuminate\Support\Facades\Route;
 
 // Webhook endpoint for n8n to post Jira known issues (public, no auth)
 Route::post('/webhooks/jira/known-issues', [KnownIssueWebhookController::class, 'store'])
-    ->name('api.webhooks.jira.known-issues');
+    ->name('webhooks.jira.known-issues');
