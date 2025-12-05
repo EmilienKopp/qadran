@@ -42,14 +42,14 @@ class GoogleOAuthController extends Controller
             $token = $googleUser->token ?? '';
 
             // Check if user is authenticated - determines flow
-            if (Auth::check()) {
-                return $this->handleAccountLinking(Auth::user(), $googleUser, $token);
+            if (auth('tenant')->check()) {
+                return $this->handleAccountLinking(auth('tenant')->user(), $googleUser, $token);
             }
 
             return $this->handleAuthentication($googleUser, $token);
 
         } catch (InvalidStateException $e) {
-            if (Auth::check()) {
+            if (auth('tenant')->check()) {
                 return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                     ->with('error', 'Invalid OAuth state. Please try again.');
             }
@@ -58,11 +58,11 @@ class GoogleOAuthController extends Controller
                 ->with('error', 'Invalid OAuth state. Please try again.');
         } catch (\Exception $e) {
             \Log::error('Google OAuth callback error', [
-                'user_id' => Auth::id(),
+                'user_id' => auth('tenant')->id(),
                 'error' => $e->getMessage(),
             ]);
 
-            if (Auth::check()) {
+            if (auth('tenant')->check()) {
                 return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                     ->with('error', 'An error occurred during Google authentication.');
             }

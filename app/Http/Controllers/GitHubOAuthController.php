@@ -49,7 +49,13 @@ class GitHubOAuthController extends Controller
     public function callback(Request $request)
     {
         try {
-            // retrieve space from session and set tenant context FIRST
+            // Get GitHub user FIRST (before tenant context) to avoid session state issues
+            $githubUser = Socialite::driver('github')->user();
+
+            // @phpstan-ignore-next-line
+            $token = $githubUser->token ?? '';
+
+            // NOW set tenant context after OAuth verification is complete
             $space = session('space');
             if (! $space) {
                 return redirect('/login')
@@ -64,11 +70,6 @@ class GitHubOAuthController extends Controller
             }
 
             $tenant->makeCurrent();
-
-            $githubUser = Socialite::driver('github')->user();
-
-            // @phpstan-ignore-next-line
-            $token = $githubUser->token ?? '';
 
             \Log::debug('GitHub OAuth callback', [
                 'github_user_id' => $githubUser->getId(),
