@@ -15,7 +15,7 @@ class RateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(?string $account = null)
     {
         $rates = Rate::with(['rateType', 'organization', 'project', 'user'])
             ->active()
@@ -29,7 +29,7 @@ class RateController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(?string $account = null)
     {
         return Inertia::render('Rate/Create', [
             'rateTypes' => RateType::all(),
@@ -43,7 +43,7 @@ class RateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ?string $account = null)
     {
         $validated = $request->validate([
             'rate_type_id' => 'required|exists:rate_types,id',
@@ -75,7 +75,7 @@ class RateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Rate $rate)
+    public function show(?string $account, Rate $rate)
     {
         $rate->load(['rateType', 'organization', 'project', 'user']);
 
@@ -87,7 +87,7 @@ class RateController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Rate $rate)
+    public function edit(?string $account, Rate $rate)
     {
         $rate->load(['rateType', 'organization', 'project', 'user']);
 
@@ -101,7 +101,7 @@ class RateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rate $rate)
+    public function update(Request $request, ?string $account, Rate $rate)
     {
         $validated = $request->validate([
             'rate_type_id' => 'required|exists:rate_types,id',
@@ -131,7 +131,7 @@ class RateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rate $rate)
+    public function destroy(?string $account, Rate $rate)
     {
         try {
             $rate->delete();

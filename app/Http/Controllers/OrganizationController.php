@@ -14,7 +14,7 @@ class OrganizationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(?string $account = null)
     {
         $organizations = Auth::user()->organizations;
 
@@ -26,7 +26,7 @@ class OrganizationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(?string $account = null)
     {
         return Inertia::render('Organization/Create', [
             'organizationTypeOptions' => OrganizationType::toSelectOptions(),
@@ -36,7 +36,7 @@ class OrganizationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrganizationRequest $request)
+    public function store(StoreOrganizationRequest $request, ?string $account = null)
     {
 
         $validated = $request->validated();
@@ -49,7 +49,7 @@ class OrganizationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Organization $organization)
+    public function show(?string $account, Organization $organization)
     {
         //
     }
@@ -57,7 +57,7 @@ class OrganizationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Organization $organization)
+    public function edit(?string $account, Organization $organization)
     {
         return Inertia::render('Organization/Edit', [
             'organization' => $organization,
@@ -68,7 +68,7 @@ class OrganizationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrganizationRequest $request, Organization $organization)
+    public function update(UpdateOrganizationRequest $request, ?string $account, Organization $organization)
     {
         $validated = $request->validated();
         $organization->update($validated);
@@ -79,7 +79,7 @@ class OrganizationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Organization $organization)
+    public function destroy(?string $account, Organization $organization)
     {
         try {
             $organization->delete();

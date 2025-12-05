@@ -14,7 +14,7 @@ class ClockEntryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(?string $account = null)
     {
         //
     }
@@ -22,7 +22,7 @@ class ClockEntryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(?string $account = null)
     {
         //
     }
@@ -30,7 +30,7 @@ class ClockEntryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreClockEntryRequest $request)
+    public function store(StoreClockEntryRequest $request, ?string $account = null)
     {
         $validated = $request->validated();
         ClockEntryRepository::clockInOrOut(
@@ -42,7 +42,7 @@ class ClockEntryController extends Controller
         return to_route('dashboard');
     }
 
-    public function in(Request $request)
+    public function in(Request $request, ?string $account = null)
     {
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
@@ -59,7 +59,7 @@ class ClockEntryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ClockEntry $clockEntry)
+    public function show(?string $account, ClockEntry $clockEntry)
     {
         //
     }
@@ -67,7 +67,7 @@ class ClockEntryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ClockEntry $clockEntry)
+    public function edit(?string $account, ClockEntry $clockEntry)
     {
         //
     }
@@ -75,7 +75,7 @@ class ClockEntryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClockEntryRequest $request, ClockEntry $clockEntry)
+    public function update(UpdateClockEntryRequest $request, ?string $account, ClockEntry $clockEntry)
     {
         $validated = $request->validated();
         $clockEntry->update($validated);
@@ -86,7 +86,7 @@ class ClockEntryController extends Controller
     /**
      * Batch update clock entries
      */
-    public function batchUpdate(\Illuminate\Http\Request $request)
+    public function batchUpdate(\Illuminate\Http\Request $request, ?string $account = null)
     {
         $validated = $request->validate([
             'entries' => 'required|array',
@@ -111,7 +111,7 @@ class ClockEntryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ClockEntry $clockEntry)
+    public function destroy(?string $account, ClockEntry $clockEntry)
     {
         try {
             $success = ClockEntryRepository::delete($clockEntry);
