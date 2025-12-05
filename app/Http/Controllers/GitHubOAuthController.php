@@ -299,7 +299,7 @@ class GitHubOAuthController extends Controller
      */
     public function disconnect(Request $request): RedirectResponse
     {
-        $connection = GitHubConnection::where('user_id', Auth::id())->first();
+        $connection = GitHubConnection::where('user_id', auth('tenant')->id())->first();
 
         if ($connection) {
             $username = $connection->username;
@@ -318,7 +318,7 @@ class GitHubOAuthController extends Controller
      */
     public function status()
     {
-        $connection = GitHubConnection::where('user_id', Auth::id())->first();
+        $connection = GitHubConnection::where('user_id', auth('tenant')->id())->first();
 
         if (!$connection) {
             return response()->json([
