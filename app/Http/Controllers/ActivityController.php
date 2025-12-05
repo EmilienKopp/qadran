@@ -31,7 +31,7 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, ?string $account = null)
     {
         $taskCategories = TaskCategory::all();
         $projects = auth()->user()->involvedProjects;
@@ -65,7 +65,7 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, $date = null)
+    public function show(Request $request, ?string $account = null, $date = null)
     {
         $date ??= $request->query('date') ?? Carbon::today()->format('Y-m-d');
 
@@ -132,7 +132,7 @@ class ActivityController extends Controller
         //
     }
 
-    public function deleteEntry(ClockEntry $clockEntry)
+    public function deleteEntry(?string $account, ClockEntry $clockEntry)
     {
         try {
             $success = ClockEntryRepository::delete($clockEntry);

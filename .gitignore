@@ -31,3 +31,5 @@ jira.example.json
 /legacy
 
 agent_tmpl.json
+
+/.llm
