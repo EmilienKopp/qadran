@@ -50,7 +50,7 @@ class GoogleOAuthController extends Controller
 
         } catch (InvalidStateException $e) {
             if (Auth::check()) {
-                return redirect()->route('settings.integrations')
+                return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                     ->with('error', 'Invalid OAuth state. Please try again.');
             }
 
@@ -63,7 +63,7 @@ class GoogleOAuthController extends Controller
             ]);
 
             if (Auth::check()) {
-                return redirect()->route('settings.integrations')
+                return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                     ->with('error', 'An error occurred during Google authentication.');
             }
 
@@ -156,7 +156,7 @@ class GoogleOAuthController extends Controller
             ->first();
 
         if ($existingConnection) {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                 ->with('error', 'This Google account is already linked to another user.');
         }
 
@@ -165,7 +165,7 @@ class GoogleOAuthController extends Controller
 
         if ($currentConnection && $currentConnection->google_user_id != $googleUser->getId()) {
             // User is trying to link a different Google account
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                 ->with('confirm_replace', [
                     'message' => 'You already have a Google account linked. Do you want to replace it?',
                     'current_email' => $currentConnection->email,
@@ -183,7 +183,7 @@ class GoogleOAuthController extends Controller
         // Create or update the connection
         $this->createOrUpdateConnection($currentUser, $googleUser, $token);
 
-        return redirect()->route('settings.integrations')
+        return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
             ->with('success', "Google account {$googleUser->getEmail()} linked successfully!");
     }
 
@@ -198,7 +198,7 @@ class GoogleOAuthController extends Controller
         ]);
 
         if ($request->confirm !== 'yes') {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                 ->with('info', 'Google account linking cancelled.');
         }
 
@@ -220,11 +220,11 @@ class GoogleOAuthController extends Controller
                     now()->addSeconds($tempData['expires_in']) : null,
             ]);
 
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                 ->with('success', "Google account {$tempData['email']} linked successfully!");
 
         } catch (\Exception $e) {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => \App\Models\Landlord\Tenant::current()->host])
                 ->with('error', 'Failed to link Google account.');
         }
     }

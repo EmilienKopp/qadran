@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Native\Laravel\Facades\Settings;
@@ -23,8 +22,7 @@ class GitHubOAuthController extends Controller
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Redirect to GitHub OAuth for authentication or account linking
@@ -53,14 +51,14 @@ class GitHubOAuthController extends Controller
         try {
             // retrieve space from session and set tenant context FIRST
             $space = session('space');
-            if (!$space) {
+            if (! $space) {
                 return redirect('/login')
                     ->with('error', 'Organization context is missing. Please try logging in again.');
             }
 
             // Use landlord connection explicitly to find tenant
             $tenant = Tenant::on('landlord')->where('host', $space)->first();
-            if (!$tenant) {
+            if (! $tenant) {
                 return redirect('/login')
                     ->with('error', 'The specified organization does not exist.');
             }
@@ -68,7 +66,7 @@ class GitHubOAuthController extends Controller
             $tenant->makeCurrent();
 
             $githubUser = Socialite::driver('github')->user();
-            
+
             // @phpstan-ignore-next-line
             $token = $githubUser->token ?? '';
 
@@ -77,7 +75,6 @@ class GitHubOAuthController extends Controller
                 'github_username' => $githubUser->getNickname(),
                 'tenant_id' => $tenant->id,
             ]);
-
 
             // Check if user is authenticated - determines flow
             if (auth('tenant')->check()) {
@@ -104,12 +101,13 @@ class GitHubOAuthController extends Controller
                     'user_id' => auth('tenant')->id(),
                 ]);
                 \Log::error($e->getMessage());
+
                 return redirect($this->settingsRoute())
-                    ->with('error', 'An error occurred during GitHub authentication. ' . $e->getMessage());
+                    ->with('error', 'An error occurred during GitHub authentication. '.$e->getMessage());
             }
 
             return redirect('/login')
-                ->with('error', 'An error occurred during GitHub authentication. ' . $e->getMessage());
+                ->with('error', 'An error occurred during GitHub authentication. '.$e->getMessage());
         }
     }
 
@@ -120,7 +118,7 @@ class GitHubOAuthController extends Controller
     {
         // Tenant context already set in callback() method
         $tenant = Tenant::current();
-        if (!$tenant) {
+        if (! $tenant) {
             return redirect('/login')
                 ->with('error', 'Organization context is missing. Please try logging in again.');
         }
@@ -130,17 +128,18 @@ class GitHubOAuthController extends Controller
             ?? $this->userRepository->findByEmail($githubUser->getEmail());
 
         // Create user if doesn't exist (web mode only)
-        if (!$user) {
+        if (! $user) {
             if (RequestContextResolver::isDesktop()) {
                 \Log::debug('GitHub user not found in desktop mode', [
                     'github_user_id' => $githubUser->getId(),
                 ]);
+
                 return redirect('/login')
                     ->with('error', 'User not found. Please sign up via web first.');
             }
 
             // Validate email is present
-            if (!$githubUser->getEmail()) {
+            if (! $githubUser->getEmail()) {
                 return redirect('/login')
                     ->with('error', 'Please make your GitHub email public to continue.');
             }
@@ -203,7 +202,7 @@ class GitHubOAuthController extends Controller
             ->first();
 
         if ($existingConnection) {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('error', 'This GitHub account is already linked to another user.');
         }
 
@@ -212,7 +211,7 @@ class GitHubOAuthController extends Controller
 
         if ($currentConnection && $currentConnection->github_user_id != $githubUser->getId()) {
             // User is trying to link a different GitHub account
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('confirm_replace', [
                     'message' => 'You already have a GitHub account linked. Do you want to replace it?',
                     'current_username' => $currentConnection->username,
@@ -232,14 +231,14 @@ class GitHubOAuthController extends Controller
 
         // Test the connection
         $service = new GitHubService($connection);
-        if (!$service->testConnection()) {
+        if (! $service->testConnection()) {
             $connection->delete();
 
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('error', 'Failed to establish GitHub connection. Please try again.');
         }
 
-        return redirect()->route('settings.integrations')
+        return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
             ->with('success', "GitHub account @{$githubUser->getNickname()} linked successfully!");
     }
 
@@ -254,7 +253,7 @@ class GitHubOAuthController extends Controller
         ]);
 
         if ($request->confirm !== 'yes') {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('info', 'GitHub account linking cancelled.');
         }
 
@@ -278,18 +277,18 @@ class GitHubOAuthController extends Controller
 
             // Test the connection
             $service = new GitHubService($connection);
-            if (!$service->testConnection()) {
+            if (! $service->testConnection()) {
                 $connection->delete();
 
-                return redirect()->route('settings.integrations')
+                return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                     ->with('error', 'Failed to establish GitHub connection.');
             }
 
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('success', "GitHub account @{$tempData['username']} linked successfully!");
 
         } catch (\Exception $e) {
-            return redirect()->route('settings.integrations')
+            return redirect()->route('settings.integrations', ['account' => Tenant::current()->host])
                 ->with('error', 'Failed to link GitHub account.');
         }
     }
@@ -320,7 +319,7 @@ class GitHubOAuthController extends Controller
     {
         $connection = GitHubConnection::where('user_id', auth('tenant')->id())->first();
 
-        if (!$connection) {
+        if (! $connection) {
             return response()->json([
                 'connected' => false,
                 'status' => 'not_connected',
@@ -363,7 +362,7 @@ class GitHubOAuthController extends Controller
                 ->where('tenant_id', Tenant::current()->id)
                 ->where('user_id', $user->id)
                 ->update(['github_user_id' => $githubUser->getId()]);
-                
+
             return $connection;
         });
     }
@@ -373,7 +372,7 @@ class GitHubOAuthController extends Controller
      */
     private function extractFirstName(?string $fullName): string
     {
-        if (!$fullName) {
+        if (! $fullName) {
             return 'GitHub';
         }
         $parts = explode(' ', $fullName, 2);
@@ -386,7 +385,7 @@ class GitHubOAuthController extends Controller
      */
     private function extractLastName(?string $fullName): ?string
     {
-        if (!$fullName) {
+        if (! $fullName) {
             return 'User';
         }
         $parts = explode(' ', $fullName, 2);
@@ -401,11 +400,11 @@ class GitHubOAuthController extends Controller
     {
         $tenant = Tenant::current();
         $params = [];
-        
+
         if ($tenant && (app()->environment('staging') || app()->isProduction())) {
             $params['account'] = $tenant->host;
         }
-        
+
         return route('settings.integrations', $params);
     }
 }
