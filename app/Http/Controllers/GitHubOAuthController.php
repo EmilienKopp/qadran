@@ -51,13 +51,30 @@ class GitHubOAuthController extends Controller
     public function callback(Request $request)
     {
         try {
+            // retrieve space from session and set tenant context FIRST
+            $space = session('space');
+            if (!$space) {
+                return redirect('/login')
+                    ->with('error', 'Organization context is missing. Please try logging in again.');
+            }
+
+            // Use landlord connection explicitly to find tenant
+            $tenant = Tenant::on('landlord')->where('host', $space)->first();
+            if (!$tenant) {
+                return redirect('/login')
+                    ->with('error', 'The specified organization does not exist.');
+            }
+
+            $tenant->makeCurrent();
+
             $githubUser = Socialite::driver('github')->user();
-            // Access token through property (Laravel Socialite provides this dynamically)
+            
             // @phpstan-ignore-next-line
             $token = $githubUser->token ?? '';
 
+            
             // Check if user is authenticated - determines flow
-            if (Auth::check()) {
+            if (Auth::guard('tenant')->check()) {
                 return $this->handleAccountLinking(Auth::user(), $githubUser, $token);
             }
 
@@ -92,23 +109,14 @@ class GitHubOAuthController extends Controller
      */
     private function handleAuthentication($githubUser, string $token): RedirectResponse
     {
-        // Retrieve and validate space from session
-        $space = session('space');
-        if (!$space) {
+        // Tenant context already set in callback() method
+        $tenant = Tenant::current();
+        if (!$tenant) {
             return redirect('/login')
                 ->with('error', 'Organization context is missing. Please try logging in again.');
         }
-        $tenant = Tenant::where('host', $space)->first();
-        if (!$tenant) {
-            return redirect('/login')
-                ->with('error', 'The specified organization does not exist.');
-        } else {
-            $tenant->makeCurrent();
-        }
 
-
-
-        // Lookup user by GitHub ID
+        // Lookup user by GitHub ID or email
         $user = $this->userRepository->findByGitHubId($githubUser->getId())
             ?? $this->userRepository->findByEmail($githubUser->getEmail());
 
