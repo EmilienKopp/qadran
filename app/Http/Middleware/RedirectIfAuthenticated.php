@@ -20,22 +20,39 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
+            try {
+                // Only check authentication if we have a tenant context
+                // This prevents DB errors when tenant hasn't been resolved yet
                 $tenant = Tenant::current();
-
-                // If on a tenant subdomain, redirect to dashboard
-                if ($tenant) {
-                    // Build parameters based on environment and tenant
-                    $params = [];
-                    if (app()->environment('staging') || app()->isProduction()) {
-                        $params['account'] = $tenant->host;
-                    }
-
-                    return redirect()->route('dashboard', $params);
+                
+                if (!$tenant) {
+                    // No tenant context, skip auth check
+                    continue;
                 }
 
-                // If on root domain (no tenant), redirect to tenant root (which shows landing)
-                return redirect()->route('tenant.root');
+                if (Auth::guard($guard)->check()) {
+                    // If on a tenant subdomain, redirect to dashboard
+                    if ($tenant) {
+                        // Build parameters based on environment and tenant
+                        $params = [];
+                        if (app()->environment('staging') || app()->isProduction()) {
+                            $params['account'] = $tenant->host;
+                        }
+
+                        return redirect()->route('dashboard', $params);
+                    }
+
+                    // If on root domain (no tenant), redirect to tenant root (which shows landing)
+                    return redirect()->route('tenant.root');
+                }
+            } catch (\Exception $e) {
+                // If there's any error checking auth (e.g., tenant DB doesn't exist),
+                // just continue to the next request
+                \Log::debug('RedirectIfAuthenticated: Skipping auth check due to error', [
+                    'error' => $e->getMessage(),
+                    'guard' => $guard,
+                ]);
+                continue;
             }
         }
 
