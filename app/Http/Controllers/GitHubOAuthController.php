@@ -36,7 +36,9 @@ class GitHubOAuthController extends Controller
         );
         $validator->validate();
 
-        session(['space' => $space]);
+        // Store space in session using put() to ensure it persists
+        session()->put('oauth_space', $space);
+        session()->save(); // Force save before redirect
 
         // No authentication check - supports both login and linking
         // Scopes can be configured in config/services.php
@@ -56,7 +58,7 @@ class GitHubOAuthController extends Controller
             $token = $githubUser->token ?? '';
 
             // NOW set tenant context after OAuth verification is complete
-            $space = session('space');
+            $space = session('oauth_space');
             if (! $space) {
                 return redirect('/login')
                     ->with('error', 'Organization context is missing. Please try logging in again.');
@@ -87,28 +89,21 @@ class GitHubOAuthController extends Controller
         } catch (InvalidStateException $e) {
             \Log::warning('GitHub OAuth callback invalid state', [
                 'error' => $e->getMessage(),
+                'has_space_in_session' => session()->has('oauth_space'),
+                'space' => session('oauth_space'),
+                'session_id' => session()->getId(),
             ]);
-            if (auth('tenant')->check()) {
-
-                return redirect($this->settingsRoute())
-                    ->with('error', 'Invalid OAuth state. Please try again.');
-            }
-
-            return redirect('/')
-                ->with('error', 'Invalid OAuth state. Please try again.');
-        } catch (\Exception $e) {
-            if (auth('tenant')->check()) {
-                \Log::error('GitHub OAuth callback error for authenticated user', [
-                    'user_id' => auth('tenant')->id(),
-                ]);
-                \Log::error($e->getMessage());
-
-                return redirect($this->settingsRoute())
-                    ->with('error', 'An error occurred during GitHub authentication. '.$e->getMessage());
-            }
 
             return redirect('/login')
-                ->with('error', 'An error occurred during GitHub authentication. '.$e->getMessage());
+                ->with('error', 'Invalid OAuth state. Please try logging in again.');
+        } catch (\Exception $e) {
+            \Log::error('GitHub OAuth callback error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect('/login')
+                ->with('error', 'An error occurred during GitHub authentication. Please try again.');
         }
     }
 
