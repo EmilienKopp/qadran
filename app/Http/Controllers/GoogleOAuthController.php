@@ -130,13 +130,12 @@ class GoogleOAuthController extends Controller
         $tenant = \App\Models\Landlord\Tenant::current();
 
         if ($tenant) {
-            // On tenant subdomain - redirect to dashboard
-            $params = [];
-            if (app()->environment('staging') || app()->isProduction()) {
-                $params['account'] = $tenant->host;
-            }
+            // Build the full tenant URL for redirect
+            $tenantUrl = app()->environment('local')
+                ? route('dashboard')
+                : 'https://' . $tenant->host . '.qadran.io/dashboard';
 
-            return redirect()->route('dashboard', $params);
+            return redirect($tenantUrl);
         }
 
         // No tenant context - user needs to select/create organization
