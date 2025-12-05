@@ -25,7 +25,6 @@ Route::get('/', function () {
     return Inertia::render('Landing', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'authenticated' => Auth::guard('web')->check(),
     ]);
 })->name('root');
 
