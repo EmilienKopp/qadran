@@ -11,6 +11,7 @@
   import type { Rate, RateType, Organization, Project } from '$models';
   import { superUseForm } from '$lib/inertia';
   import { asSelectOptions } from '$lib/utils/formatting';
+  import { enums } from '$lib/inertia';
 
   interface Props {
     frequenciesOptions: SelectOption[];
@@ -27,9 +28,10 @@
     projects,
     rateTypes,
   }: Props = $props();
+  $inspect(enums('rate_types'));
   let organizationsOptions = asSelectOptions(organizations, 'id', 'name');
   let projectsOptions = asSelectOptions(projects, 'id', 'name');
-  let rateTypesOptions = asSelectOptions(rateTypes, 'id', 'name');
+  let rateTypesOptions = asSelectOptions(enums('rate_types') ?? [], 'value', 'name');
   let scope: 'organization' | 'project' | 'user' = $state('organization'); //TODO: better typing
 
   let form = superUseForm<Rate>({
@@ -100,10 +102,9 @@
             <legend class="text-lg font-medium">Basic Rate Information</legend>
             <Select
               label="Rate Type"
-              name="rate_type_id"
+              name="rate_type"
               options={rateTypesOptions}
-              bind:value={$form.rate_type_id}
-              required
+              bind:value={$form.rate_type}
             />
 
             <Select

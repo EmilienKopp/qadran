@@ -8,6 +8,7 @@ use App\Models\Rate;
 use App\Models\RateType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class RateController extends Controller
@@ -20,7 +21,7 @@ class RateController extends Controller
         $rates = Rate::with(['rateType', 'organization', 'project', 'user'])
             ->active()
             ->get();
-
+            
         return Inertia::render('Rate/Index', [
             'rates' => $rates,
         ]);
@@ -46,11 +47,11 @@ class RateController extends Controller
     public function store(Request $request, ?string $account = null)
     {
         $validated = $request->validate([
-            'rate_type_id' => 'required|exists:rate_types,id',
+            'rate_type' => ['nullable', new Enum(RateType::class)],
             'rate_frequency' => 'required|string',
-            'organization_id' => 'nullable|exists:organizations,id',
-            'project_id' => 'nullable|exists:projects,id',
-            'user_id' => 'nullable|exists:users,id',
+            'organization_id' => 'nullable|exists:tenant.organizations,id',
+            'project_id' => 'nullable|exists:tenant.projects,id',
+            'user_id' => 'nullable|exists:tenant.users,id',
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|size:3',
             'overtime_multiplier' => 'numeric|min:1',
@@ -65,7 +66,7 @@ class RateController extends Controller
 
         $validated['value'] = $validated['amount'];
 
-        $rate = Rate::create($validated);
+        Rate::create($validated);
 
         return redirect()
             ->route('rate.index')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
 use App\Enums\RateFrequency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,7 +31,7 @@ class Rate extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => Money::class,
         'overtime_multiplier' => 'decimal:2',
         'holiday_multiplier' => 'decimal:2',
         'special_multiplier' => 'decimal:2',

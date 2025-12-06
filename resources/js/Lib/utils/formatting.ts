@@ -73,14 +73,22 @@ export function timespan(
  * @returns a formatted string with the correct currency symbol
  */
 export function currency(
-  value: number | string,
+  value: number | string | {amount: string | number, currency: string},
   locale: 'ja-JP' | 'en-US' = 'ja-JP'
 ): string {
+
+  let currency = locale === 'ja-JP' ? 'JPY' : 'USD'; 
+  if(typeof value === 'object' && value !== null && 'amount' in value) {
+    currency = value.currency;
+    value = value.amount; 
+  }
+
   value = Number(value);
+
   if (isNaN(value)) return '';
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: locale === 'ja-JP' ? 'JPY' : 'USD',
+    currency: currency,
   }).format(value);
 }
 

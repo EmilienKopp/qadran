@@ -67,6 +67,7 @@ class HandleInertiaRequests extends Middleware
             'enums' => [
                 'roles' => \App\Enums\RoleEnum::toSelectOptions(),
                 'report_types' => \App\Enums\ReportTypes::toSelectOptions(),
+                'rate_types' => \App\Enums\RateType::toSelectOptions(),
             ],
             'features' => [
                 'voiceAssistant' => $tenant?->features()->value(VoiceAssistant::class) ?? false,

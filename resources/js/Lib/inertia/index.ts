@@ -49,6 +49,17 @@ export function shared(path?: string): any {
   return context;
 }
 
+export function enums(path?: string): any {
+  const enums = get(page)?.props?.enums;
+  if (path) {
+    return path
+      .toString()
+      .split('.')
+      .reduce((obj: any, key: string) => obj && obj[key], enums);
+  }
+  return enums;
+}
+
 export function getSharedContext(): Context {
   return get(page)?.props?.context;
 }

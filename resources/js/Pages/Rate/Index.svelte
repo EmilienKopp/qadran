@@ -34,7 +34,6 @@
   function clear() {
     filteredRates = rates;
   }
-
 </script>
 
 <AuthenticatedLayout>

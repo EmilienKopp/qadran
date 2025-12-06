@@ -22,6 +22,7 @@
         "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.9",
         "laravel/wayfinder": "^0.1.6",
+        "moneyphp/money": "^4.8",
         "nativephp/desktop": "^2.0",
         "php-http/curl-client": "^2.3",
         "predis/predis": "^3.2",
