@@ -97,7 +97,7 @@
           {authenticated && tenant ? 'Dashboard' : 'Login'}
         </a>
         {#if canRegister}
-          <a href="/welcome/register" class="btn btn-primary btn-sm">
+          <a href={route('register')} class="btn btn-primary btn-sm">
             Get Started
           </a>
         {/if}

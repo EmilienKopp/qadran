@@ -72,7 +72,7 @@ class User extends Authenticatable
             if (! $user->handle) {
                 $user->handle = $user->email;
             }
-            $user->assignRole('user', 'web');
+            $user->assignRole('user');
 
         });
 

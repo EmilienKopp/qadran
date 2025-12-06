@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens([
+            'webhooks/*'
+        ]);
         $middleware->web(prepend: [
             \App\Http\Middleware\SetTenantUrlDefaults::class,
             \App\Http\Middleware\PreventPlusAddressing::class,

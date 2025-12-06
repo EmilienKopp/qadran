@@ -13,7 +13,7 @@ SELECT
   TO_CHAR(
     DATE_TRUNC(
       'day',
-      ce.in AT TIME ZONE 'UTC' AT TIME ZONE u.timezone
+      ce.in AT TIME ZONE u.timezone
     ),
     'YYYY-MM-DD'
   ) AS date,
@@ -35,6 +35,6 @@ GROUP BY
   p.name,
   DATE_TRUNC(
     'day',
-    ce.in AT TIME ZONE 'UTC' AT TIME ZONE u.timezone
+    ce.in AT TIME ZONE u.timezone
   )
 ORDER BY (ce.duration_seconds || ' seconds')::interval DESC 

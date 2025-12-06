@@ -13,6 +13,6 @@
 <legend class={twMerge('fieldset-legend', rest.class)} {...rest}>
   {@render children?.()}
   {#if required}
-    <span class="text-error ml-1">*</span>
+    <span class="text-error">*</span>
   {/if}
 </legend>

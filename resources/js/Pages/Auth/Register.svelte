@@ -13,7 +13,24 @@
     email: '',
     password: '',
     password_confirmation: '',
+    space: '',
+    host: '',
   });
+
+  let hostChanged = false;
+
+  const handleHostChange = (e: Event) => {
+    hostChanged = true;
+  };
+
+  const handleOrgDisplayNameChange = (e: Event) => {
+    if(hostChanged) {
+      return;
+    }
+    const input = e.target as HTMLInputElement;
+    console.log('handleOrgDisplayNameChange', input.value, hostChanged);
+    $form.host = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
+  };
 
   const submit = () => {
     $form.post(route('register'), {
@@ -30,7 +47,6 @@
     <div class="flex flex-row gap-4">
       <Input
         label="First Name"
-        id="first_name"
         name="first_name"
         type="text"
         class=""
@@ -42,7 +58,6 @@
       />
       <Input
         label="Last Name"
-        id="last_name"
         name="last_name"
         type="text"
         class=""
@@ -53,12 +68,10 @@
         error={$form.errors.last_name}
       />
     </div>
-    
 
     <div class="mt-4">
       <Input
         label="Email"
-        id="email"
         name="email"
         type="email"
         class=""
@@ -66,6 +79,39 @@
         required
         autocomplete="username"
         error={$form.errors.email}
+      />
+    </div>
+
+    <div class="mt-4">
+      <Input
+        label="Space/Organization Display Name"
+        name="space"
+        type="text"
+        class=""
+        placeholder="e.g. Acme Corporation"
+        hint="This will be your organization's display name."
+        bind:value={$form.space}
+        oninput={handleOrgDisplayNameChange}
+        required
+        autocomplete="organization"
+        error={$form.errors.space}
+      />
+    </div>
+
+    
+    <div class="mt-4">
+      <Input
+        label="Space/Organization Unique Name"
+        name="host"
+        type="text"
+        class=""
+        placeholder="e.g. acme"
+        hint="This will be your organization's unique identifier used in URLs. It must be lowercase and contain no spaces."
+        bind:value={$form.host}
+        oninput={handleHostChange}
+        required
+        autocomplete="organization"
+        error={$form.errors.host}
       />
     </div>
 

@@ -13,4 +13,14 @@ class Formatters
     {
         return json_encode($array);
     }
+
+    public static function stripPlusAddressing(string $email): string
+    {
+        return preg_replace('/\+.*@/', '@', $email);
+    }
+
+    public static function isValidHost(string $host): bool
+    {
+        return preg_match('/^[a-z0-9-]+$/', $host) === 1;
+    }
 }
