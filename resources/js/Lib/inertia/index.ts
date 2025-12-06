@@ -5,6 +5,18 @@ import { page } from '@inertiajs/svelte';
 
 export type * from './types';
 
+// Wrap ziggy's route() to add "account" parameter automatically
+export function xRoute(
+  name: string,
+  params?: Record<string, any>,
+  absolute?: boolean
+): string {
+  const context = shared('context');
+  const mergedParams = { ...(params || {}), account: context?.host };
+  // @ts-ignore
+  return route(name, mergedParams, absolute);
+}
+
 export function superUseForm<T extends object>(
   obj?: Partial<T>
 ): Readable<InertiaForm<T>> {
