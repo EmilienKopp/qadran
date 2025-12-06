@@ -30,8 +30,8 @@ Route::middleware('guest')->group(function () {
     Route::get('google/login', [GoogleOAuthController::class, 'redirect'])
         ->name('google.login');
 
-    // Fallback: password-based login (keeping for backward compatibility)
-    Route::post('welcome/login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])
+        ->name('login');
 
     Route::get('welcome/forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

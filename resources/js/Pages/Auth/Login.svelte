@@ -6,7 +6,7 @@
   import GuestLayout from '$layouts/GuestLayout.svelte';
   import { getPage } from '$lib/inertia';
   import { asSelectOptions } from '$lib/utils/formatting';
-  import { Link, useForm } from '@inertiajs/svelte';
+  import { Link, useForm, Form} from '@inertiajs/svelte';
   import dayjs from 'dayjs';
 
   interface Props {
@@ -20,7 +20,7 @@
     status = undefined,
     rememberedSpaces = [],
   }: Props = $props();
-  let formElement: HTMLFormElement;
+  let formElement: Form;
   let inputNewSpace = $state(rememberedSpaces.length === 0);
   const spaceOptions = $derived(
     rememberedSpaces
@@ -56,7 +56,7 @@
 </svelte:head>
 
 <GuestLayout>
-  <form bind:this={formElement} class="w-full max-w-md mx-auto" method="POST">
+  <Form bind:this={formElement} class="w-full max-w-md mx-auto" method="POST" action={route('login')}>
     <h1 class="mb-8 text-center text-3xl font-bold">Welcome Back</h1>
     <hr class="border-gray-300 dark:border-gray-600 my-4" />
 
@@ -72,6 +72,7 @@
           id="space-select"
           class="mt-1 block w-full"
           bind:value={$form.space}
+          name="space"
           options={asSelectOptions(spaceOptions, 'space', 'space')}
         ></Select>
         <button
@@ -98,6 +99,11 @@
         />
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
           Your organization's space identifier
+        </p>
+      {/if}
+      {#if $form.errors?.space}
+        <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+          {$form.errors.space}
         </p>
       {/if}
     </div>
@@ -242,5 +248,5 @@
         Sign up
       </Link>
     </p>
-  </form>
+  </Form>
 </GuestLayout>
