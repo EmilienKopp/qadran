@@ -40,7 +40,7 @@ Route::get('/landing', function () {
     return Inertia::render('Landing', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'authenticated' => Auth::check(),
+        'authenticated' => Auth::guard('tenant')->check(),
         'tenant' => $tenant,
     ]);
 })->name('tenant.landing');
