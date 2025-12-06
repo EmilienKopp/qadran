@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/*'
         ]);
         $middleware->web(prepend: [
-            \App\Http\Middleware\SetTenantUrlDefaults::class,
+            \App\Http\Middleware\AddHostToContext::class,
             \App\Http\Middleware\PreventPlusAddressing::class,
         ]);
         $middleware->web(append: [

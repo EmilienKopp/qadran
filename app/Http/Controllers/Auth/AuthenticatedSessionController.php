@@ -148,12 +148,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        TenantUrl::setDefaultParameters(); // ensure the "account" parameter is set appropriately
-
         // Remember the space in a cookie for future visits
         SpaceService::registerSpaceCookie($tenant->host);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(TenantUrl::route('dashboard', absolute: false));
     }
 
     /**

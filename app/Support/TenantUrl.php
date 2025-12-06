@@ -3,7 +3,6 @@
 namespace App\Support;
 
 use App\Models\Landlord\Tenant;
-use Illuminate\Support\Facades\URL;
 
 class TenantUrl
 {
@@ -34,28 +33,4 @@ class TenantUrl
         return route($name, $parameters, $absolute);
     }
 
-    /**
-     * Set default route parameters based on current tenant and environment.
-     */
-    public static function setDefaultParameters(): ?array
-    {
-        $tenant = Tenant::current();
-        if (! $tenant) {
-            return null;
-        }
-
-        $defaults = ['account' => $tenant->host];
-        // Set defaults for both staging (prefix) and production (domain) routing
-        if (app()->environment('staging')) {
-            // Staging uses path prefix
-            $defaults['account'] = $tenant->host;
-            URL::defaults($defaults);
-        } elseif (app()->isProduction()) {
-            // Production uses subdomain - set domain defaults
-            $defaults['account'] = $tenant->host;
-            URL::defaults($defaults);
-        }
-
-        return $defaults;
-    }
 }

@@ -6,10 +6,12 @@ use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;
 
@@ -42,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
 
         WorkOS::setApiKey(config('workos.api_key'));
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        Route::bind('account', function ($value) {
+            // Tenant is already found by TenantFinder, just return it
+            return Tenant::current() ?? Tenant::where('host', $value)->firstOrFail();
+        });
 
         // Use file-based sessions for desktop mode (Redis not available)
         if (config('nativephp-internal.running', false)) {

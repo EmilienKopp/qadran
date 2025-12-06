@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Models\ActivityType;
 use App\Models\ClockEntry;
+use App\Models\Landlord\Tenant;
 use App\Models\Task;
 use App\Models\TaskCategory;
 use App\Models\User;
@@ -65,10 +66,10 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, ?string $account = null, $date = null)
+    public function show(Request $request, Tenant $account = null, $date = null)
     {
-        $date ??= $request->query('date') ?? Carbon::today()->format('Y-m-d');
-
+        $date ??= Carbon::today()->format('Y-m-d');
+        
         $user = User::find(auth('tenant')->user()->id);
         $projects = $this->projectRepository->findForUser($user);
 
@@ -77,7 +78,6 @@ class ActivityController extends Controller
 
             return $taskCategory;
         });
-
         $activities = $this->activityLogRepository->findByUserAndDate($user->id, $date);
         $activityTypes = ActivityType::all();
 

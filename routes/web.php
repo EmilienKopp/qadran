@@ -66,9 +66,9 @@ if (app()->isProduction()) {
         });
     }
 } else {
-    // In development, include tenant routes directly
-    // The tenant.php routes will handle both root and subdomain logic
-    require __DIR__ . '/tenant.php';
+    Route::prefix('{account}')->group(function () {
+        require __DIR__ . '/tenant.php';
+    });
 }
 
 require __DIR__ . '/auth.php';

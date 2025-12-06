@@ -31,9 +31,9 @@ The routing works in two phases:
    - Extracts: {account} = "tenant"
    - ✅ request()->route()->parameter('account') NOW works
                         ↓
-4. SetTenantUrlDefaults Middleware
+4. AddHostToContext Middleware (could probable be removed)
    - Reads: Tenant::current()->host
-   - Sets: URL::defaults(['account' => 'tenant'])
+   - Sets: Context::add('tenant_subdomain', 'tenant')
                         ↓
 5. Route-Specific Middleware (guest, auth, etc.)
    - route('dashboard') → uses URL::defaults(), to avoid annoying "Missing required parameter" errors
@@ -78,18 +78,10 @@ if (app()->isProduction()) {
 - Makes routes explicitly tenant-scoped (documentation)
 - Works with `URL::defaults()` in middleware
 
-### 3. SetTenantUrlDefaults Middleware
-Located at: `app/Http/Middleware/SetTenantUrlDefaults.php`
+### 3. AddHostToContext Middleware
+Located at: `app/Http/Middleware/AddHostToContext.php`
 
-Prepended to web middleware stack to set URL defaults early:
-
-```php
-public function handle(Request $request, Closure $next): Response
-{
-    TenantUrl::setDefaultParameters();
-    return $next($request);
-}
-```
+Adds host to context for reference.
 
 ### 4. RedirectIfAuthenticated Middleware
 Located at: `app/Http/Middleware/RedirectIfAuthenticated.php`
@@ -164,7 +156,7 @@ After these changes:
 
 ## Related Files
 - `app/Services/TenantFinder.php` - Subdomain parsing & tenant finding
-- `app/Http/Middleware/SetTenantUrlDefaults.php` - URL defaults middleware
+- `app/Http/Middleware/AddHostToContext.php` - Middleware to add host to context
 - `app/Http/Middleware/RedirectIfAuthenticated.php` - Guest middleware
 - `app/Support/TenantUrl.php` - Helper class
 - `app/Support/RequestContextResolver.php` - Context resolver with `getAccountParameter()`
