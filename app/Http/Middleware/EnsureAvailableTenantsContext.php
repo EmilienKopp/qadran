@@ -25,6 +25,7 @@ class EnsureAvailableTenantsContext
         if (! Context::has('availableTenants') || empty(Context::get('availableTenants'))) {
             $availableTenants = DB::connection('landlord')->table('tenant_users')
                 ->where('user_id', $user->id)
+                ->where('email', $user->email)
                 ->join('tenants', 'tenants.id', '=', 'tenant_users.tenant_id')
                 ->select('tenant_id', 'user_id', 'tenants.name as name', 'tenants.host as host', 'tenants.domain as domain', 'github_user_id', 'google_user_id')
                 ->get()
