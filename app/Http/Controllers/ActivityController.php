@@ -39,6 +39,13 @@ class ActivityController extends Controller
 
         $date = $request->query('date') ?? Carbon::today()->format('Y-m-d');
 
+        $dailyLogs = DailyLog::groupByRaw('user_id, project_id, date, is_running, clock_entry_id, duration')
+            ->selectRaw('sum(total_seconds) as total_seconds, min("start_time") as "start_time", max("end_time") as "end_time", user_id, project_id, date, is_running, clock_entry_id, duration')
+            ->where('user_id', auth('tenant')->user()->id)
+            ->whereBetween('date', [now()->startOfMonth()->format('Y-m-d'), now()->endOfMonth()->format('Y-m-d')])
+            ->with('activities.activityType')
+            ->get();
+
         $activityTypes = ActivityType::all();
 
         return inertia('Activity/Index', compact('projects', 'dailyLogs', 'taskCategories', 'activityTypes', 'date'));

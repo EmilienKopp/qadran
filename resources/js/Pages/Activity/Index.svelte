@@ -3,13 +3,22 @@
     import AuthenticatedLayout from "$layouts/AuthenticatedLayout.svelte";
     import type { DailyLog } from "$models";
 
-    export let dailyLogs: DailyLog[] = [];
-    export let date: Date = new Date();
+    interface Props {
+        dailyLogs?: Record<string, DailyLog[]>;
+        date?: Date | string;
+    }
+
+    let {
+        dailyLogs = {},
+        date = new Date(),
+    }: Props = $props();
+
+    
 
 </script>
 
 <AuthenticatedLayout>
-    <div class="w3/4 mx-auto pt-16">
+    <div class="w3/4 mx-auto">
         <MonthTable headers={["Date", "Project", "Activity", "Duration"]} data={dailyLogs} {date} />
     </div>
 </AuthenticatedLayout>

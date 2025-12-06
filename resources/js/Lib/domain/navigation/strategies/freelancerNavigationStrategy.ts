@@ -9,6 +9,16 @@ export class FreelancerNavigationStrategy extends DefaultNavigationStrategy {
       //   active: false,
       // },
       {
+        name: 'Daily',
+        href: route('activities.show', { date: (new Date()).toISOString().split('T')[0] }),
+        active: false,
+      },
+      {
+        name: 'Montly',
+        href: route('activities.index'),
+        active: false,
+      },
+      {
         name: 'Projects',
         href: route('project.index'),
         active: false,

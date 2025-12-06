@@ -9,6 +9,13 @@ SELECT
   u.last_name,
   ce.project_id,
   p.name as project_name,
+  min("in") as "start_time",
+  max("out") as "end_time",
+  -- is_running: if there is no "out" time, the clock entry is still running
+  CASE
+    WHEN max("out") IS NULL THEN TRUE
+    ELSE FALSE
+  END AS is_running,
   (ce.duration_seconds || ' seconds')::interval AS duration,
   TO_CHAR(
     DATE_TRUNC(

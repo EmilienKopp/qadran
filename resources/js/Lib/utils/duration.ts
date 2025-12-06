@@ -67,6 +67,7 @@ export class Duration {
     }
 
     public static toHHMM(seconds: number): string {
+        console.log('toHHMM called with seconds:', seconds); // Debug log
         const duration = new Duration(seconds);
         return duration.toHHMM();
     }
