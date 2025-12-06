@@ -151,7 +151,16 @@ class AuthenticatedSessionController extends Controller
         // Remember the space in a cookie for future visits
         SpaceService::registerSpaceCookie($tenant->host);
 
-        return redirect()->intended(TenantUrl::route('dashboard', absolute: false));
+        $tenantRoute = TenantUrl::route('dashboard', absolute: false);
+
+        \Log::debug('User logged in', [
+            'user_id' => auth()->user()->id,
+            'tenant_id' => $tenant->id,
+            'session_id' => $request->session()->getId(),
+            'tenant_route' => $tenantRoute,
+        ]);
+
+        return redirect()->intended($tenantRoute);
     }
 
     /**
