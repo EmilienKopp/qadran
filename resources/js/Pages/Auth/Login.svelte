@@ -56,7 +56,7 @@
 </svelte:head>
 
 <GuestLayout>
-  <form bind:this={formElement} class="w-full max-w-md mx-auto">
+  <form bind:this={formElement} class="w-full max-w-md mx-auto" method="POST">
     <h1 class="mb-8 text-center text-3xl font-bold">Welcome Back</h1>
     <hr class="border-gray-300 dark:border-gray-600 my-4" />
 
