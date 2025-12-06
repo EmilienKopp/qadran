@@ -218,8 +218,8 @@
                     variant="secondary"
                     class="col-start-3 place-self-end"
                   >
-                    Add
-                  </MiniButton>
+                  ＋
+                </MiniButton>
                 </div>
               </td>
             {/if}

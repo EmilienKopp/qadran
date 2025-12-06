@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  export let openPopoverId: string;
+  let openPopoverId: string;
 </script>
 
 <script lang="ts">
