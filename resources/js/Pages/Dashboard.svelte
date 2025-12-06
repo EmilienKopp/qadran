@@ -13,18 +13,22 @@
   import type { Project } from '$models';
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import { getContext } from 'svelte';
+  import RotatingCircle from '$components/Feedback/RotatingCircle.svelte';
 
   interface Props {
     user: User;
   }
-
 
   let { user }: Props = $props();
   let latestEntry = $derived(user?.todays_entries?.[0]);
   let projectOptions = asSelectOptions<Project>(user.projects, 'id', 'name');
 
   const getLastEntry = (field?: string) => {
-    if(field && latestEntry && latestEntry[field as keyof typeof latestEntry]) {
+    if (
+      field &&
+      latestEntry &&
+      latestEntry[field as keyof typeof latestEntry]
+    ) {
       return latestEntry[field as keyof typeof latestEntry];
     }
     return latestEntry;
@@ -35,8 +39,9 @@
     timezone: getLastEntry('timezone') ?? getTimezone(),
   });
 
-  let nextAction = $derived.by(() => ClockEntry.determineNextAction($form,latestEntry));
-
+  let nextAction = $derived.by(() =>
+    ClockEntry.determineNextAction($form, latestEntry)
+  );
 </script>
 
 <svelte:head>
@@ -47,13 +52,11 @@
   <div class="py-12 w-full">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
       <div class="overflow-hidden shadow-xs sm:rounded-lg w-full">
-        <div
-          class="p-6 flex flex-col items-center justify-between w-full"
-        >
-          <fieldset class="p-4 flex items-center justify-center gap-8 border rounded-md">
-            <legend>
-              Punch
-            </legend>
+        <div class="p-6 flex flex-col items-center justify-between w-full">
+          <fieldset
+            class="p-4 flex items-center justify-center gap-8 border rounded-md"
+          >
+            <legend> Punch </legend>
             <Select
               bind:value={$form.project_id}
               options={projectOptions}
@@ -61,16 +64,22 @@
               placeholder="Select Project"
               class="w-44"
             />
-            <Button disabled={!$form.project_id} onclick={() => ClockEntry.push($form)}>
+            <Button
+              disabled={!$form.project_id}
+              onclick={() => ClockEntry.push($form)}
+            >
               {nextAction}
             </Button>
           </fieldset>
+          
           <div class="w-full mt-4 flex flex-col items-center">
             <h2 class="text-xl font-semibold leading-tight mt-8 mb-2">
               Today's Entries
               <MiniButton
                 color="accent"
-                href={route('activities.show', { date: new Date().toISOString().split('T')[0] })}
+                href={route('activities.show', {
+                  date: new Date().toISOString().split('T')[0],
+                })}
               >
                 See All
               </MiniButton>
