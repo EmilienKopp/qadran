@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Landlord\Tenant;
 use App\Repositories\UserRepositoryInterface;
+use App\Services\SpaceService;
+use App\Support\TenantUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +22,9 @@ class AuthenticatedSessionController extends Controller
     // WorkOS authentication commented out - using GitHub OAuth as primary
     // public function __construct(public UserManagement $userManager, public UserRepositoryInterface $userRepository) {}
 
-    public function __construct(public UserRepositoryInterface $userRepository) {}
+    public function __construct(public UserRepositoryInterface $userRepository)
+    {
+    }
 
     /**
      * Display the login view.
@@ -132,7 +136,7 @@ class AuthenticatedSessionController extends Controller
     {
         // Find tenant by space identifier
         $tenant = Tenant::where('host', $request->input('space'))->first();
-        if (! $tenant) {
+        if (!$tenant) {
             return back()->withErrors([
                 'space' => 'Space not found. Please check your organization identifier.',
             ])->onlyInput('email', 'space');
@@ -143,6 +147,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->authenticate();
         $request->session()->regenerate();
+
+        TenantUrl::setDefaultParameters(); // ensure the "account" parameter is set appropriately
+
+        // Remember the space in a cookie for future visits
+        SpaceService::registerSpaceCookie($tenant->host);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

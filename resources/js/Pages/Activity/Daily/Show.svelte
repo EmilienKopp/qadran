@@ -106,6 +106,8 @@
     })
   );
 
+  $inspect(dailyLogs,logs);
+
   const gridOptions = $derived<any>({
     //TODO: `any` not great but ag-Grid types are complex and I want to have a simple string (non-existing key in object) as field
     rowData: logs,
@@ -157,7 +159,7 @@
     router.get(
       route('activities.show', selectedDate),
       {},
-      { preserveState: true, preserveScroll: true }
+      { preserveScroll: true }
     );
   }
 </script>

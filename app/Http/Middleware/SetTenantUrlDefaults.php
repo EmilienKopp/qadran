@@ -20,8 +20,8 @@ class SetTenantUrlDefaults
         TenantUrl::setDefaultParameters();
 
         $subdomain = UrlTools::getSubdomain($request->getHost());
-
-        Context::add('tenant_subdomain', $subdomain);
+        
+        Context::add('tenant_subdomain', $subdomain); // for debug/reference only
 
         return $next($request);
     }

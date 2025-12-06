@@ -13,7 +13,7 @@ class TenantUrl
     public static function route(string $name, array $parameters = [], bool $absolute = true): string
     {
         $tenant = Tenant::current();
-
+        
         if (! $tenant) {
             return route($name, $parameters, $absolute);
         }
@@ -37,21 +37,25 @@ class TenantUrl
     /**
      * Set default route parameters based on current tenant and environment.
      */
-    public static function setDefaultParameters(): void
+    public static function setDefaultParameters(): ?array
     {
         $tenant = Tenant::current();
-
         if (! $tenant) {
-            return;
+            return null;
         }
 
+        $defaults = ['account' => $tenant->host];
         // Set defaults for both staging (prefix) and production (domain) routing
         if (app()->environment('staging')) {
             // Staging uses path prefix
-            URL::defaults(['account' => $tenant->host]);
+            $defaults['account'] = $tenant->host;
+            URL::defaults($defaults);
         } elseif (app()->isProduction()) {
             // Production uses subdomain - set domain defaults
-            URL::defaults(['account' => $tenant->host]);
+            $defaults['account'] = $tenant->host;
+            URL::defaults($defaults);
         }
+
+        return $defaults;
     }
 }
