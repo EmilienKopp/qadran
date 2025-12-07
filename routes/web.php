@@ -55,6 +55,11 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
     ]);
 })->name('find-tenant');
 
+
+require __DIR__ . '/auth.php';
+require __DIR__ . '/webhooks.php';
+
+
 if (app()->isProduction()) {
     if (app()->environment('staging')) {
         Route::prefix('{account}')->group(function () {
@@ -70,6 +75,3 @@ if (app()->isProduction()) {
         require __DIR__ . '/tenant.php';
     });
 }
-
-require __DIR__ . '/auth.php';
-require __DIR__ . '/webhooks.php';
