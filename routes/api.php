@@ -7,7 +7,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/git-report', [GitReportController::class, 'generate']);
+    
+    // Personal Access Token management
+    Route::get('/tokens', [\App\Http\Controllers\Api\TokenController::class, 'index']);
+    Route::delete('/tokens/{tokenId}', [\App\Http\Controllers\Api\TokenController::class, 'revoke']);
+    Route::delete('/tokens', [\App\Http\Controllers\Api\TokenController::class, 'revokeAll']);
 });
+
+// Token creation (requires email and password, not an existing token)
+Route::post('/tokens', [\App\Http\Controllers\Api\TokenController::class, 'create']);
 
 Route::get('/artisan', [\App\Http\Controllers\Api\ArtisanController::class, 'run'])
     ->name('api.artisan');
