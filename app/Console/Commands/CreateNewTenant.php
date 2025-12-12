@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use Illuminate\Support\Facades\DB;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\table;
@@ -81,11 +82,16 @@ class CreateNewTenant extends Command
                 };
             }
         }
+        try {
+            $this->duplicateTenantDatabase();
+        } catch (\Exception $e) {
+            $this->error('Failed to create tenant database: ' . $e->getMessage());
+            return;
+        }
 
         $this->newLine();
         $this->info('Tenant created successfully!');
 
-        dd($this->tenantName, $this->domain, $this->host);
     }
 
     private function createWorkOSOrg(): void
@@ -168,6 +174,13 @@ class CreateNewTenant extends Command
         }
 
         return $option;
+    }
+
+    private function duplicateTenantDatabase(): void
+    {
+        DB::connection('landlord')->unprepared(<<<SQL
+            CREATE DATABASE {$this->host}_db TEMPLATE tenant_template;
+        SQL);
     }
 
     private function isValidHost(string $host): bool
