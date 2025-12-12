@@ -15,7 +15,6 @@ class EnsureAvailableTenantsContext
         if (! Tenant::current()) {
             return $next($request);
         }
-
         $user = $request->user();
         if (! $user?->id) {
             return $next($request);

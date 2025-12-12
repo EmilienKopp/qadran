@@ -19,10 +19,15 @@ class AddHostToContext
     public function handle(Request $request, Closure $next): Response
     {
         $subdomain = UrlTools::getSubdomain($request->getHost());
-
         URL::defaults(['account' => $subdomain ?? Tenant::current()?->host]);
-        
+
+        $account = $request->route('account');
         Context::add('tenant_subdomain', $subdomain); // for debug/reference only
+
+        $tenant = Tenant::firstWhere('host', $account);
+        if ($tenant) {
+            $tenant->makeCurrent();
+        }
 
         return $next($request);
     }

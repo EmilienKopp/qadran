@@ -14,6 +14,12 @@ use App\Http\Controllers\GoogleOAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    Route::get('space-selection', [AuthenticatedSessionController::class, 'spaceSelection'])
+        ->name('space-selection');
+
+    Route::post('space-selection', [AuthenticatedSessionController::class, 'storeSpaceSelection'])
+        ->name('space-selection.store');
+
     Route::get('welcome/register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -21,6 +27,9 @@ Route::middleware('guest')->group(function () {
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
+
+    Route::get('authenticate', [AuthenticatedSessionController::class, 'authenticate'])
+        ->name('authenticate');
 
     // Primary authentication: GitHub OAuth
     Route::get('github/login', [GitHubOAuthController::class, 'redirect'])
