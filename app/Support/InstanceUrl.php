@@ -12,7 +12,7 @@ class InstanceUrl
     public static function build(string $host): string
     {
         if (RequestContextResolver::isDev($host) || app()->isLocal()) {
-            return 'http://localhost:8000';
+            return 'http://localhost:8000/'.$host;
         }
         $scheme = parse_url(config('app.url'), PHP_URL_SCHEME);
 

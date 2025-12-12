@@ -59,6 +59,22 @@ Route::post('/find-tenant', function (Illuminate\Http\Request $request) {
 require __DIR__ . '/auth.php';
 require __DIR__ . '/webhooks.php';
 
+// Register Passport OAuth routes BEFORE {account} prefix to prevent route conflicts
+Route::middleware(['auth:tenant'])->prefix('oauth')->as('passport.')->group(function () {
+    Route::get('/authorize', [\Laravel\Passport\Http\Controllers\AuthorizationController::class, 'authorize'])
+        ->name('authorizations.authorize');
+    Route::post('/authorize', [\Laravel\Passport\Http\Controllers\ApproveAuthorizationController::class, 'approve'])
+        ->name('authorizations.approve');
+    Route::delete('/authorize', [\Laravel\Passport\Http\Controllers\DenyAuthorizationController::class, 'deny'])
+        ->name('authorizations.deny');
+});
+
+Route::prefix('oauth')->as('passport.')->group(function () {
+    Route::post('/token', [\Laravel\Passport\Http\Controllers\AccessTokenController::class, 'issueToken'])
+        ->name('token');
+    Route::post('/token/refresh', [\Laravel\Passport\Http\Controllers\TransientTokenController::class, 'refresh'])
+        ->name('token.refresh');
+});
 
 if (app()->isProduction()) {
     if (app()->environment('staging')) {

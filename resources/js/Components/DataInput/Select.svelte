@@ -3,7 +3,8 @@
   import clsx from 'clsx';
   import InputLabel from './InputLabel.svelte';
   import InputError from './InputError.svelte';
-  
+  import { type Snippet } from 'svelte';
+
   interface Props {
     label?: string;
     options?: Option[];
@@ -16,7 +17,8 @@
     items?: any[];
     mapping?: { valueColumn: string; labelColumn: string };
     onchange?: (e: Event) => void;
-    [key: string]: any
+    children?: Snippet;
+    [key: string]: any;
   }
 
   let {
@@ -31,6 +33,7 @@
     required = false,
     class: className = '',
     onchange,
+    children,
     ...rest
   }: Props = $props();
 
@@ -41,25 +44,34 @@
 
   // Normalize error handling - support both 'error' and 'errors' props
   const normalizedError = $derived(
-    error || 
-    (typeof errors === 'string' ? errors : Array.isArray(errors) ? errors[0] : null)
+    error ||
+      (typeof errors === 'string'
+        ? errors
+        : Array.isArray(errors)
+          ? errors[0]
+          : null)
   );
 
-  let classes = $derived(clsx(
-    'select select-bordered w-full text-xs',
-    normalizedError && 'select-error',
-    className,
-  ))
+  let classes = $derived(
+    clsx(
+      'select select-bordered w-full text-xs',
+      normalizedError && 'select-error',
+      className
+    )
+  );
 
-  if(!options?.length && items && mapping) {
-    options = items.map(item => ({
+  if (!options?.length && items && mapping) {
+    options = items.map((item) => ({
       value: item[mapping.valueColumn],
       name: item[mapping.labelColumn],
     }));
   }
 </script>
 
-<fieldset class="fieldset w-full" data-error={normalizedError ? 'true' : 'false'}>
+<fieldset
+  class="fieldset w-full"
+  data-error={normalizedError ? 'true' : 'false'}
+>
   {#if label}
     <InputLabel for={rest.id} {required}>
       {label}
@@ -75,9 +87,14 @@
     {#if placeholder}
       <option disabled selected>{placeholder}</option>
     {/if}
-    {#each options as option}
-      <option value={option.value}>{option.name}</option>
-    {/each}
+
+    {#if !children}
+      {#each options as option}
+        <option value={option.value}>{option.name}</option>
+      {/each}
+    {:else}
+      {@render children()}
+    {/if}
   </select>
   <InputError message={normalizedError} />
 </fieldset>

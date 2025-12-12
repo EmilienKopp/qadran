@@ -30,7 +30,7 @@ services:
 
   laravel.vite:
     build:
-      context: './docker/8.4'
+      context: './vendor/laravel/sail/runtimes/8.4'
       dockerfile: Dockerfile
       args:
         WWWGROUP: '${WWWGROUP}'
@@ -52,9 +52,9 @@ services:
       - laravel.test
 
   pgsql:
-    image: 'postgres:17'
+    image: 'postgres:17.7'
     ports:
-      - '${FORWARD_DB_PORT:-5432}:5432'
+      - "0.0.0.0:5435:5432"
     environment:
       PGPASSWORD: '${DB_PASSWORD:-secret}'
       POSTGRES_DB: '${DB_DATABASE}'

@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Passport\ClientRepository;
 
 class RegisteredUserController extends Controller
 {
+
+    public function __construct(private ClientRepository $clientRepository)
+    {
+    }
+
     /**
      * Display the registration view.
      */
@@ -34,12 +40,19 @@ class RegisteredUserController extends Controller
         $validated = $request->validated();
 
         
-
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+        
+        $this->clientRepository->createAuthorizationCodeGrantClient(
+            user: $user,
+            name: 'Qadran CLI',
+            redirectUris: ['https://localhost:8765/callback'],
+            confidential: false,
+            enableDeviceFlow: true
+        );
 
         event(new Registered($user));
 

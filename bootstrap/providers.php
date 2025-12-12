@@ -5,5 +5,6 @@ return [
     App\Providers\AppServiceProvider::class,
     App\Providers\DataAccessServiceProvider::class,
     App\Providers\GitHubServiceProvider::class,
+    App\Providers\PassportOauthProvider::class,
     App\Providers\RepositoryServiceProvider::class,
 ];

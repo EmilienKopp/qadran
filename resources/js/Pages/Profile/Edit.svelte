@@ -6,6 +6,7 @@
   import McpTokenForm from './Partials/McpTokenForm.svelte';
   import GitHubIntegrationCard from './Partials/GitHubIntegrationCard.svelte';
   import VoiceAssistantCard from './Partials/VoiceAssistantCard.svelte';
+  import AccessTokens from './Partials/AccessTokens.svelte';
 
   interface Props {
     mustVerifyEmail?: boolean;
@@ -56,6 +57,8 @@
         />
 
         <VoiceAssistantCard />
+
+        <AccessTokens />
       </section>
 
       <DeleteUserForm class="max-w-xl" />

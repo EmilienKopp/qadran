@@ -18,8 +18,13 @@ class ForceWebContext
     {
         $response = $next($request);
 
+        // Add 'original' property to all responses to prevent NativePhp LivewireDispatcher errors
+        if (! property_exists($response, 'original')) {
+            $response->original = null;
+        }
+
         // If this is a StreamedResponse, wrap it with a class that has the 'original' property
-        if ($response instanceof StreamedResponse) {
+        if ($response instanceof StreamedResponse && ! property_exists($response, 'original')) {
             return new StreamedResponseWithOriginal($response);
         }
 
