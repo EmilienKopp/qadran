@@ -87,6 +87,7 @@
                 name="organization_id"
                 options={organizationsOptions}
                 bind:value={$form.organization_id}
+                error={$form.errors.organization_id}
                 required
               />
             {:else if scope === 'project'}
@@ -95,6 +96,7 @@
                 name="project_id"
                 options={projectsOptions}
                 bind:value={$form.project_id}
+                error={$form.errors.project_id}
                 required
               />
             {/if}
@@ -110,6 +112,7 @@
               name="rate_type"
               options={rateTypesOptions}
               bind:value={$form.rate_type}
+              error={$form.errors.rate_type}
               required
             />
 
@@ -118,6 +121,7 @@
               name="rate_frequency"
               options={frequenciesOptions}
               bind:value={$form.rate_frequency}
+              error={$form.errors.rate_frequency}
               required
             />
 
@@ -128,6 +132,7 @@
               bind:value={$form.amount}
               min="0"
               step="0.01"
+              error={$form.errors.amount}
               required
             />
 
@@ -138,6 +143,7 @@
               bind:value={$form.currency}
               maxlength="3"
               placeholder="USD"
+              error={$form.errors.currency}
               required
             />
           </fieldset>

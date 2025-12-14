@@ -23,6 +23,10 @@ export class BaseRateTableStrategy
         label: "View",
         href: (row: Rate) => route("rate.show", row.id),
       },
+      {
+        label: "Edit",
+        href: (row: Rate) => route("rate.edit", row.id),
+      },
     ];
   }
 } 
