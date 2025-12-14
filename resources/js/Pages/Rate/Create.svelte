@@ -8,7 +8,7 @@
   import DatePicker from '$components/DataInput/DatePicker.svelte';
   import FieldsetWrapper from '$components/UI/FieldsetWrapper.svelte';
   import type { SelectOption } from '$types/index';
-  import type { Rate, RateType, Organization, Project } from '$models';
+  import type { Rate, Organization, Project } from '$models';
   import { superUseForm } from '$lib/inertia';
   import { asSelectOptions } from '$lib/utils/formatting';
   import { enums } from '$lib/inertia';
