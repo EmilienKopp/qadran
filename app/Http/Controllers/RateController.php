@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RateFrequency;
+use App\Enums\RateType;
 use App\Enums\RateTypeScope;
 use App\Models\Rate;
-use App\Models\RateType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
@@ -18,7 +18,7 @@ class RateController extends Controller
      */
     public function index(?string $account = null)
     {
-        $rates = Rate::with(['rateType', 'organization', 'project', 'user'])
+        $rates = Rate::with(['organization', 'project', 'user'])
             ->active()
             ->get();
             
@@ -33,7 +33,6 @@ class RateController extends Controller
     public function create(?string $account = null)
     {
         return Inertia::render('Rate/Create', [
-            'rateTypes' => RateType::all(),
             'frequenciesOptions' => RateFrequency::toSelectOptions(),
             'scopesOptions' => RateTypeScope::toSelectOptions(),
             'organizations' => Auth::user()->organizations,
@@ -47,24 +46,22 @@ class RateController extends Controller
     public function store(Request $request, ?string $account = null)
     {
         $validated = $request->validate([
-            'rate_type' => ['nullable', new Enum(RateType::class)],
-            'rate_frequency' => 'required|string',
+            'rate_type' => ['required', new Enum(RateType::class)],
+            'rate_frequency' => ['required', new Enum(RateFrequency::class)],
             'organization_id' => 'nullable|exists:tenant.organizations,id',
             'project_id' => 'nullable|exists:tenant.projects,id',
             'user_id' => 'nullable|exists:tenant.users,id',
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|size:3',
-            'overtime_multiplier' => 'numeric|min:1',
-            'holiday_multiplier' => 'numeric|min:1',
-            'special_multiplier' => 'numeric|min:1',
+            'overtime_multiplier' => 'nullable|numeric|min:1',
+            'holiday_multiplier' => 'nullable|numeric|min:1',
+            'special_multiplier' => 'nullable|numeric|min:1',
             'custom_multiplier_rate' => 'nullable|numeric|min:1',
             'custom_multiplier_label' => 'nullable|string',
-            'is_default' => 'boolean',
+            'is_default' => 'nullable|boolean',
             'effective_from' => 'nullable|date',
             'effective_until' => 'nullable|date|after:effective_from',
         ]);
-
-        $validated['value'] = $validated['amount'];
 
         Rate::create($validated);
 
@@ -78,7 +75,7 @@ class RateController extends Controller
      */
     public function show(?string $account, Rate $rate)
     {
-        $rate->load(['rateType', 'organization', 'project', 'user']);
+        $rate->load(['organization', 'project', 'user']);
 
         return Inertia::render('Rate/Show', [
             'rate' => $rate,
@@ -90,12 +87,14 @@ class RateController extends Controller
      */
     public function edit(?string $account, Rate $rate)
     {
-        $rate->load(['rateType', 'organization', 'project', 'user']);
+        $rate->load(['organization', 'project', 'user']);
 
         return Inertia::render('Rate/Edit', [
             'rate' => $rate,
-            'frequencies' => RateFrequency::toSelectOptions(),
-            'scopes' => RateTypeScope::toSelectOptions(),
+            'frequenciesOptions' => RateFrequency::toSelectOptions(),
+            'scopesOptions' => RateTypeScope::toSelectOptions(),
+            'organizations' => Auth::user()->organizations,
+            'projects' => Auth::user()->projects,
         ]);
     }
 
@@ -105,19 +104,19 @@ class RateController extends Controller
     public function update(Request $request, ?string $account, Rate $rate)
     {
         $validated = $request->validate([
-            'rate_type_id' => 'required|exists:rate_types,id',
-            'rate_frequency' => 'required|string',
-            'organization_id' => 'nullable|exists:organizations,id',
-            'project_id' => 'nullable|exists:projects,id',
-            'user_id' => 'nullable|exists:users,id',
+            'rate_type' => ['required', new Enum(RateType::class)],
+            'rate_frequency' => ['required', new Enum(RateFrequency::class)],
+            'organization_id' => 'nullable|exists:tenant.organizations,id',
+            'project_id' => 'nullable|exists:tenant.projects,id',
+            'user_id' => 'nullable|exists:tenant.users,id',
             'amount' => 'required|numeric|min:0',
             'currency' => 'required|string|size:3',
-            'overtime_multiplier' => 'numeric|min:1',
-            'holiday_multiplier' => 'numeric|min:1',
-            'special_multiplier' => 'numeric|min:1',
+            'overtime_multiplier' => 'nullable|numeric|min:1',
+            'holiday_multiplier' => 'nullable|numeric|min:1',
+            'special_multiplier' => 'nullable|numeric|min:1',
             'custom_multiplier_rate' => 'nullable|numeric|min:1',
             'custom_multiplier_label' => 'nullable|string',
-            'is_default' => 'boolean',
+            'is_default' => 'nullable|boolean',
             'effective_from' => 'nullable|date',
             'effective_until' => 'nullable|date|after:effective_from',
         ]);

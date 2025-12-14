@@ -8,12 +8,13 @@
   import DatePicker from '$components/DataInput/DatePicker.svelte';
   import FieldsetWrapper from '$components/UI/FieldsetWrapper.svelte';
   import type { SelectOption } from '$types/index';
-  import type { Rate, RateType, Organization, Project } from '$models';
+  import type { Rate, Organization, Project } from '$models';
   import { superUseForm } from '$lib/inertia';
   import { asSelectOptions } from '$lib/utils/formatting';
   import { enums } from '$lib/inertia';
 
   interface Props {
+    rate: Rate;
     frequenciesOptions: SelectOption[];
     scopesOptions: SelectOption[];
     organizations: Organization[];
@@ -21,6 +22,7 @@
   }
 
   let {
+    rate,
     frequenciesOptions,
     scopesOptions,
     organizations,
@@ -30,35 +32,39 @@
   let organizationsOptions = asSelectOptions(organizations, 'id', 'name');
   let projectsOptions = asSelectOptions(projects, 'id', 'name');
   let rateTypesOptions = asSelectOptions(enums('rate_types') ?? [], 'value', 'name');
-  let scope: 'organization' | 'project' | 'user' = $state('organization');
+  
+  // Determine initial scope based on what's set in the rate
+  let scope: 'organization' | 'project' | 'user' = $state(
+    rate.organization_id ? 'organization' : rate.project_id ? 'project' : 'user'
+  );
 
   let form = superUseForm<Rate>({
-    rate_type: undefined,
-    rate_frequency: undefined,
-    amount: undefined,
-    currency: 'USD',
-    organization_id: undefined,
-    project_id: undefined,
-    user_id: undefined,
-    overtime_multiplier: 1.5,
-    holiday_multiplier: 2.0,
-    special_multiplier: 2.5,
-    custom_multiplier_rate: undefined,
-    custom_multiplier_label: undefined,
-    is_default: false,
-    effective_from: undefined,
-    effective_until: undefined,
+    rate_type: rate.rate_type,
+    rate_frequency: rate.rate_frequency,
+    amount: rate.amount,
+    currency: rate.currency,
+    organization_id: rate.organization_id,
+    project_id: rate.project_id,
+    user_id: rate.user_id,
+    overtime_multiplier: rate.overtime_multiplier ?? 1.5,
+    holiday_multiplier: rate.holiday_multiplier ?? 2.0,
+    special_multiplier: rate.special_multiplier ?? 2.5,
+    custom_multiplier_rate: rate.custom_multiplier_rate,
+    custom_multiplier_label: rate.custom_multiplier_label,
+    is_default: rate.is_default ?? false,
+    effective_from: rate.effective_from,
+    effective_until: rate.effective_until,
   });
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
-    $form.post(route('rate.store'));
+    $form.put(route('rate.update', rate.id));
   }
 </script>
 
 <AuthenticatedLayout>
   <div class="p-8">
-    <Header title="Create Rate" />
+    <Header title="Edit Rate" />
 
     <FieldsetWrapper>
       <form onsubmit={handleSubmit} class="space-y-6">
@@ -209,7 +215,7 @@
           <Button type="button" variant="secondary" href={route('rate.index')}>
             Cancel
           </Button>
-          <Button type="submit">Create Rate</Button>
+          <Button type="submit">Update Rate</Button>
         </div>
       </form>
     </FieldsetWrapper>

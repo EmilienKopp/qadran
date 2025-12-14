@@ -10,7 +10,7 @@ export class BaseRateTableStrategy
 {
   protected defaultHeaders() {
     return [
-      { label: "Type", key: "rate_type.name" },
+      { label: "Type", key: "rate_type" },
       { label: "Amount", key: "amount", formatter: currency },
       { label: "Frequency", key: "rate_frequency" },
       { label: "Updated At", key: "updated_at", formatter: date },
@@ -32,7 +32,7 @@ export class BaseRateDatalistStrategy extends BaseRateTableStrategy {
     return [
       { label: "Organization", key: "organization.name" },
       { label: "Project", key: "project.name" },
-      { label: "Type", key: "rate_type.name" },
+      { label: "Type", key: "rate_type" },
       { label: "Amount", key: "amount", formatter: currency },
       { label: "Frequency", key: "rate_frequency" },
       { label: "Updated At", key: "updated_at", formatter: date },

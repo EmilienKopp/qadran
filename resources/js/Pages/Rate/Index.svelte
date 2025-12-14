@@ -26,7 +26,7 @@
         || caseInsensitiveIncludes(rate.user?.first_name, query)
         || caseInsensitiveIncludes(rate.user?.last_name, query)
         || caseInsensitiveIncludes(rate.project?.name, query)
-        || caseInsensitiveIncludes(rate.rate_type?.name, query)
+        || caseInsensitiveIncludes(rate.rate_type, query)
         || rate.amount == Number(query);
     });
   }

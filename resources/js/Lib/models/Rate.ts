@@ -1,9 +1,8 @@
-import { RateType, Organization, Project, User, Rate } from '$models';
+import { Organization, Project, User, Rate } from '$models';
 
 export class RateBase implements Rate {
     id: number;
-    rate_type_id: number;
-    rate_type?: RateType;
+    rate_type: string;
     rate_frequency: string;
     organization_id?: number;
     organization?: Organization;
@@ -13,12 +12,12 @@ export class RateBase implements Rate {
     user?: User;
     amount: number;
     currency: string;
-    overtime_multiplier: number;
-    holiday_multiplier: number;
-    special_multiplier: number;
+    overtime_multiplier?: number;
+    holiday_multiplier?: number;
+    special_multiplier?: number;
     custom_multiplier_rate?: number;
     custom_multiplier_label?: string;
-    is_default: boolean;
+    is_default?: boolean;
     effective_from?: Date | string;
     effective_until?: Date | string;
     created_at?: Date | string;
@@ -27,7 +26,7 @@ export class RateBase implements Rate {
 
     constructor(data: Rate) {
         this.id = data.id;
-        this.rate_type_id = data.rate_type_id;
+        this.rate_type = data.rate_type;
         this.rate_frequency = data.rate_frequency;
         this.organization_id = data.organization_id;
         this.project_id = data.project_id;
