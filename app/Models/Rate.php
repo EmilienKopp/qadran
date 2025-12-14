@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\Money;
 use App\Enums\RateFrequency;
+use App\Enums\RateType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -13,7 +14,7 @@ class Rate extends Model
     use UsesTenantConnection;
 
     protected $fillable = [
-        'rate_type_id',
+        'rate_type',
         'rate_frequency',
         'organization_id',
         'project_id',
@@ -39,13 +40,9 @@ class Rate extends Model
         'is_default' => 'boolean',
         'effective_from' => 'datetime',
         'effective_until' => 'datetime',
+        'rate_type' => RateType::class,
         'rate_frequency' => RateFrequency::class,
     ];
-
-    public function rateType(): BelongsTo
-    {
-        return $this->belongsTo(RateType::class);
-    }
 
     public function organization(): BelongsTo
     {

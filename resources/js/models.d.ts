@@ -196,8 +196,7 @@ export interface ProjectUser {
 
 export interface Rate {
     id: number;
-    rate_type_id: number;
-    rate_type?: RateType;
+    rate_type: string;
     rate_frequency: string;
     organization_id?: number;
     organization?: Organization;
@@ -207,29 +206,14 @@ export interface Rate {
     user?: User;
     amount: number;
     currency: string;
-    overtime_multiplier: number;
-    holiday_multiplier: number;
-    special_multiplier: number;
+    overtime_multiplier?: number;
+    holiday_multiplier?: number;
+    special_multiplier?: number;
     custom_multiplier_rate?: number;
     custom_multiplier_label?: string;
-    is_default: boolean;
+    is_default?: boolean;
     effective_from?: Date | string;
     effective_until?: Date | string;
-    created_at?: Date | string;
-    updated_at?: Date | string;
-}
-
-export interface RateType {
-    id: number;
-    name: string;
-    description?: string;
-    scope: string;
-    organization_id?: number;
-    organization?: Organization;
-    project_id?: number;
-    project?: Project;
-    user_id?: number;
-    user?: User;
     created_at?: Date | string;
     updated_at?: Date | string;
 }
@@ -390,4 +374,4 @@ export interface DailyLog {
     activities?: ActivityLog[];
 }
 
-export type ModelTypes = Activity | ActivityLog | ActivityType | ClockEntry | Currency | GitHubConnection | Industry | ModelHasRoles | Organization | OrganizationUser | Permission | PersonalAccessToken | Project | ProjectUser | Rate | RateType | Report | RepositorySettings | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User | VoiceCommand | DailyLog;
+export type ModelTypes = Activity | ActivityLog | ActivityType | ClockEntry | Currency | GitHubConnection | Industry | ModelHasRoles | Organization | OrganizationUser | Permission | PersonalAccessToken | Project | ProjectUser | Rate | Report | RepositorySettings | Role | Tag | Taggable | Task | TaskCategoriesAlias | TaskCategory | TaskCategoryAlias | User | VoiceCommand | DailyLog;
