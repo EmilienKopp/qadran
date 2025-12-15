@@ -8,6 +8,7 @@
   import { Link, router } from '@inertiajs/svelte';
   import dayjs from 'dayjs';
   import { fade } from 'svelte/transition';
+  import activities from '../../routes/activities';
 
   interface Props {
     entries?: ClockEntry[];
@@ -48,7 +49,7 @@
         {entry.out ? timespan(entry.in, entry.out) : clock.since(entry.in)}
     </td>
     <td>
-        <OutlineButton viewTransition class="mr-2" href={route('activities.show', dayjs(entry.in).format('YYYY-MM-DD'))}>
+        <OutlineButton viewTransition class="mr-2" href={activities.show.url({ date: dayjs(entry.in).format('YYYY-MM-DD') })}>
           See Details
         </OutlineButton>
       <DeleteButton class="text-red-500" onclick={() => handleDelete(entry)} />

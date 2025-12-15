@@ -8,6 +8,7 @@
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import { caseInsensitiveIncludes } from '$lib/utils/strings';
   import type { Rate } from '$models';
+  import rate from '../../routes/rate';
 
   interface Props {
     rates: Rate[];

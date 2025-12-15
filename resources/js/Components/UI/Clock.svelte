@@ -12,10 +12,10 @@
 
 {#if clock.time}
   <div class="countdown font-mono text-2xl w-36">
-    <span style="--value:{clock.h};"></span>
+    <span style="--value:{clock.h}; --digits: 2;" aria-live="polite" aria-label={clock.h}>{clock.h}</span>
     :
-    <span style="--value:{clock.m};"></span>
+    <span style="--value:{clock.m}; --digits: 2;" aria-live="polite" aria-label={clock.m}>{clock.m}</span>
     :
-    <span style="--value:{clock.s};"></span>
+    <span style="--value:{clock.s}; --digits: 2;" aria-live="polite" aria-label={clock.s}>{clock.s}</span>
   </div>
 {/if}

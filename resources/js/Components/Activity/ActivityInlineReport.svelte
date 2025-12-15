@@ -14,6 +14,7 @@
   import { onDestroy } from 'svelte';
   import { slide } from 'svelte/transition';
   import dayjs from 'dayjs';
+  import activities from '../../routes/activities';
 
   interface Props {
     log: any;
@@ -104,7 +105,7 @@
           <li>
             <a
               onclick={clock}
-              href={route('activities.show', { date: log.date })}
+              href={activities.show.url({ date: log.date })}
             >
               Clock Out and Edit
             </a>
@@ -122,7 +123,7 @@
             />
           {/if}
         </li>
-        <li><a href={route('activities.show', { date: log.date })}>Edit</a></li>
+        <li><a href={activities.show.url({ date: log.date })}>Edit</a></li>
       </ul>
     </form>
     {#if log.activities?.length}
@@ -136,7 +137,7 @@
         <MiniPie data={log.activities.map((a) => a.duration_seconds)} />
       </button>
     {:else if !log.is_running}
-      <a href={route('activities.show', { date: log.date })}>
+      <a href={activities.show.url({ date: log.date })}>
         <!-- PencilSquare -->
         <svg
           xmlns="http://www.w3.org/2000/svg"

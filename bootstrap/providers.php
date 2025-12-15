@@ -7,4 +7,5 @@ return [
     App\Providers\GitHubServiceProvider::class,
     App\Providers\PassportOauthProvider::class,
     App\Providers\RepositoryServiceProvider::class,
+    App\Providers\WorkOSServiceProvider::class,
 ];

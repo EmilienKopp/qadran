@@ -107,7 +107,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::byOrganization
-* @see app/Http/Controllers/Api/ProjectController.php:26
+* @see app/Http/Controllers/Api/ProjectController.php:27
 * @route '/api/projects/by-organization/{organizationId}'
 */
 export const byOrganization = (args: { organizationId: string | number } | [organizationId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ byOrganization.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::byOrganization
-* @see app/Http/Controllers/Api/ProjectController.php:26
+* @see app/Http/Controllers/Api/ProjectController.php:27
 * @route '/api/projects/by-organization/{organizationId}'
 */
 byOrganization.url = (args: { organizationId: string | number } | [organizationId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -149,7 +149,7 @@ byOrganization.url = (args: { organizationId: string | number } | [organizationI
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::byOrganization
-* @see app/Http/Controllers/Api/ProjectController.php:26
+* @see app/Http/Controllers/Api/ProjectController.php:27
 * @route '/api/projects/by-organization/{organizationId}'
 */
 byOrganization.get = (args: { organizationId: string | number } | [organizationId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ byOrganization.get = (args: { organizationId: string | number } | [organizationI
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::byOrganization
-* @see app/Http/Controllers/Api/ProjectController.php:26
+* @see app/Http/Controllers/Api/ProjectController.php:27
 * @route '/api/projects/by-organization/{organizationId}'
 */
 byOrganization.head = (args: { organizationId: string | number } | [organizationId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -169,7 +169,7 @@ byOrganization.head = (args: { organizationId: string | number } | [organization
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::store
-* @see app/Http/Controllers/Api/ProjectController.php:32
+* @see app/Http/Controllers/Api/ProjectController.php:34
 * @route '/api/projects'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -184,7 +184,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::store
-* @see app/Http/Controllers/Api/ProjectController.php:32
+* @see app/Http/Controllers/Api/ProjectController.php:34
 * @route '/api/projects'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -193,7 +193,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::store
-* @see app/Http/Controllers/Api/ProjectController.php:32
+* @see app/Http/Controllers/Api/ProjectController.php:34
 * @route '/api/projects'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -203,7 +203,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::update
-* @see app/Http/Controllers/Api/ProjectController.php:43
+* @see app/Http/Controllers/Api/ProjectController.php:46
 * @route '/api/projects/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -218,7 +218,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::update
-* @see app/Http/Controllers/Api/ProjectController.php:43
+* @see app/Http/Controllers/Api/ProjectController.php:46
 * @route '/api/projects/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -245,7 +245,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::update
-* @see app/Http/Controllers/Api/ProjectController.php:43
+* @see app/Http/Controllers/Api/ProjectController.php:46
 * @route '/api/projects/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -255,7 +255,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::destroy
-* @see app/Http/Controllers/Api/ProjectController.php:57
+* @see app/Http/Controllers/Api/ProjectController.php:61
 * @route '/api/projects/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -270,7 +270,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::destroy
-* @see app/Http/Controllers/Api/ProjectController.php:57
+* @see app/Http/Controllers/Api/ProjectController.php:61
 * @route '/api/projects/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\ProjectController::destroy
-* @see app/Http/Controllers/Api/ProjectController.php:57
+* @see app/Http/Controllers/Api/ProjectController.php:61
 * @route '/api/projects/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

@@ -21,6 +21,9 @@ class EnsureCLIOAuthClient
      */
     public function handle($request, \Closure $next)
     {
+        if (RequestContextResolver::getExecutionContext() === ExecutionContext::WEB) {
+            return $next($request);
+        }
         $user = $request->user();
         if (!$user instanceof User) {
             return $next($request);

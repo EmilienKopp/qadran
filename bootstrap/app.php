@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(prepend: [
             \App\Http\Middleware\AddHostToContext::class,
             \App\Http\Middleware\PreventPlusAddressing::class,
-            \App\Http\Middleware\ForceWebContext::class,
+            // \App\Http\Middleware\ForceWebContext::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\EnsureAvailableTenantsContext::class, // do not put AFTER HandleInertiaRequests

@@ -1,442 +1,638 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:42
-* @route '/report'
+* @see app/Http/Controllers/ReportController.php:45
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report'
 */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+export const index = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 index.definition = {
     methods: ["get","head"],
-    url: '/report',
+    url: '/{account?}/report',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:42
-* @route '/report'
+* @see app/Http/Controllers/ReportController.php:45
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report'
 */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
+index.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return index.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:42
-* @route '/report'
+* @see app/Http/Controllers/ReportController.php:45
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report'
 */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+index.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:42
-* @route '/report'
+* @see app/Http/Controllers/ReportController.php:45
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report'
 */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
+index.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::create
-* @see app/Http/Controllers/ReportController.php:56
-* @route '/report/create'
+* @see app/Http/Controllers/ReportController.php:60
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/create'
 */
-export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+export const create = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 create.definition = {
     methods: ["get","head"],
-    url: '/report/create',
+    url: '/{account?}/report/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::create
-* @see app/Http/Controllers/ReportController.php:56
-* @route '/report/create'
+* @see app/Http/Controllers/ReportController.php:60
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/create'
 */
-create.url = (options?: RouteQueryOptions) => {
-    return create.definition.url + queryParams(options)
+create.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return create.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::create
-* @see app/Http/Controllers/ReportController.php:56
-* @route '/report/create'
+* @see app/Http/Controllers/ReportController.php:60
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/create'
 */
-create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+create.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::create
-* @see app/Http/Controllers/ReportController.php:56
-* @route '/report/create'
+* @see app/Http/Controllers/ReportController.php:60
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/create'
 */
-create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: create.url(options),
+create.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: create.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::store
-* @see app/Http/Controllers/ReportController.php:82
-* @route '/report/store'
+* @see app/Http/Controllers/ReportController.php:86
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/store'
 */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+export const store = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 store.definition = {
     methods: ["post"],
-    url: '/report/store',
+    url: '/{account?}/report/store',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::store
-* @see app/Http/Controllers/ReportController.php:82
-* @route '/report/store'
+* @see app/Http/Controllers/ReportController.php:86
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/store'
 */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
+store.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return store.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::store
-* @see app/Http/Controllers/ReportController.php:82
-* @route '/report/store'
+* @see app/Http/Controllers/ReportController.php:86
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/store'
 */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+store.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::generate
-* @see app/Http/Controllers/ReportController.php:19
-* @route '/report/generate'
+* @see app/Http/Controllers/ReportController.php:21
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/generate'
 */
-export const generate = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: generate.url(options),
+export const generate = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: generate.url(args, options),
     method: 'post',
 })
 
 generate.definition = {
     methods: ["post"],
-    url: '/report/generate',
+    url: '/{account?}/report/generate',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::generate
-* @see app/Http/Controllers/ReportController.php:19
-* @route '/report/generate'
+* @see app/Http/Controllers/ReportController.php:21
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/generate'
 */
-generate.url = (options?: RouteQueryOptions) => {
-    return generate.definition.url + queryParams(options)
+generate.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return generate.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::generate
-* @see app/Http/Controllers/ReportController.php:19
-* @route '/report/generate'
+* @see app/Http/Controllers/ReportController.php:21
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/generate'
 */
-generate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: generate.url(options),
+generate.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: generate.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::fetchCommits
-* @see app/Http/Controllers/ReportController.php:103
-* @route '/report/logs'
+* @see app/Http/Controllers/ReportController.php:107
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/logs'
 */
-export const fetchCommits = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: fetchCommits.url(options),
+export const fetchCommits = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: fetchCommits.url(args, options),
     method: 'post',
 })
 
 fetchCommits.definition = {
     methods: ["post"],
-    url: '/report/logs',
+    url: '/{account?}/report/logs',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::fetchCommits
-* @see app/Http/Controllers/ReportController.php:103
-* @route '/report/logs'
+* @see app/Http/Controllers/ReportController.php:107
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/logs'
 */
-fetchCommits.url = (options?: RouteQueryOptions) => {
-    return fetchCommits.definition.url + queryParams(options)
+fetchCommits.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return fetchCommits.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::fetchCommits
-* @see app/Http/Controllers/ReportController.php:103
-* @route '/report/logs'
+* @see app/Http/Controllers/ReportController.php:107
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/logs'
 */
-fetchCommits.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: fetchCommits.url(options),
+fetchCommits.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: fetchCommits.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ReportController::bustCache
+* @see app/Http/Controllers/ReportController.php:165
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/bust-cache'
+*/
+export const bustCache = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: bustCache.url(args, options),
+    method: 'post',
+})
+
+bustCache.definition = {
+    methods: ["post"],
+    url: '/{account?}/report/bust-cache',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\ReportController::bustCache
+* @see app/Http/Controllers/ReportController.php:165
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/bust-cache'
+*/
+bustCache.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return bustCache.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ReportController::bustCache
+* @see app/Http/Controllers/ReportController.php:165
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/bust-cache'
+*/
+bustCache.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: bustCache.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::show
-* @see app/Http/Controllers/ReportController.php:130
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:134
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-export const show = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 show.definition = {
     methods: ["get","head"],
-    url: '/report/{report}',
+    url: '/{account?}/report/{report}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::show
-* @see app/Http/Controllers/ReportController.php:130
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:134
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-show.url = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { report: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { report: args.id }
-    }
-
+show.url = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            report: args[0],
+            account: args[0],
+            report: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         report: typeof args.report === 'object'
         ? args.report.id
         : args.report,
     }
 
     return show.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{report}', parsedArgs.report.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::show
-* @see app/Http/Controllers/ReportController.php:130
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:134
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-show.get = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::show
-* @see app/Http/Controllers/ReportController.php:130
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:134
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-show.head = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::edit
-* @see app/Http/Controllers/ReportController.php:138
-* @route '/report/{report}/edit'
+* @see app/Http/Controllers/ReportController.php:142
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}/edit'
 */
-export const edit = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/report/{report}/edit',
+    url: '/{account?}/report/{report}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::edit
-* @see app/Http/Controllers/ReportController.php:138
-* @route '/report/{report}/edit'
+* @see app/Http/Controllers/ReportController.php:142
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}/edit'
 */
-edit.url = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { report: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { report: args.id }
-    }
-
+edit.url = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            report: args[0],
+            account: args[0],
+            report: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         report: typeof args.report === 'object'
         ? args.report.id
         : args.report,
     }
 
     return edit.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{report}', parsedArgs.report.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::edit
-* @see app/Http/Controllers/ReportController.php:138
-* @route '/report/{report}/edit'
+* @see app/Http/Controllers/ReportController.php:142
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}/edit'
 */
-edit.get = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::edit
-* @see app/Http/Controllers/ReportController.php:138
-* @route '/report/{report}/edit'
+* @see app/Http/Controllers/ReportController.php:142
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}/edit'
 */
-edit.head = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::update
-* @see app/Http/Controllers/ReportController.php:148
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:152
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-export const update = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 update.definition = {
     methods: ["patch"],
-    url: '/report/{report}',
+    url: '/{account?}/report/{report}',
 } satisfies RouteDefinition<["patch"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::update
-* @see app/Http/Controllers/ReportController.php:148
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:152
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-update.url = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { report: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { report: args.id }
-    }
-
+update.url = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            report: args[0],
+            account: args[0],
+            report: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         report: typeof args.report === 'object'
         ? args.report.id
         : args.report,
     }
 
     return update.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{report}', parsedArgs.report.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::update
-* @see app/Http/Controllers/ReportController.php:148
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:152
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-update.patch = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
 * @see \App\Http\Controllers\ReportController::destroy
-* @see app/Http/Controllers/ReportController.php:156
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:160
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-export const destroy = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 destroy.definition = {
     methods: ["delete"],
-    url: '/report/{report}',
+    url: '/{account?}/report/{report}',
 } satisfies RouteDefinition<["delete"]>
 
 /**
 * @see \App\Http\Controllers\ReportController::destroy
-* @see app/Http/Controllers/ReportController.php:156
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:160
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-destroy.url = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { report: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { report: args.id }
-    }
-
+destroy.url = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            report: args[0],
+            account: args[0],
+            report: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         report: typeof args.report === 'object'
         ? args.report.id
         : args.report,
     }
 
     return destroy.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{report}', parsedArgs.report.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ReportController::destroy
-* @see app/Http/Controllers/ReportController.php:156
-* @route '/report/{report}'
+* @see app/Http/Controllers/ReportController.php:160
+* @param account - Default: '$subdomain'
+* @route '/{account?}/report/{report}'
 */
-destroy.delete = (args: { report: number | { id: number } } | [report: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { account?: string | number, report: string | number | { id: string | number } } | [account: string | number, report: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -447,6 +643,7 @@ const report = {
     store: Object.assign(store, store),
     generate: Object.assign(generate, generate),
     fetchCommits: Object.assign(fetchCommits, fetchCommits),
+    bustCache: Object.assign(bustCache, bustCache),
     show: Object.assign(show, show),
     edit: Object.assign(edit, edit),
     update: Object.assign(update, update),

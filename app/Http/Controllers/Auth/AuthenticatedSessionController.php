@@ -169,6 +169,8 @@ class AuthenticatedSessionController extends Controller
             'account' => $account,
         ]);
 
+        session(['workos_user_id' => $response->user->id]);
+
         return to_route('dashboard', ['account' => $account]);
     }
 
@@ -221,9 +223,9 @@ class AuthenticatedSessionController extends Controller
      * Destroy an authenticated session.
      * Simplified - no WorkOS dual-session complexity!
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, Tenant $account): RedirectResponse
     {
-        Auth::logout();
+        Auth::guard('tenant')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

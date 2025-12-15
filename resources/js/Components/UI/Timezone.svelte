@@ -5,6 +5,7 @@
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import Svelecte from 'svelecte';
   import { shared } from '$lib/inertia';
+  import user from '../../routes/user';
 
   let timezones: string[] = $state(listTimezones());
   let selectedTimezone: string = $state(shared('timezone') ?? getTimezone());

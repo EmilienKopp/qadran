@@ -11,6 +11,7 @@
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import Select from '$components/DataInput/Select.svelte';
   import { asSelectOptions } from '$lib/utils/formatting';
+  import project from '../../routes/project';
 
   interface Props {
     projects: any[];

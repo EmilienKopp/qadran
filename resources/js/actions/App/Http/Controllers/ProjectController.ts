@@ -1,374 +1,461 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ProjectController::index
 * @see app/Http/Controllers/ProjectController.php:20
-* @route '/projects'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects'
 */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+export const index = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 index.definition = {
     methods: ["get","head"],
-    url: '/projects',
+    url: '/{account?}/projects',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::index
 * @see app/Http/Controllers/ProjectController.php:20
-* @route '/projects'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects'
 */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
+index.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return index.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::index
 * @see app/Http/Controllers/ProjectController.php:20
-* @route '/projects'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects'
 */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+index.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::index
 * @see app/Http/Controllers/ProjectController.php:20
-* @route '/projects'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects'
 */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
+index.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::create
 * @see app/Http/Controllers/ProjectController.php:34
-* @route '/projects/create'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/create'
 */
-export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+export const create = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 create.definition = {
     methods: ["get","head"],
-    url: '/projects/create',
+    url: '/{account?}/projects/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::create
 * @see app/Http/Controllers/ProjectController.php:34
-* @route '/projects/create'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/create'
 */
-create.url = (options?: RouteQueryOptions) => {
-    return create.definition.url + queryParams(options)
+create.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return create.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::create
 * @see app/Http/Controllers/ProjectController.php:34
-* @route '/projects/create'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/create'
 */
-create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+create.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::create
 * @see app/Http/Controllers/ProjectController.php:34
-* @route '/projects/create'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/create'
 */
-create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: create.url(options),
+create.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: create.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::store
 * @see app/Http/Controllers/ProjectController.php:42
-* @route '/projects/store'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/store'
 */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+export const store = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 store.definition = {
     methods: ["post"],
-    url: '/projects/store',
+    url: '/{account?}/projects/store',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::store
 * @see app/Http/Controllers/ProjectController.php:42
-* @route '/projects/store'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/store'
 */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
+store.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return store.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::store
 * @see app/Http/Controllers/ProjectController.php:42
-* @route '/projects/store'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/store'
 */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+store.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::show
-* @see app/Http/Controllers/ProjectController.php:52
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:53
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-export const show = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 show.definition = {
     methods: ["get","head"],
-    url: '/projects/{project}',
+    url: '/{account?}/projects/{project}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::show
-* @see app/Http/Controllers/ProjectController.php:52
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:53
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-show.url = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { project: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { project: args.id }
-    }
-
+show.url = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            project: args[0],
+            account: args[0],
+            project: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         project: typeof args.project === 'object'
         ? args.project.id
         : args.project,
     }
 
     return show.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{project}', parsedArgs.project.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::show
-* @see app/Http/Controllers/ProjectController.php:52
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:53
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-show.get = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::show
-* @see app/Http/Controllers/ProjectController.php:52
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:53
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-show.head = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::edit
-* @see app/Http/Controllers/ProjectController.php:62
-* @route '/projects/{project}/edit'
+* @see app/Http/Controllers/ProjectController.php:63
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}/edit'
 */
-export const edit = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/projects/{project}/edit',
+    url: '/{account?}/projects/{project}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::edit
-* @see app/Http/Controllers/ProjectController.php:62
-* @route '/projects/{project}/edit'
+* @see app/Http/Controllers/ProjectController.php:63
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}/edit'
 */
-edit.url = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { project: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { project: args.id }
-    }
-
+edit.url = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            project: args[0],
+            account: args[0],
+            project: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         project: typeof args.project === 'object'
         ? args.project.id
         : args.project,
     }
 
     return edit.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{project}', parsedArgs.project.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::edit
-* @see app/Http/Controllers/ProjectController.php:62
-* @route '/projects/{project}/edit'
+* @see app/Http/Controllers/ProjectController.php:63
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}/edit'
 */
-edit.get = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::edit
-* @see app/Http/Controllers/ProjectController.php:62
-* @route '/projects/{project}/edit'
+* @see app/Http/Controllers/ProjectController.php:63
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}/edit'
 */
-edit.head = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::update
-* @see app/Http/Controllers/ProjectController.php:78
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-export const update = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 update.definition = {
     methods: ["patch"],
-    url: '/projects/{project}',
+    url: '/{account?}/projects/{project}',
 } satisfies RouteDefinition<["patch"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::update
-* @see app/Http/Controllers/ProjectController.php:78
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-update.url = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { project: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { project: args.id }
-    }
-
+update.url = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            project: args[0],
+            account: args[0],
+            project: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         project: typeof args.project === 'object'
         ? args.project.id
         : args.project,
     }
 
     return update.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{project}', parsedArgs.project.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::update
-* @see app/Http/Controllers/ProjectController.php:78
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-update.patch = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
 * @see \App\Http\Controllers\ProjectController::destroy
-* @see app/Http/Controllers/ProjectController.php:86
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:87
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-export const destroy = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 destroy.definition = {
     methods: ["delete"],
-    url: '/projects/{project}',
+    url: '/{account?}/projects/{project}',
 } satisfies RouteDefinition<["delete"]>
 
 /**
 * @see \App\Http\Controllers\ProjectController::destroy
-* @see app/Http/Controllers/ProjectController.php:86
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:87
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-destroy.url = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { project: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { project: args.id }
-    }
-
+destroy.url = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            project: args[0],
+            account: args[0],
+            project: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         project: typeof args.project === 'object'
         ? args.project.id
         : args.project,
     }
 
     return destroy.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{project}', parsedArgs.project.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProjectController::destroy
-* @see app/Http/Controllers/ProjectController.php:86
-* @route '/projects/{project}'
+* @see app/Http/Controllers/ProjectController.php:87
+* @param account - Default: '$subdomain'
+* @route '/{account?}/projects/{project}'
 */
-destroy.delete = (args: { project: number | { id: number } } | [project: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { account?: string | number, project: string | number | { id: string | number } } | [account: string | number, project: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

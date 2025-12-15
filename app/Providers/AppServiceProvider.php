@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Multitenancy\Contracts\IsTenant;
+use WorkOS\Resource\OrganizationMembership;
 use WorkOS\UserManagement;
 use WorkOS\WorkOS;
 
@@ -22,10 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        app()->singleton(UserManagement::class, function ($app) {
-            return new UserManagement;
-        });
-
         // Register multitenancy service provider
         $this->app->register(\Spatie\Multitenancy\MultitenancyServiceProvider::class);
 
@@ -42,7 +39,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        WorkOS::setApiKey(config('workos.api_key'));
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         Route::bind('account', function ($value) {

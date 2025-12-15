@@ -5,6 +5,7 @@
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { ReportContext } from '$lib/domain/Report/context';
   import { getAllUserRoles, getUserRoleName } from '$lib/inertia';
+  import report from '../../routes/report';
 
   interface Props {
     reports: any[];

@@ -1,374 +1,461 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\RateController::index
-* @see app/Http/Controllers/RateController.php:18
-* @route '/rates'
+* @see app/Http/Controllers/RateController.php:19
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates'
 */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+export const index = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 index.definition = {
     methods: ["get","head"],
-    url: '/rates',
+    url: '/{account?}/rates',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\RateController::index
-* @see app/Http/Controllers/RateController.php:18
-* @route '/rates'
+* @see app/Http/Controllers/RateController.php:19
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates'
 */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
+index.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return index.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::index
-* @see app/Http/Controllers/RateController.php:18
-* @route '/rates'
+* @see app/Http/Controllers/RateController.php:19
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates'
 */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+index.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::index
-* @see app/Http/Controllers/RateController.php:18
-* @route '/rates'
+* @see app/Http/Controllers/RateController.php:19
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates'
 */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
+index.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::create
-* @see app/Http/Controllers/RateController.php:32
-* @route '/rates/create'
+* @see app/Http/Controllers/RateController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/create'
 */
-export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+export const create = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 create.definition = {
     methods: ["get","head"],
-    url: '/rates/create',
+    url: '/{account?}/rates/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\RateController::create
-* @see app/Http/Controllers/RateController.php:32
-* @route '/rates/create'
+* @see app/Http/Controllers/RateController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/create'
 */
-create.url = (options?: RouteQueryOptions) => {
-    return create.definition.url + queryParams(options)
+create.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return create.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::create
-* @see app/Http/Controllers/RateController.php:32
-* @route '/rates/create'
+* @see app/Http/Controllers/RateController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/create'
 */
-create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: create.url(options),
+create.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: create.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::create
-* @see app/Http/Controllers/RateController.php:32
-* @route '/rates/create'
+* @see app/Http/Controllers/RateController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/create'
 */
-create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: create.url(options),
+create.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: create.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::store
-* @see app/Http/Controllers/RateController.php:46
-* @route '/rates/store'
+* @see app/Http/Controllers/RateController.php:47
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/store'
 */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+export const store = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 store.definition = {
     methods: ["post"],
-    url: '/rates/store',
+    url: '/{account?}/rates/store',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\RateController::store
-* @see app/Http/Controllers/RateController.php:46
-* @route '/rates/store'
+* @see app/Http/Controllers/RateController.php:47
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/store'
 */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
+store.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return store.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::store
-* @see app/Http/Controllers/RateController.php:46
-* @route '/rates/store'
+* @see app/Http/Controllers/RateController.php:47
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/store'
 */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+store.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::show
-* @see app/Http/Controllers/RateController.php:78
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-export const show = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 show.definition = {
     methods: ["get","head"],
-    url: '/rates/{rate}',
+    url: '/{account?}/rates/{rate}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\RateController::show
-* @see app/Http/Controllers/RateController.php:78
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-show.url = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { rate: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { rate: args.id }
-    }
-
+show.url = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            rate: args[0],
+            account: args[0],
+            rate: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         rate: typeof args.rate === 'object'
         ? args.rate.id
         : args.rate,
     }
 
     return show.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{rate}', parsedArgs.rate.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::show
-* @see app/Http/Controllers/RateController.php:78
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-show.get = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::show
-* @see app/Http/Controllers/RateController.php:78
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:79
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-show.head = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::edit
-* @see app/Http/Controllers/RateController.php:90
-* @route '/rates/{rate}/edit'
+* @see app/Http/Controllers/RateController.php:91
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}/edit'
 */
-export const edit = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/rates/{rate}/edit',
+    url: '/{account?}/rates/{rate}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\RateController::edit
-* @see app/Http/Controllers/RateController.php:90
-* @route '/rates/{rate}/edit'
+* @see app/Http/Controllers/RateController.php:91
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}/edit'
 */
-edit.url = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { rate: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { rate: args.id }
-    }
-
+edit.url = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            rate: args[0],
+            account: args[0],
+            rate: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         rate: typeof args.rate === 'object'
         ? args.rate.id
         : args.rate,
     }
 
     return edit.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{rate}', parsedArgs.rate.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::edit
-* @see app/Http/Controllers/RateController.php:90
-* @route '/rates/{rate}/edit'
+* @see app/Http/Controllers/RateController.php:91
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}/edit'
 */
-edit.get = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::edit
-* @see app/Http/Controllers/RateController.php:90
-* @route '/rates/{rate}/edit'
+* @see app/Http/Controllers/RateController.php:91
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}/edit'
 */
-edit.head = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::update
-* @see app/Http/Controllers/RateController.php:104
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:105
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-export const update = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 update.definition = {
     methods: ["patch"],
-    url: '/rates/{rate}',
+    url: '/{account?}/rates/{rate}',
 } satisfies RouteDefinition<["patch"]>
 
 /**
 * @see \App\Http\Controllers\RateController::update
-* @see app/Http/Controllers/RateController.php:104
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:105
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-update.url = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { rate: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { rate: args.id }
-    }
-
+update.url = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            rate: args[0],
+            account: args[0],
+            rate: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         rate: typeof args.rate === 'object'
         ? args.rate.id
         : args.rate,
     }
 
     return update.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{rate}', parsedArgs.rate.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::update
-* @see app/Http/Controllers/RateController.php:104
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:105
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-update.patch = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
 * @see \App\Http\Controllers\RateController::destroy
-* @see app/Http/Controllers/RateController.php:134
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:135
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-export const destroy = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 destroy.definition = {
     methods: ["delete"],
-    url: '/rates/{rate}',
+    url: '/{account?}/rates/{rate}',
 } satisfies RouteDefinition<["delete"]>
 
 /**
 * @see \App\Http\Controllers\RateController::destroy
-* @see app/Http/Controllers/RateController.php:134
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:135
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-destroy.url = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { rate: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { rate: args.id }
-    }
-
+destroy.url = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            rate: args[0],
+            account: args[0],
+            rate: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         rate: typeof args.rate === 'object'
         ? args.rate.id
         : args.rate,
     }
 
     return destroy.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{rate}', parsedArgs.rate.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\RateController::destroy
-* @see app/Http/Controllers/RateController.php:134
-* @route '/rates/{rate}'
+* @see app/Http/Controllers/RateController.php:135
+* @param account - Default: '$subdomain'
+* @route '/{account?}/rates/{rate}'
 */
-destroy.delete = (args: { rate: number | { id: number } } | [rate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { account?: string | number, rate: string | number | { id: string | number } } | [account: string | number, rate: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

@@ -1,8 +1,8 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\KnownIssueWebhookController::knownIssues
 * @see app/Http/Controllers/KnownIssueWebhookController.php:15
-* @route '/api/webhooks/jira/known-issues'
+* @route '/webhooks/jira/known-issues'
 */
 export const knownIssues = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: knownIssues.url(options),
@@ -11,13 +11,13 @@ export const knownIssues = (options?: RouteQueryOptions): RouteDefinition<'post'
 
 knownIssues.definition = {
     methods: ["post"],
-    url: '/api/webhooks/jira/known-issues',
+    url: '/webhooks/jira/known-issues',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\KnownIssueWebhookController::knownIssues
 * @see app/Http/Controllers/KnownIssueWebhookController.php:15
-* @route '/api/webhooks/jira/known-issues'
+* @route '/webhooks/jira/known-issues'
 */
 knownIssues.url = (options?: RouteQueryOptions) => {
     return knownIssues.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ knownIssues.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\KnownIssueWebhookController::knownIssues
 * @see app/Http/Controllers/KnownIssueWebhookController.php:15
-* @route '/api/webhooks/jira/known-issues'
+* @route '/webhooks/jira/known-issues'
 */
 knownIssues.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: knownIssues.url(options),

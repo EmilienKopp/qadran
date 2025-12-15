@@ -1,334 +1,519 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ClockEntryController::store
-* @see app/Http/Controllers/ClockEntryController.php:34
-* @route '/clock-entry/store'
+* @see app/Http/Controllers/ClockEntryController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entry/store'
 */
-export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+export const store = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 store.definition = {
     methods: ["post"],
-    url: '/clock-entry/store',
+    url: '/{account?}/clock-entry/store',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::store
-* @see app/Http/Controllers/ClockEntryController.php:34
-* @route '/clock-entry/store'
+* @see app/Http/Controllers/ClockEntryController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entry/store'
 */
-store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options)
+store.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return store.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::store
-* @see app/Http/Controllers/ClockEntryController.php:34
-* @route '/clock-entry/store'
+* @see app/Http/Controllers/ClockEntryController.php:33
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entry/store'
 */
-store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: store.url(options),
+store.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::index
-* @see app/Http/Controllers/ClockEntryController.php:18
-* @route '/clock-entries'
+* @see app/Http/Controllers/ClockEntryController.php:17
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries'
 */
-export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+export const index = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 index.definition = {
     methods: ["get","head"],
-    url: '/clock-entries',
+    url: '/{account?}/clock-entries',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::index
-* @see app/Http/Controllers/ClockEntryController.php:18
-* @route '/clock-entries'
+* @see app/Http/Controllers/ClockEntryController.php:17
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries'
 */
-index.url = (options?: RouteQueryOptions) => {
-    return index.definition.url + queryParams(options)
+index.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return index.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::index
-* @see app/Http/Controllers/ClockEntryController.php:18
-* @route '/clock-entries'
+* @see app/Http/Controllers/ClockEntryController.php:17
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries'
 */
-index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: index.url(options),
+index.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::index
-* @see app/Http/Controllers/ClockEntryController.php:18
-* @route '/clock-entries'
+* @see app/Http/Controllers/ClockEntryController.php:17
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries'
 */
-index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: index.url(options),
+index.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::show
-* @see app/Http/Controllers/ClockEntryController.php:69
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:62
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-export const show = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 show.definition = {
     methods: ["get","head"],
-    url: '/clock-entries/{clockEntry}',
+    url: '/{account?}/clock-entries/{clockEntry}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::show
-* @see app/Http/Controllers/ClockEntryController.php:69
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:62
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-show.url = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { clockEntry: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { clockEntry: args.id }
-    }
-
+show.url = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            clockEntry: args[0],
+            account: args[0],
+            clockEntry: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         clockEntry: typeof args.clockEntry === 'object'
         ? args.clockEntry.id
         : args.clockEntry,
     }
 
     return show.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{clockEntry}', parsedArgs.clockEntry.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::show
-* @see app/Http/Controllers/ClockEntryController.php:69
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:62
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-show.get = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::show
-* @see app/Http/Controllers/ClockEntryController.php:69
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:62
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-show.head = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::edit
-* @see app/Http/Controllers/ClockEntryController.php:77
-* @route '/clock-entries/{clockEntry}/edit'
+* @see app/Http/Controllers/ClockEntryController.php:70
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}/edit'
 */
-export const edit = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/clock-entries/{clockEntry}/edit',
+    url: '/{account?}/clock-entries/{clockEntry}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::edit
-* @see app/Http/Controllers/ClockEntryController.php:77
-* @route '/clock-entries/{clockEntry}/edit'
+* @see app/Http/Controllers/ClockEntryController.php:70
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}/edit'
 */
-edit.url = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { clockEntry: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { clockEntry: args.id }
-    }
-
+edit.url = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            clockEntry: args[0],
+            account: args[0],
+            clockEntry: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         clockEntry: typeof args.clockEntry === 'object'
         ? args.clockEntry.id
         : args.clockEntry,
     }
 
     return edit.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{clockEntry}', parsedArgs.clockEntry.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::edit
-* @see app/Http/Controllers/ClockEntryController.php:77
-* @route '/clock-entries/{clockEntry}/edit'
+* @see app/Http/Controllers/ClockEntryController.php:70
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}/edit'
 */
-edit.get = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::edit
-* @see app/Http/Controllers/ClockEntryController.php:77
-* @route '/clock-entries/{clockEntry}/edit'
+* @see app/Http/Controllers/ClockEntryController.php:70
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}/edit'
 */
-edit.head = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::update
-* @see app/Http/Controllers/ClockEntryController.php:85
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:78
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-export const update = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 update.definition = {
     methods: ["patch"],
-    url: '/clock-entries/{clockEntry}',
+    url: '/{account?}/clock-entries/{clockEntry}',
 } satisfies RouteDefinition<["patch"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::update
-* @see app/Http/Controllers/ClockEntryController.php:85
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:78
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-update.url = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { clockEntry: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { clockEntry: args.id }
-    }
-
+update.url = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            clockEntry: args[0],
+            account: args[0],
+            clockEntry: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         clockEntry: typeof args.clockEntry === 'object'
         ? args.clockEntry.id
         : args.clockEntry,
     }
 
     return update.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{clockEntry}', parsedArgs.clockEntry.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::update
-* @see app/Http/Controllers/ClockEntryController.php:85
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:78
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-update.patch = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::destroy
-* @see app/Http/Controllers/ClockEntryController.php:93
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-export const destroy = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
+const destroy347aeadbfc9a15e48d7524426eddaa7b = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy347aeadbfc9a15e48d7524426eddaa7b.url(args, options),
     method: 'delete',
 })
 
-destroy.definition = {
+destroy347aeadbfc9a15e48d7524426eddaa7b.definition = {
     methods: ["delete"],
-    url: '/clock-entries/{clockEntry}',
+    url: '/{account?}/clock-entries/{clockEntry}',
 } satisfies RouteDefinition<["delete"]>
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::destroy
-* @see app/Http/Controllers/ClockEntryController.php:93
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-destroy.url = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { clockEntry: args }
-    }
-
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { clockEntry: args.id }
-    }
-
+destroy347aeadbfc9a15e48d7524426eddaa7b.url = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-            clockEntry: args[0],
+            account: args[0],
+            clockEntry: args[1],
         }
     }
 
     args = applyUrlDefaults(args)
 
+    validateParameters(args, [
+        "account",
+    ])
+
     const parsedArgs = {
+        account: args.account ?? '$subdomain',
         clockEntry: typeof args.clockEntry === 'object'
         ? args.clockEntry.id
         : args.clockEntry,
     }
 
-    return destroy.definition.url
+    return destroy347aeadbfc9a15e48d7524426eddaa7b.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
             .replace('{clockEntry}', parsedArgs.clockEntry.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ClockEntryController::destroy
-* @see app/Http/Controllers/ClockEntryController.php:93
-* @route '/clock-entries/{clockEntry}'
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/clock-entries/{clockEntry}'
 */
-destroy.delete = (args: { clockEntry: number | { id: number } } | [clockEntry: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
-    url: destroy.url(args, options),
+destroy347aeadbfc9a15e48d7524426eddaa7b.delete = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy347aeadbfc9a15e48d7524426eddaa7b.url(args, options),
     method: 'delete',
 })
 
-const ClockEntryController = { store, index, show, edit, update, destroy }
+/**
+* @see \App\Http\Controllers\ClockEntryController::destroy
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/{clockEntry}'
+*/
+const destroyfc1e036f6823d923c2077ca6ae5f1afa = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroyfc1e036f6823d923c2077ca6ae5f1afa.url(args, options),
+    method: 'delete',
+})
+
+destroyfc1e036f6823d923c2077ca6ae5f1afa.definition = {
+    methods: ["delete"],
+    url: '/{account?}/timelog/{clockEntry}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\ClockEntryController::destroy
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/{clockEntry}'
+*/
+destroyfc1e036f6823d923c2077ca6ae5f1afa.url = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+            clockEntry: args[1],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args.account ?? '$subdomain',
+        clockEntry: typeof args.clockEntry === 'object'
+        ? args.clockEntry.id
+        : args.clockEntry,
+    }
+
+    return destroyfc1e036f6823d923c2077ca6ae5f1afa.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace('{clockEntry}', parsedArgs.clockEntry.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ClockEntryController::destroy
+* @see app/Http/Controllers/ClockEntryController.php:114
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/{clockEntry}'
+*/
+destroyfc1e036f6823d923c2077ca6ae5f1afa.delete = (args: { account?: string | number, clockEntry: string | number | { id: string | number } } | [account: string | number, clockEntry: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroyfc1e036f6823d923c2077ca6ae5f1afa.url(args, options),
+    method: 'delete',
+})
+
+export const destroy = {
+    '/{account?}/clock-entries/{clockEntry}': destroy347aeadbfc9a15e48d7524426eddaa7b,
+    '/{account?}/timelog/{clockEntry}': destroyfc1e036f6823d923c2077ca6ae5f1afa,
+}
+
+/**
+* @see \App\Http\Controllers\ClockEntryController::batchUpdate
+* @see app/Http/Controllers/ClockEntryController.php:89
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/batch-update'
+*/
+export const batchUpdate = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: batchUpdate.url(args, options),
+    method: 'put',
+})
+
+batchUpdate.definition = {
+    methods: ["put"],
+    url: '/{account?}/timelog/batch-update',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\ClockEntryController::batchUpdate
+* @see app/Http/Controllers/ClockEntryController.php:89
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/batch-update'
+*/
+batchUpdate.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return batchUpdate.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ClockEntryController::batchUpdate
+* @see app/Http/Controllers/ClockEntryController.php:89
+* @param account - Default: '$subdomain'
+* @route '/{account?}/timelog/batch-update'
+*/
+batchUpdate.put = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: batchUpdate.url(args, options),
+    method: 'put',
+})
+
+const ClockEntryController = { store, index, show, edit, update, destroy, batchUpdate }
 
 export default ClockEntryController

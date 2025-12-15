@@ -1,4 +1,9 @@
 import { DefaultNavigationStrategy } from "$lib/core/strategies/navigationStrategy";
+import activities from "../../../../routes/activities";
+import organization from "../../../../routes/organization";
+import project from "../../../../routes/project";
+import rate from "../../../../routes/rate";
+import report from "../../../../routes/report";
 
 export class FreelancerNavigationStrategy extends DefaultNavigationStrategy {
   navigationElements() {

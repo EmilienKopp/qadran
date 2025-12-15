@@ -1,5 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
-import webhooks from './webhooks'
+import n8n from './n8n'
 /**
 * @see \App\Http\Controllers\Api\ArtisanController::artisan
 * @see app/Http/Controllers/Api/ArtisanController.php:10
@@ -45,7 +45,7 @@ artisan.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/api.php:21
+* @see routes/api.php:15
 * @route '/api/instance-url/{host}'
 */
 export const instanceUrl = (args: { host: string | number } | [host: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -59,7 +59,7 @@ instanceUrl.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/api.php:21
+* @see routes/api.php:15
 * @route '/api/instance-url/{host}'
 */
 instanceUrl.url = (args: { host: string | number } | [host: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -85,7 +85,7 @@ instanceUrl.url = (args: { host: string | number } | [host: string | number ] | 
 }
 
 /**
-* @see routes/api.php:21
+* @see routes/api.php:15
 * @route '/api/instance-url/{host}'
 */
 instanceUrl.get = (args: { host: string | number } | [host: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ instanceUrl.get = (args: { host: string | number } | [host: string | number ] | 
 })
 
 /**
-* @see routes/api.php:21
+* @see routes/api.php:15
 * @route '/api/instance-url/{host}'
 */
 instanceUrl.head = (args: { host: string | number } | [host: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -104,8 +104,8 @@ instanceUrl.head = (args: { host: string | number } | [host: string | number ] |
 
 const api = {
     artisan: Object.assign(artisan, artisan),
-    webhooks: Object.assign(webhooks, webhooks),
     instanceUrl: Object.assign(instanceUrl, instanceUrl),
+    n8n: Object.assign(n8n, n8n),
 }
 
 export default api

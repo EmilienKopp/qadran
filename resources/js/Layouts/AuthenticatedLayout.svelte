@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
   import Dropdown from '$components/Actions/Dropdown.svelte';
   import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
@@ -17,8 +17,8 @@
   import Timezone from '$components/UI/Timezone.svelte';
   import Button from '$components/Actions/Button.svelte';
   import { features } from '$lib/stores/global/features.svelte';
-  import { getSharedContext } from '$lib/inertia';
-  import { setContext } from 'svelte';
+  import { edit } from '../routes/profile';
+  import { dashboard, logout } from '../routes';
 
   interface Props {
     header?: import('svelte').Snippet;
@@ -33,6 +33,8 @@
   let navigationElements = $derived(
     navigationContext.strategy.navigationElements()
   );
+
+  $inspect(navigationElements, navigationContext, RoleContext.selected);
 
   const settingsDropdownActions: DropdownAction[] = [
     { text: 'Profile', href: route('profile.edit') },
@@ -53,7 +55,7 @@
       <div class="navbar-start gap-2">
         <!-- Logo with Clock -->
         <div class="flex shrink-0 items-center w-36">
-          <Link href={route('dashboard')}>
+          <Link href={route('dashboard')} class="flex items-center gap-2">
             <Clock />
           </Link>
         </div>

@@ -20,15 +20,15 @@ class Clock {
   }
 
   get h() {
-    return dayjs(this.#datetime).hour();
+    return dayjs(this.#datetime).format('HH');
   }
 
   get m() {
-    return dayjs(this.#datetime).minute();
+    return dayjs(this.#datetime).format('mm');
   }
 
   get s() {
-    return dayjs(this.#datetime).second();
+    return dayjs(this.#datetime).format('ss');
   }
 
   set(datetime: number) {

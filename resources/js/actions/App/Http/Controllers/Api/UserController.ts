@@ -107,7 +107,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byWorkosId
-* @see app/Http/Controllers/Api/UserController.php:26
+* @see app/Http/Controllers/Api/UserController.php:27
 * @route '/api/users/by-workos-id/{workosId}'
 */
 export const byWorkosId = (args: { workosId: string | number } | [workosId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ byWorkosId.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byWorkosId
-* @see app/Http/Controllers/Api/UserController.php:26
+* @see app/Http/Controllers/Api/UserController.php:27
 * @route '/api/users/by-workos-id/{workosId}'
 */
 byWorkosId.url = (args: { workosId: string | number } | [workosId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -149,7 +149,7 @@ byWorkosId.url = (args: { workosId: string | number } | [workosId: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byWorkosId
-* @see app/Http/Controllers/Api/UserController.php:26
+* @see app/Http/Controllers/Api/UserController.php:27
 * @route '/api/users/by-workos-id/{workosId}'
 */
 byWorkosId.get = (args: { workosId: string | number } | [workosId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ byWorkosId.get = (args: { workosId: string | number } | [workosId: string | numb
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byWorkosId
-* @see app/Http/Controllers/Api/UserController.php:26
+* @see app/Http/Controllers/Api/UserController.php:27
 * @route '/api/users/by-workos-id/{workosId}'
 */
 byWorkosId.head = (args: { workosId: string | number } | [workosId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -168,8 +168,132 @@ byWorkosId.head = (args: { workosId: string | number } | [workosId: string | num
 })
 
 /**
+* @see \App\Http\Controllers\Api\UserController::byGitHubId
+* @see app/Http/Controllers/Api/UserController.php:34
+* @route '/api/users/by-github-id/{githubId}'
+*/
+export const byGitHubId = (args: { githubId: string | number } | [githubId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: byGitHubId.url(args, options),
+    method: 'get',
+})
+
+byGitHubId.definition = {
+    methods: ["get","head"],
+    url: '/api/users/by-github-id/{githubId}',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGitHubId
+* @see app/Http/Controllers/Api/UserController.php:34
+* @route '/api/users/by-github-id/{githubId}'
+*/
+byGitHubId.url = (args: { githubId: string | number } | [githubId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { githubId: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            githubId: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        githubId: args.githubId,
+    }
+
+    return byGitHubId.definition.url
+            .replace('{githubId}', parsedArgs.githubId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGitHubId
+* @see app/Http/Controllers/Api/UserController.php:34
+* @route '/api/users/by-github-id/{githubId}'
+*/
+byGitHubId.get = (args: { githubId: string | number } | [githubId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: byGitHubId.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGitHubId
+* @see app/Http/Controllers/Api/UserController.php:34
+* @route '/api/users/by-github-id/{githubId}'
+*/
+byGitHubId.head = (args: { githubId: string | number } | [githubId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: byGitHubId.url(args, options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGoogleId
+* @see app/Http/Controllers/Api/UserController.php:45
+* @route '/api/users/by-google-id/{googleId}'
+*/
+export const byGoogleId = (args: { googleId: string | number } | [googleId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: byGoogleId.url(args, options),
+    method: 'get',
+})
+
+byGoogleId.definition = {
+    methods: ["get","head"],
+    url: '/api/users/by-google-id/{googleId}',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGoogleId
+* @see app/Http/Controllers/Api/UserController.php:45
+* @route '/api/users/by-google-id/{googleId}'
+*/
+byGoogleId.url = (args: { googleId: string | number } | [googleId: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { googleId: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            googleId: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        googleId: args.googleId,
+    }
+
+    return byGoogleId.definition.url
+            .replace('{googleId}', parsedArgs.googleId.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGoogleId
+* @see app/Http/Controllers/Api/UserController.php:45
+* @route '/api/users/by-google-id/{googleId}'
+*/
+byGoogleId.get = (args: { googleId: string | number } | [googleId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: byGoogleId.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Api\UserController::byGoogleId
+* @see app/Http/Controllers/Api/UserController.php:45
+* @route '/api/users/by-google-id/{googleId}'
+*/
+byGoogleId.head = (args: { googleId: string | number } | [googleId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: byGoogleId.url(args, options),
+    method: 'head',
+})
+
+/**
 * @see \App\Http\Controllers\Api\UserController::byEmail
-* @see app/Http/Controllers/Api/UserController.php:32
+* @see app/Http/Controllers/Api/UserController.php:56
 * @route '/api/users/by-email'
 */
 export const byEmail = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -184,7 +308,7 @@ byEmail.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byEmail
-* @see app/Http/Controllers/Api/UserController.php:32
+* @see app/Http/Controllers/Api/UserController.php:56
 * @route '/api/users/by-email'
 */
 byEmail.url = (options?: RouteQueryOptions) => {
@@ -193,7 +317,7 @@ byEmail.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byEmail
-* @see app/Http/Controllers/Api/UserController.php:32
+* @see app/Http/Controllers/Api/UserController.php:56
 * @route '/api/users/by-email'
 */
 byEmail.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -203,7 +327,7 @@ byEmail.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\UserController::byEmail
-* @see app/Http/Controllers/Api/UserController.php:32
+* @see app/Http/Controllers/Api/UserController.php:56
 * @route '/api/users/by-email'
 */
 byEmail.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -213,7 +337,7 @@ byEmail.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\UserController::store
-* @see app/Http/Controllers/Api/UserController.php:39
+* @see app/Http/Controllers/Api/UserController.php:64
 * @route '/api/users'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -228,7 +352,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::store
-* @see app/Http/Controllers/Api/UserController.php:39
+* @see app/Http/Controllers/Api/UserController.php:64
 * @route '/api/users'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -237,7 +361,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::store
-* @see app/Http/Controllers/Api/UserController.php:39
+* @see app/Http/Controllers/Api/UserController.php:64
 * @route '/api/users'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -247,7 +371,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\UserController::update
-* @see app/Http/Controllers/Api/UserController.php:51
+* @see app/Http/Controllers/Api/UserController.php:77
 * @route '/api/users/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -262,7 +386,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::update
-* @see app/Http/Controllers/Api/UserController.php:51
+* @see app/Http/Controllers/Api/UserController.php:77
 * @route '/api/users/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -289,7 +413,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\UserController::update
-* @see app/Http/Controllers/Api/UserController.php:51
+* @see app/Http/Controllers/Api/UserController.php:77
 * @route '/api/users/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -299,7 +423,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\UserController::destroy
-* @see app/Http/Controllers/Api/UserController.php:66
+* @see app/Http/Controllers/Api/UserController.php:93
 * @route '/api/users/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -314,7 +438,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\UserController::destroy
-* @see app/Http/Controllers/Api/UserController.php:66
+* @see app/Http/Controllers/Api/UserController.php:93
 * @route '/api/users/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -341,7 +465,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\UserController::destroy
-* @see app/Http/Controllers/Api/UserController.php:66
+* @see app/Http/Controllers/Api/UserController.php:93
 * @route '/api/users/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -349,6 +473,6 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
     method: 'delete',
 })
 
-const UserController = { index, show, byWorkosId, byEmail, store, update, destroy }
+const UserController = { index, show, byWorkosId, byGitHubId, byGoogleId, byEmail, store, update, destroy }
 
 export default UserController

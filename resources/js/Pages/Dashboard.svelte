@@ -14,6 +14,7 @@
   import MiniButton from '$components/Buttons/MiniButton.svelte';
   import { getContext } from 'svelte';
   import RotatingCircle from '$components/Feedback/RotatingCircle.svelte';
+  import activities from '../routes/activities';
 
   interface Props {
     user: User;
@@ -77,7 +78,7 @@
               Today's Entries
               <MiniButton
                 color="accent"
-                href={route('activities.show', {
+                href={activities.show.url({
                   date: new Date().toISOString().split('T')[0],
                 })}
               >

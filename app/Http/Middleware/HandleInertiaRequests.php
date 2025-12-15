@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\DTOs\WorkOSOrganizationMembership;
 use App\Features\VoiceAssistant;
 use App\Features\VoiceAssistantMode;
 use App\Models\Landlord\Tenant;
@@ -13,6 +14,10 @@ use Laravel\Pennant\Feature;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private UserRepositoryInterface $userRepository, private \App\Services\WorkOSService $workosService)
+    {
+    }
+
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -42,13 +47,19 @@ class HandleInertiaRequests extends Middleware
 
         if ($tenant) {
             $userId = $request->user()?->id;
-            $user = $userId ? app(UserRepositoryInterface::class)->find($userId, ['roles', 'organizations']) : null;
+            $user = $userId ? $this->userRepository->find($userId, ['roles', 'organizations']) : null;
+        }
+
+        $memberships = [];
+        if($user?->workos_id) {
+            $memberships = $this->workosService->getUserOrganizationMemberships($user->workos_id);
         }
 
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user,
+                'memberships' => $memberships,
             ],
             'timezone' => $user?->timezone ?? $user?->preferences['timezone'] ?? null,
             'context' => [

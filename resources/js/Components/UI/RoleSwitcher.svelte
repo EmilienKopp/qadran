@@ -5,6 +5,7 @@
     getAllUserRoles,
     getSharedContext,
     getUserRoleName,
+    shared,
   } from '$lib/inertia';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import { TenantContext, useTenantContext } from '$lib/stores/global/tenantContext.svelte';
@@ -12,26 +13,30 @@
   RoleContext.selected = getUserRoleName();
   RoleContext.available = getAllUserRoles();
 
-  useTenantContext();
-  $inspect(TenantContext.current, TenantContext.available);
+  const severalRolesAvailable =
+    RoleContext.available.filter((r) => r !== 'user').length > 0;
+
+  const memberships = shared('auth.memberships') || [];
+  $inspect(memberships);
 </script>
 
 <div
   class="flex items-center justify-center gap-1 w-full px-8 mx-auto"
-  class:hidden={RoleContext.available.filter((r) => r !== 'user').length === 0}
+  class:hidden={!severalRolesAvailable}
 >
+
   <Select
     name="role"
     bind:value={RoleContext.selected}
     options={asSelectOptions(RoleContext.available)}
   />
 
-  {#if TenantContext.current?.tenant && (TenantContext.available?.length ?? 0) > 1}
+  {#if memberships.length}
     @
     <Select
       name="tenant"
       bind:value={TenantContext.current.tenant}
-      options={asSelectOptions(TenantContext.available, 'tenant_id', 'name')}
+      options={asSelectOptions(memberships, 'organizationId', 'organizationName')}
     />
   {/if}
 </div>

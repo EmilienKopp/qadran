@@ -10,9 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
+use WorkOS\Resource\OrganizationMembership;
+use WorkOS\UserManagement;
 
 class AddHostToContext
 {
+    public function __construct(private UserManagement $userApi)
+    {
+    }
+
     /**
      * Handle an incoming request.
      */
@@ -25,8 +31,12 @@ class AddHostToContext
         Context::add('tenant_subdomain', $subdomain); // for debug/reference only
 
         $tenant = Tenant::firstWhere('host', $account);
+
         if ($tenant) {
             $tenant->makeCurrent();
+            Context::add('domain', $tenant->domain);
+            Context::add('host', $tenant->host);
+            URL::defaults(['account' => $tenant->host]);
         }
 
         return $next($request);

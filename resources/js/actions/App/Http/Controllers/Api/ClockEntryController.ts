@@ -107,7 +107,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::byUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:26
+* @see app/Http/Controllers/Api/ClockEntryController.php:27
 * @route '/api/clock-entries/by-user/{userId}'
 */
 export const byUser = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ byUser.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::byUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:26
+* @see app/Http/Controllers/Api/ClockEntryController.php:27
 * @route '/api/clock-entries/by-user/{userId}'
 */
 byUser.url = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -149,7 +149,7 @@ byUser.url = (args: { userId: string | number } | [userId: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::byUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:26
+* @see app/Http/Controllers/Api/ClockEntryController.php:27
 * @route '/api/clock-entries/by-user/{userId}'
 */
 byUser.get = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ byUser.get = (args: { userId: string | number } | [userId: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::byUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:26
+* @see app/Http/Controllers/Api/ClockEntryController.php:27
 * @route '/api/clock-entries/by-user/{userId}'
 */
 byUser.head = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -169,7 +169,7 @@ byUser.head = (args: { userId: string | number } | [userId: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::activeByUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:32
+* @see app/Http/Controllers/Api/ClockEntryController.php:34
 * @route '/api/clock-entries/active-by-user/{userId}'
 */
 export const activeByUser = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -184,7 +184,7 @@ activeByUser.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::activeByUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:32
+* @see app/Http/Controllers/Api/ClockEntryController.php:34
 * @route '/api/clock-entries/active-by-user/{userId}'
 */
 activeByUser.url = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -211,7 +211,7 @@ activeByUser.url = (args: { userId: string | number } | [userId: string | number
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::activeByUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:32
+* @see app/Http/Controllers/Api/ClockEntryController.php:34
 * @route '/api/clock-entries/active-by-user/{userId}'
 */
 activeByUser.get = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -221,7 +221,7 @@ activeByUser.get = (args: { userId: string | number } | [userId: string | number
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::activeByUser
-* @see app/Http/Controllers/Api/ClockEntryController.php:32
+* @see app/Http/Controllers/Api/ClockEntryController.php:34
 * @route '/api/clock-entries/active-by-user/{userId}'
 */
 activeByUser.head = (args: { userId: string | number } | [userId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -231,7 +231,7 @@ activeByUser.head = (args: { userId: string | number } | [userId: string | numbe
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::store
-* @see app/Http/Controllers/Api/ClockEntryController.php:38
+* @see app/Http/Controllers/Api/ClockEntryController.php:41
 * @route '/api/clock-entries'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -246,7 +246,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::store
-* @see app/Http/Controllers/Api/ClockEntryController.php:38
+* @see app/Http/Controllers/Api/ClockEntryController.php:41
 * @route '/api/clock-entries'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -255,7 +255,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::store
-* @see app/Http/Controllers/Api/ClockEntryController.php:38
+* @see app/Http/Controllers/Api/ClockEntryController.php:41
 * @route '/api/clock-entries'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -265,7 +265,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::update
-* @see app/Http/Controllers/Api/ClockEntryController.php:50
+* @see app/Http/Controllers/Api/ClockEntryController.php:54
 * @route '/api/clock-entries/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -280,7 +280,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::update
-* @see app/Http/Controllers/Api/ClockEntryController.php:50
+* @see app/Http/Controllers/Api/ClockEntryController.php:54
 * @route '/api/clock-entries/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::update
-* @see app/Http/Controllers/Api/ClockEntryController.php:50
+* @see app/Http/Controllers/Api/ClockEntryController.php:54
 * @route '/api/clock-entries/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -317,7 +317,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::destroy
-* @see app/Http/Controllers/Api/ClockEntryController.php:64
+* @see app/Http/Controllers/Api/ClockEntryController.php:69
 * @route '/api/clock-entries/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -332,7 +332,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::destroy
-* @see app/Http/Controllers/Api/ClockEntryController.php:64
+* @see app/Http/Controllers/Api/ClockEntryController.php:69
 * @route '/api/clock-entries/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -359,7 +359,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\ClockEntryController::destroy
-* @see app/Http/Controllers/Api/ClockEntryController.php:64
+* @see app/Http/Controllers/Api/ClockEntryController.php:69
 * @route '/api/clock-entries/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

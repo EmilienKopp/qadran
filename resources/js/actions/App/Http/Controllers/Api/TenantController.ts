@@ -107,7 +107,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::byDomain
-* @see app/Http/Controllers/Api/TenantController.php:22
+* @see app/Http/Controllers/Api/TenantController.php:23
 * @route '/api/tenants/by-domain'
 */
 export const byDomain = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ byDomain.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::byDomain
-* @see app/Http/Controllers/Api/TenantController.php:22
+* @see app/Http/Controllers/Api/TenantController.php:23
 * @route '/api/tenants/by-domain'
 */
 byDomain.url = (options?: RouteQueryOptions) => {
@@ -131,7 +131,7 @@ byDomain.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::byDomain
-* @see app/Http/Controllers/Api/TenantController.php:22
+* @see app/Http/Controllers/Api/TenantController.php:23
 * @route '/api/tenants/by-domain'
 */
 byDomain.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -141,7 +141,7 @@ byDomain.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::byDomain
-* @see app/Http/Controllers/Api/TenantController.php:22
+* @see app/Http/Controllers/Api/TenantController.php:23
 * @route '/api/tenants/by-domain'
 */
 byDomain.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -151,7 +151,7 @@ byDomain.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::store
-* @see app/Http/Controllers/Api/TenantController.php:29
+* @see app/Http/Controllers/Api/TenantController.php:31
 * @route '/api/tenants'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -166,7 +166,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::store
-* @see app/Http/Controllers/Api/TenantController.php:29
+* @see app/Http/Controllers/Api/TenantController.php:31
 * @route '/api/tenants'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -175,7 +175,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::store
-* @see app/Http/Controllers/Api/TenantController.php:29
+* @see app/Http/Controllers/Api/TenantController.php:31
 * @route '/api/tenants'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -185,7 +185,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::update
-* @see app/Http/Controllers/Api/TenantController.php:40
+* @see app/Http/Controllers/Api/TenantController.php:43
 * @route '/api/tenants/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -200,7 +200,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::update
-* @see app/Http/Controllers/Api/TenantController.php:40
+* @see app/Http/Controllers/Api/TenantController.php:43
 * @route '/api/tenants/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -227,7 +227,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::update
-* @see app/Http/Controllers/Api/TenantController.php:40
+* @see app/Http/Controllers/Api/TenantController.php:43
 * @route '/api/tenants/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -237,7 +237,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::destroy
-* @see app/Http/Controllers/Api/TenantController.php:56
+* @see app/Http/Controllers/Api/TenantController.php:60
 * @route '/api/tenants/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -252,7 +252,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::destroy
-* @see app/Http/Controllers/Api/TenantController.php:56
+* @see app/Http/Controllers/Api/TenantController.php:60
 * @route '/api/tenants/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -279,7 +279,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\TenantController::destroy
-* @see app/Http/Controllers/Api/TenantController.php:56
+* @see app/Http/Controllers/Api/TenantController.php:60
 * @route '/api/tenants/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

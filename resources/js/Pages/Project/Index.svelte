@@ -5,6 +5,7 @@
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
   import { ProjectContext } from '$lib/domain/Project/context';
   import { getAllUserRoles, getUserRoleName } from '$lib/inertia';
+  import project from '../../routes/project';
 
   interface Props {
     projects: any[];

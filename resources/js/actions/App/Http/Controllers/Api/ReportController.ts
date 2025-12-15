@@ -107,7 +107,7 @@ show.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::byProject
-* @see app/Http/Controllers/Api/ReportController.php:26
+* @see app/Http/Controllers/Api/ReportController.php:27
 * @route '/api/reports/by-project/{projectId}'
 */
 export const byProject = (args: { projectId: string | number } | [projectId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -122,7 +122,7 @@ byProject.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::byProject
-* @see app/Http/Controllers/Api/ReportController.php:26
+* @see app/Http/Controllers/Api/ReportController.php:27
 * @route '/api/reports/by-project/{projectId}'
 */
 byProject.url = (args: { projectId: string | number } | [projectId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -149,7 +149,7 @@ byProject.url = (args: { projectId: string | number } | [projectId: string | num
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::byProject
-* @see app/Http/Controllers/Api/ReportController.php:26
+* @see app/Http/Controllers/Api/ReportController.php:27
 * @route '/api/reports/by-project/{projectId}'
 */
 byProject.get = (args: { projectId: string | number } | [projectId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -159,7 +159,7 @@ byProject.get = (args: { projectId: string | number } | [projectId: string | num
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::byProject
-* @see app/Http/Controllers/Api/ReportController.php:26
+* @see app/Http/Controllers/Api/ReportController.php:27
 * @route '/api/reports/by-project/{projectId}'
 */
 byProject.head = (args: { projectId: string | number } | [projectId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -169,7 +169,7 @@ byProject.head = (args: { projectId: string | number } | [projectId: string | nu
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::store
-* @see app/Http/Controllers/Api/ReportController.php:32
+* @see app/Http/Controllers/Api/ReportController.php:34
 * @route '/api/reports'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -184,7 +184,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::store
-* @see app/Http/Controllers/Api/ReportController.php:32
+* @see app/Http/Controllers/Api/ReportController.php:34
 * @route '/api/reports'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -193,7 +193,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::store
-* @see app/Http/Controllers/Api/ReportController.php:32
+* @see app/Http/Controllers/Api/ReportController.php:34
 * @route '/api/reports'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -203,7 +203,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::update
-* @see app/Http/Controllers/Api/ReportController.php:42
+* @see app/Http/Controllers/Api/ReportController.php:45
 * @route '/api/reports/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -218,7 +218,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::update
-* @see app/Http/Controllers/Api/ReportController.php:42
+* @see app/Http/Controllers/Api/ReportController.php:45
 * @route '/api/reports/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -245,7 +245,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::update
-* @see app/Http/Controllers/Api/ReportController.php:42
+* @see app/Http/Controllers/Api/ReportController.php:45
 * @route '/api/reports/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -255,7 +255,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::destroy
-* @see app/Http/Controllers/Api/ReportController.php:55
+* @see app/Http/Controllers/Api/ReportController.php:59
 * @route '/api/reports/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -270,7 +270,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::destroy
-* @see app/Http/Controllers/Api/ReportController.php:55
+* @see app/Http/Controllers/Api/ReportController.php:59
 * @route '/api/reports/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Api\ReportController::destroy
-* @see app/Http/Controllers/Api/ReportController.php:55
+* @see app/Http/Controllers/Api/ReportController.php:59
 * @route '/api/reports/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

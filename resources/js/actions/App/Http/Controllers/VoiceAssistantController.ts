@@ -1,150 +1,374 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::show
-* @see app/Http/Controllers/VoiceAssistantController.php:23
-* @route '/voice-assistant'
+* @see app/Http/Controllers/VoiceAssistantController.php:27
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant'
 */
-export const show = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(options),
+export const show = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
     method: 'get',
 })
 
 show.definition = {
     methods: ["get","head"],
-    url: '/voice-assistant',
+    url: '/{account?}/voice-assistant',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::show
-* @see app/Http/Controllers/VoiceAssistantController.php:23
-* @route '/voice-assistant'
+* @see app/Http/Controllers/VoiceAssistantController.php:27
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant'
 */
-show.url = (options?: RouteQueryOptions) => {
-    return show.definition.url + queryParams(options)
+show.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return show.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::show
-* @see app/Http/Controllers/VoiceAssistantController.php:23
-* @route '/voice-assistant'
+* @see app/Http/Controllers/VoiceAssistantController.php:27
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant'
 */
-show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: show.url(options),
+show.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::show
-* @see app/Http/Controllers/VoiceAssistantController.php:23
-* @route '/voice-assistant'
+* @see app/Http/Controllers/VoiceAssistantController.php:27
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant'
 */
-show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: show.url(options),
+show.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::activate
-* @see app/Http/Controllers/VoiceAssistantController.php:45
-* @route '/voice-assistant/activate'
+* @see app/Http/Controllers/VoiceAssistantController.php:48
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/activate'
 */
-export const activate = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: activate.url(options),
+export const activate = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: activate.url(args, options),
     method: 'post',
 })
 
 activate.definition = {
     methods: ["post"],
-    url: '/voice-assistant/activate',
+    url: '/{account?}/voice-assistant/activate',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::activate
-* @see app/Http/Controllers/VoiceAssistantController.php:45
-* @route '/voice-assistant/activate'
+* @see app/Http/Controllers/VoiceAssistantController.php:48
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/activate'
 */
-activate.url = (options?: RouteQueryOptions) => {
-    return activate.definition.url + queryParams(options)
+activate.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return activate.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::activate
-* @see app/Http/Controllers/VoiceAssistantController.php:45
-* @route '/voice-assistant/activate'
+* @see app/Http/Controllers/VoiceAssistantController.php:48
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/activate'
 */
-activate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: activate.url(options),
+activate.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: activate.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::deactivate
-* @see app/Http/Controllers/VoiceAssistantController.php:201
-* @route '/voice-assistant/deactivate'
+* @see app/Http/Controllers/VoiceAssistantController.php:238
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/deactivate'
 */
-export const deactivate = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: deactivate.url(options),
+export const deactivate = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: deactivate.url(args, options),
     method: 'post',
 })
 
 deactivate.definition = {
     methods: ["post"],
-    url: '/voice-assistant/deactivate',
+    url: '/{account?}/voice-assistant/deactivate',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::deactivate
-* @see app/Http/Controllers/VoiceAssistantController.php:201
-* @route '/voice-assistant/deactivate'
+* @see app/Http/Controllers/VoiceAssistantController.php:238
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/deactivate'
 */
-deactivate.url = (options?: RouteQueryOptions) => {
-    return deactivate.definition.url + queryParams(options)
+deactivate.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return deactivate.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::deactivate
-* @see app/Http/Controllers/VoiceAssistantController.php:201
-* @route '/voice-assistant/deactivate'
+* @see app/Http/Controllers/VoiceAssistantController.php:238
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/deactivate'
 */
-deactivate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: deactivate.url(options),
+deactivate.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: deactivate.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::updatePreferences
-* @see app/Http/Controllers/VoiceAssistantController.php:271
-* @route '/voice-assistant/preferences'
+* @see app/Http/Controllers/VoiceAssistantController.php:307
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/preferences'
 */
-export const updatePreferences = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
-    url: updatePreferences.url(options),
+export const updatePreferences = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: updatePreferences.url(args, options),
     method: 'patch',
 })
 
 updatePreferences.definition = {
     methods: ["patch"],
-    url: '/voice-assistant/preferences',
+    url: '/{account?}/voice-assistant/preferences',
 } satisfies RouteDefinition<["patch"]>
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::updatePreferences
-* @see app/Http/Controllers/VoiceAssistantController.php:271
-* @route '/voice-assistant/preferences'
+* @see app/Http/Controllers/VoiceAssistantController.php:307
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/preferences'
 */
-updatePreferences.url = (options?: RouteQueryOptions) => {
-    return updatePreferences.definition.url + queryParams(options)
+updatePreferences.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return updatePreferences.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\VoiceAssistantController::updatePreferences
-* @see app/Http/Controllers/VoiceAssistantController.php:271
-* @route '/voice-assistant/preferences'
+* @see app/Http/Controllers/VoiceAssistantController.php:307
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/preferences'
 */
-updatePreferences.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
-    url: updatePreferences.url(options),
+updatePreferences.patch = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: updatePreferences.url(args, options),
     method: 'patch',
 })
 
-const VoiceAssistantController = { show, activate, deactivate, updatePreferences }
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/transcribe'
+*/
+const transcribeToAssistantdb464d0660a99f554cf7b82d00215781 = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: transcribeToAssistantdb464d0660a99f554cf7b82d00215781.url(args, options),
+    method: 'post',
+})
+
+transcribeToAssistantdb464d0660a99f554cf7b82d00215781.definition = {
+    methods: ["post"],
+    url: '/{account?}/voice-assistant/transcribe',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/transcribe'
+*/
+transcribeToAssistantdb464d0660a99f554cf7b82d00215781.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return transcribeToAssistantdb464d0660a99f554cf7b82d00215781.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/voice-assistant/transcribe'
+*/
+transcribeToAssistantdb464d0660a99f554cf7b82d00215781.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: transcribeToAssistantdb464d0660a99f554cf7b82d00215781.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/audio/assistant'
+*/
+const transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0 = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.url(args, options),
+    method: 'post',
+})
+
+transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.definition = {
+    methods: ["post"],
+    url: '/{account?}/audio/assistant',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/audio/assistant'
+*/
+transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\VoiceAssistantController::transcribeToAssistant
+* @see app/Http/Controllers/VoiceAssistantController.php:351
+* @param account - Default: '$subdomain'
+* @route '/{account?}/audio/assistant'
+*/
+transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.post = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0.url(args, options),
+    method: 'post',
+})
+
+export const transcribeToAssistant = {
+    '/{account?}/voice-assistant/transcribe': transcribeToAssistantdb464d0660a99f554cf7b82d00215781,
+    '/{account?}/audio/assistant': transcribeToAssistant778f977588a086c0ce79b9d65d4ab5f0,
+}
+
+const VoiceAssistantController = { show, activate, deactivate, updatePreferences, transcribeToAssistant }
 
 export default VoiceAssistantController

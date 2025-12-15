@@ -9,6 +9,7 @@
   import type { Organization } from '$models';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import Button from '$components/Actions/Button.svelte';
+  import organization from '../../routes/organization';
 
   interface Props {
     organizations: Organization[];

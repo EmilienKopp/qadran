@@ -17,12 +17,12 @@
   <ul
     class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm transition delay-75"
   >
-    {#each actions as {href, onclick, text, as}}
+    {#each actions as {href, onclick, text, as, method}}
       <li>
         {#if as === 'a' || !as}
           <Link {href}>{text}</Link>
         {:else if as === 'button'}
-          <button {onclick} use:inertia="{{ href: href, method: 'post' }}" type="button">
+          <button {onclick} use:inertia="{{ href: href, method: method }}" type="button">
             {text}
           </button>
         {:else}

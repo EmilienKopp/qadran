@@ -1,45 +1,71 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults, validateParameters } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke
 * @see app/Http/Controllers/Auth/EmailVerificationPromptController.php:16
-* @route '/verify-email'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/verify-email'
 */
-const EmailVerificationPromptController = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: EmailVerificationPromptController.url(options),
+const EmailVerificationPromptController = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: EmailVerificationPromptController.url(args, options),
     method: 'get',
 })
 
 EmailVerificationPromptController.definition = {
     methods: ["get","head"],
-    url: '/verify-email',
+    url: '/{account?}/verify-email',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke
 * @see app/Http/Controllers/Auth/EmailVerificationPromptController.php:16
-* @route '/verify-email'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/verify-email'
 */
-EmailVerificationPromptController.url = (options?: RouteQueryOptions) => {
-    return EmailVerificationPromptController.definition.url + queryParams(options)
+EmailVerificationPromptController.url = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { account: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            account: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    validateParameters(args, [
+        "account",
+    ])
+
+    const parsedArgs = {
+        account: args?.account ?? '$subdomain',
+    }
+
+    return EmailVerificationPromptController.definition.url
+            .replace('{account?}', parsedArgs.account?.toString() ?? '')
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke
 * @see app/Http/Controllers/Auth/EmailVerificationPromptController.php:16
-* @route '/verify-email'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/verify-email'
 */
-EmailVerificationPromptController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: EmailVerificationPromptController.url(options),
+EmailVerificationPromptController.get = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: EmailVerificationPromptController.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Auth\EmailVerificationPromptController::__invoke
 * @see app/Http/Controllers/Auth/EmailVerificationPromptController.php:16
-* @route '/verify-email'
+* @param account - Default: '$subdomain'
+* @route '/{account?}/verify-email'
 */
-EmailVerificationPromptController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: EmailVerificationPromptController.url(options),
+EmailVerificationPromptController.head = (args?: { account?: string | number } | [account: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: EmailVerificationPromptController.url(args, options),
     method: 'head',
 })
 
