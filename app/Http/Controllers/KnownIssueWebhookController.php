@@ -14,9 +14,7 @@ class KnownIssueWebhookController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::debug('Received KnownIssueWebhookController store request', [
-            'payload' => $request->all(),
-        ]);
+
         try {
             $payload = $request->all();
 
@@ -93,9 +91,14 @@ class KnownIssueWebhookController extends Controller
     {
         // Handle new structure where payload is an array with one object containing issues
         if (isset($payload[0]['issues']) && is_array($payload[0]['issues'])) {
+            \Log::debug("Payload 0");
             return $payload[0]['issues'];
         }
 
+        if(isset($payload['issues'])) {
+            return $payload['issues'];
+        }
+        
         // Fallback to old structure (array of issue objects)
         $issues = [];
         foreach ($payload as $item) {
