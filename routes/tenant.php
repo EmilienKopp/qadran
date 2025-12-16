@@ -22,6 +22,23 @@ $APP_HOST = Uri::of(env('APP_URL'))->host();
 // Set default guard for tenant routes
 config(['auth.defaults.guard' => 'tenant']);
 
+// Register Passport OAuth routes BEFORE {account} prefix to prevent route conflicts
+Route::middleware(['auth:tenant'])->prefix('oauth')->as('passport.')->group(function () {
+    Route::get('/authorize', [\Laravel\Passport\Http\Controllers\AuthorizationController::class, 'authorize'])
+        ->name('authorizations.authorize');
+    Route::post('/authorize', [\Laravel\Passport\Http\Controllers\ApproveAuthorizationController::class, 'approve'])
+        ->name('authorizations.approve');
+    Route::delete('/authorize', [\Laravel\Passport\Http\Controllers\DenyAuthorizationController::class, 'deny'])
+        ->name('authorizations.deny');
+});
+
+Route::prefix('oauth')->as('passport.')->group(function () {
+    Route::post('/token', [\Laravel\Passport\Http\Controllers\AccessTokenController::class, 'issueToken'])
+        ->name('token');
+    Route::post('/token/refresh', [\Laravel\Passport\Http\Controllers\TransientTokenController::class, 'refresh'])
+        ->name('token.refresh');
+});
+
 // Root route - shows landing page if no tenant, otherwise redirects based on auth
 Route::get('/', function () {
     $tenant = Tenant::current();
