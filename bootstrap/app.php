@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->statefulApi();
 
+        // Add CORS middleware for API routes
+        $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+
         // Register custom middleware aliases
         $middleware->alias([
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
